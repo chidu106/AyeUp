@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.instance.model.Patient;
 
 public class PatientProcessor implements Processor {
@@ -22,11 +23,12 @@ public class PatientProcessor implements Processor {
 			
 		org.hl7.fhir.instance.model.Patient patient = new Patient();
         patient.addIdentifier();
-        patient.getIdentifier().get(0).setSystem("urn:hapitest:mrns");
-        patient.getIdentifier().get(0).setValue("00002");
-        patient.addName().addFamily("Test");
-        patient.getName().get(0).addGiven("PatientOne");
-        patient.setGender(null);
+        patient.getIdentifier().get(0).setSystem("http://elmet.nhs.jorvik.uk/PatientID");
+        patient.getIdentifier().get(0).setValue("00009");
+        patient.addName().addFamily("Spidimus");
+        patient.getName().get(0).addGiven("Horatio");
+          
+        patient.setGender(AdministrativeGender.MALE);
         
 		try 
 		{
