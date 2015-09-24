@@ -60,7 +60,8 @@
             <Bundle-SymbolicName>${bundle.symbolicName}</Bundle-SymbolicName>
             <Bundle-Version>${project.version}</Bundle-Version>
             <Import-Package>*</Import-Package>
-            <Export-Package>org.openehr.fhir</Export-Package>
+            <Export-Package>org.openehr.fhir
+            </Export-Package>
             <Include-Resource>
 	  		{maven-resources}
 			</Include-Resource>

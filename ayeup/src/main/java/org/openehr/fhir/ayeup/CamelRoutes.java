@@ -1,6 +1,7 @@
 package org.openehr.fhir.ayeup;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.dataformat.JsonLibrary;
 import org.apache.camel.model.rest.RestBindingMode;
 
 public class CamelRoutes extends RouteBuilder {
@@ -10,7 +11,7 @@ public class CamelRoutes extends RouteBuilder {
 	        {
 			 
 				restConfiguration().component("jetty")
-					.bindingMode(RestBindingMode.json)
+					//.bindingMode(RestBindingMode.json)
 					.dataFormatProperty("prettyPrint", "true")
 					.port(8080);
 	        	
@@ -22,10 +23,13 @@ public class CamelRoutes extends RouteBuilder {
 	            
 	            from("direct:Patient")
             		.routeId("Patient")
-            		.processRef("toPatient") ;
+            		.processRef("toPatient");
+            
 	            from("direct:Condition")
 	            	.routeId("Condition")
-	                .transform().constant("Condition - Hello World");
+	                .transform().constant("Condition - Hello World")
+	                .marshal().json(JsonLibrary.Jackson);
+	            
 	            from("direct:AllergyIntolerance")
 	            	.routeId("AllergyIntolerance")
 	                .transform().constant("AllergyIntollerence - Bye World");
