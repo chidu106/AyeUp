@@ -9,7 +9,9 @@ public class CamelRoutes extends RouteBuilder {
 	@Override
 	        public void configure() throws Exception 
 	        {
-			 
+			  //feature:install camel-jaxb
+				//feature:install camel-http4
+		//feature:install camel-jetty
 				restConfiguration().component("jetty")
 					//.bindingMode(RestBindingMode.json)
 					.dataFormatProperty("prettyPrint", "true")
