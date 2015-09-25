@@ -1,0 +1,98 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>org.openehr.bundle.jsonpath</groupId>
+	<artifactId>JsonPath-osgi</artifactId>
+	<name>JSONPath - OSGI Bundle</name>
+ 
+  <version>1.2.0</version>
+	<packaging>bundle</packaging>
+
+	  <properties>
+    <activemq-version>5.11.1</activemq-version>
+    <camel-version>2.15.2</camel-version>
+    <cxf-version>3.0.4</cxf-version>
+    <hawtio-version>1.4.50</hawtio-version>
+    <hsqldb-version>1.8.0.10</hsqldb-version>
+    <junit-version>4.11</junit-version>
+    <log4j-version>1.2.17</log4j-version>
+    <spring-version>4.1.6.RELEASE</spring-version>
+    <slf4j-version>1.7.5</slf4j-version>
+    <xbean-version>3.18</xbean-version>
+    <bundle-plugin-version>2.3.7</bundle-plugin-version>
+    <jetty-plugin-version>8.1.16.v20140903</jetty-plugin-version>
+    <scala-version>2.11.5</scala-version>
+    <scala-plugin-version>3.1.6</scala-plugin-version>
+    <!-- use utf-8 encoding -->
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+    <fhir-version>1.2</fhir-version>
+    <bundle.symbolicName>OSGIJsonPath.Bundle</bundle.symbolicName>
+    <bundle.namespace>org.openehr.bundle.jsonpath</bundle.namespace>
+  </properties>
+	
+	<dependencies>
+		<dependency>
+    		<groupId>com.jayway.jsonpath</groupId>
+    		<artifactId>json-path</artifactId>
+    		<version>2.0.0</version>
+		</dependency>
+
+	</dependencies>
+
+	<reporting>
+		<plugins>
+		</plugins>
+	</reporting>
+
+	<build>
+		<plugins>
+		
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>2.3.7</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<!-- Embed all dependency jars except logging one. Since logging shall be used from PAX-logging -->
+						<Embed-Dependency>*;scope=compile|runtime;artifactId=!slf4j-api|hapi-base</Embed-Dependency>
+						<Embed-Transitive>true</Embed-Transitive>
+						<unpackBundle>true</unpackBundle>
+						<!-- Packages exported by HAPI OSGI Bundle to others -->
+						<Export-Package>
+							com.jayway.jsonpath*
+                        </Export-Package>
+						<Import-Package>
+							
+							*;resolution:=optional
+                        </Import-Package>
+						<!-- This is required to handle dynamic class loading using Class.forName 
+							methods in various places in HAPI -->
+						<DynamicImport-Package>
+						
+                            
+                        </DynamicImport-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<executions>
+					
+				</executions>
+			</plugin>
+		</plugins>
+		<resources>
+			<resource>
+				<directory>src/main/resources</directory>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+	</build>
+
+	<description>jayway bundle</description>
+</project>
