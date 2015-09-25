@@ -12,8 +12,6 @@ import org.openehr.fhir.ayeup.CamelRoutes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.jayway.jsonpath.JsonPath;
-
 import org.hl7.fhir.instance.formats.ParserType;
 import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.instance.model.Identifier.IdentifierUse;
@@ -23,67 +21,47 @@ import org.hl7.fhir.instance.model.Reference;
 
 
 
-public class PatientProcessor implements Processor {
+public class PatientProcessorDummy implements Processor {
 	
 	private static final Logger log = LoggerFactory.getLogger(CamelRoutes.class);
 	
 	public void process(Exchange exchange) throws Exception {
 		
-		String json = exchange.getIn().getBody(String.class);
-		
-		log.info(json);
-		/*
-		 {"meta":{"href":"https://rest.ehrscape.com/rest/v1/demographics/party/63436"},"action":"RETRIEVE","part
-			 y":{"id":"63436","version":0,"firstNames":"Steve","lastNames":"Walford","gender":"MALE","dateOfBirth":"1965-07-12T00:00:
-			 00.000Z","address":{"id":"63436","version":0,"address":"60 Florida Gardens, Cardiff, LS23 4RT"},"partyAdditionalInfo":[{
-			 "id":"63438","version":0,"key":"title","value":"Mr"},{"id":"63437","version":0,"key":"uk.nhs.nhsnumber","value":"7430555
-			 "}]}}
-		*/
 		Patient patient = new Patient();
         patient.addIdentifier();
-        patient.getIdentifier().get(0).setSystem("http://openehr.org/FHIR/Patient/EHRID");
-        patient.getIdentifier().get(0).setValue(exchange.getIn().getHeader("PatientEHRID",String.class));
-        patient.getIdentifier().get(0).setUse(IdentifierUse.USUAL);
-    
-        patient.addName().addFamily((String) JsonPath.read(json, "$.party.lastNames"));
-        patient.getName().get(0).addGiven((String) JsonPath.read(json, "$.party.firstNames"));
-        //patient.getName().get(0).addPrefix((String) JsonPath.read(json, "$.party.lastNames"));
+        patient.getIdentifier().get(0).setSystem(NHSEnglandConstants.URI_NHS_NUMBER_ENGLAND);
+        patient.getIdentifier().get(0).setValue("9123456780");
+        patient.getIdentifier().get(0).setUse(IdentifierUse.OFFICIAL);
+        patient.addIdentifier();
+        patient.getIdentifier().get(1).setSystem(NHSScotlandConstants.URI_NHS_NUMBER_SCOTLAND);
+        patient.getIdentifier().get(1).setValue("9876543210");
+        patient.addIdentifier();
+        patient.getIdentifier().get(2).setSystem(NHSScotlandConstants.URI_CHI_NUMBER_SCOTLAND);
+        patient.getIdentifier().get(2).setValue("3312316780");
+        patient.getIdentifier().get(2).setUse(IdentifierUse.OFFICIAL);
+        patient.addIdentifier();
+        patient.getIdentifier().get(3).setSystem(NHSScotlandConstants.URI_CHI_NUMBER_SCOTLAND);
+        patient.getIdentifier().get(3).setValue("3312316781");
+        patient.getIdentifier().get(3).setUse(IdentifierUse.SECONDARY);
+        
+        patient.addName().addFamily("Spidimus");
+        patient.getName().get(0).addGiven("Horatio");
+        patient.getName().get(0).addPrefix("Mr");
           
-        if ((String) JsonPath.read(json, "$.party.lastNames")=="MALE")
-        {
-        	patient.setGender(AdministrativeGender.MALE);
-        }
-        else
-        {
-        	patient.setGender(AdministrativeGender.FEMALE);
-        	
-        }
-        
-        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
-        Date dob = fmt.parse((String) JsonPath.read(json, "$.party.dateOfBirth"));
-        patient.setBirthDate(dob);
-        
-        String Address = (String) JsonPath.read(json, "$.party.address.address");
-        String[] AddrArray = Address.split(","); 
+        patient.setGender(AdministrativeGender.MALE);
         
         patient.addAddress();
-        for(int i=0; i<AddrArray.length; i++)
-        {
-        	switch (i)
-        	{
-	        	case 2: 
-	        		patient.getAddress().get(0).setCity(AddrArray[i].toString());
-	        		break;
-	        	case 3:
-	        		patient.getAddress().get(0).setPostalCode(AddrArray[i].toString());
-	        		break;
-	        	default:
-	        		patient.getAddress().get(0).addLine(AddrArray[i].toString());
-        	}
-        }
+        patient.getAddress().get(0).addLine("6 Gertrude Reed Avenue");
+        patient.getAddress().get(0).addLine("Barnbow");
+        patient.getAddress().get(0).setCity("Leeds");
+        patient.getAddress().get(0).setPostalCode("LS15 0RF");
+        
+        SimpleDateFormat fmt = new SimpleDateFormat("yyyy-MM-dd");
+        Date dob = fmt.parse("1916-12-5");
+        patient.setBirthDate(dob);
         
         patient.setActive(true);
-        /*
+        
         Reference surgery = new Reference();
         surgery.setDisplay("Churchview Surgery");
         surgery.setReference("Organization/urn:oid:2.16.840.1.113883.2.1.4.3|B86016");
@@ -92,7 +70,7 @@ public class PatientProcessor implements Processor {
         Narrative text = new Narrative();
         text.getUserData("Horatio Spidimus @ Churchview Surgery");
         patient.setText(text);
-        */
+        
 		try 
 		{
 			String format = exchange.getIn().getHeader("_format", String.class);

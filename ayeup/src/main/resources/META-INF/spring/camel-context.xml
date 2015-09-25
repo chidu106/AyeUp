@@ -17,7 +17,13 @@
 -->
 
 <!-- Configures the Camel Context-->
+<!--
+  <import resource="messaging/${messagingConfig}.xml"/>
+  -->
+  
 
+  
+  
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:broker="http://activemq.apache.org/schema/core"
@@ -26,13 +32,17 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+  <import resource="ssl/vanilla.xml"/>
+
+
 	<bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="brokerURL" value="tcp://localhost:61616" />
         <property name="userName" value="smx"/>
       	<property name="password" value="smx"/>
     </bean>
     
-      <bean id="toPatient" class="org.openehr.fhir.processor.PatientProcessor"/>
+      <bean id="convPatient" class="org.openehr.fhir.processor.PatientProcessor"/>
+      <bean id="convPatientDummy" class="org.openehr.fhir.processor.PatientProcessorDummy"/>
    
   	<camelContext id="OpenEHRFHIRDemonstrator" xmlns="http://camel.apache.org/schema/spring">
     	<package>org.openehr.fhir.ayeup</package>
