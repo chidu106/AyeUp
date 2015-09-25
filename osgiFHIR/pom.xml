@@ -4,9 +4,9 @@
 
 	<modelVersion>4.0.0</modelVersion>
 
-	<groupId>uk.nhs.chft.osgi.fhir</groupId>
-	<artifactId>fhir-osgi-base-chft</artifactId>
-	<name>CHFT - Java HL7 FHIR API - OSGI Bundle</name>
+	<groupId>org.openehr.bundle.hl7</groupId>
+	<artifactId>fhir-osgi</artifactId>
+	<name>HL7 FHIR - OSGI Bundle</name>
  
   <version>1.2.0</version>
 	<packaging>bundle</packaging>
@@ -30,29 +30,12 @@
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
     <fhir-version>1.2</fhir-version>
-    <bundle.symbolicName>CHFTOSGIFHIR.Bundle</bundle.symbolicName>
-    <bundle.namespace>uk.nhs.chft.java.esb</bundle.namespace>
+    <bundle.symbolicName>OSGIFHIR.Bundle</bundle.symbolicName>
+    <bundle.namespace>org.openehr.bundle.fhir</bundle.namespace>
   </properties>
 	
 	<dependencies>
-	<!-- 
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-base</artifactId>
-			<version>${fhir-version}</version>
-		</dependency>
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-dstu</artifactId>
-			<version>${fhir-version}</version>
-		</dependency>
-
-		<dependency>
-			<groupId>ca.uhn.hapi.fhir</groupId>
-			<artifactId>hapi-fhir-structures-dstu2</artifactId>
-			<version>${fhir-version}</version>
-		</dependency>
-		 -->
+	
 		<dependency>
 			<groupId>me.fhir</groupId>
 			<artifactId>fhir-dstu2</artifactId>
@@ -102,33 +85,7 @@
 			<plugin>
 				<artifactId>maven-assembly-plugin</artifactId>
 				<executions>
-					<!-- <execution>
-						<id>sources</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/osgi-source.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					-->
-					<!--
-					<execution>
-						<id>javadoc</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-						<configuration>
-							<descriptors>
-								<descriptor>../src/assembly/osgi-javadoc.xml</descriptor>
-							</descriptors>
-						</configuration>
-					</execution>
-					-->
+				
 				</executions>
 			</plugin>
 		</plugins>
