@@ -14,7 +14,7 @@ public class CamelRoutes extends RouteBuilder {
 	@Override
 	        public void configure() throws Exception 
 	        {
-				String PatientEHRID = "";
+				
 				
 				restConfiguration().component("jetty")
 					.bindingMode(RestBindingMode.off)

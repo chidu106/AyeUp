@@ -5,8 +5,8 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.openehr.fhir.NHS.NHSEnglandConstants;
-import org.openehr.fhir.NHS.NHSScotlandConstants;
+//import org.openehr.fhir.NHS.NHSEnglandConstants;
+//import org.openehr.fhir.NHS.NHSScotlandConstants;
 import org.openehr.fhir.ayeup.CamelRoutes;
 
 import org.slf4j.Logger;
@@ -17,9 +17,9 @@ import com.jayway.jsonpath.JsonPath;
 import org.hl7.fhir.instance.formats.ParserType;
 import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.instance.model.Identifier.IdentifierUse;
-import org.hl7.fhir.instance.model.Narrative;
+//import org.hl7.fhir.instance.model.Narrative;
 import org.hl7.fhir.instance.model.Patient;
-import org.hl7.fhir.instance.model.Reference;
+//import org.hl7.fhir.instance.model.Reference;
 
 
 
