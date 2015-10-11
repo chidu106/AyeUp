@@ -13,9 +13,9 @@ public class FHIRApi extends RouteBuilder {
 	    public void configure() throws Exception {
 	        // configure we want to use servlet as the component for the rest DSL
 	        // and we enable json binding mode
-	        restConfiguration().component("servlet")
-	        	.bindingMode(RestBindingMode.off)
-				.dataFormatProperty("prettyPrint", "true");
+		 restConfiguration().component("servlet").bindingMode(RestBindingMode.json)
+         .dataFormatProperty("prettyPrint", "true")
+         .contextPath("RippleFHIR/FHIR").port(8080);
 	 
 	        // this user REST service is json only
 	        rest("/Patient").description("Patient rest service")
