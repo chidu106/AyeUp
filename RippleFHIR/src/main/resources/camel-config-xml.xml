@@ -30,13 +30,13 @@
 		</restConfiguration>
 		
 		<rest path="/Binary" consumes="application/json,application/xml" produces="application/json,application/xml">
-			<description>Retrieval of documents</description>
+			<description>Document Interface</description>
 			<get uri="/{id}" >
 				<description>Used to retrieve an actual document. This API acts more like a normal html page, the document is returned with no JSON/XML</description>
-				<param name="id" type="path" description="The id of the Binary document to get"
+				<param name="id" type="path" description="The id of the Binary document"
 					dataType="integer" />
-				<responseMessage message="The document that was found" />
-				<responseMessage code="404" message="Binary not found"  />
+				<responseMessage message="Ok" />
+				<responseMessage code="404" message="Resource not found"  />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -54,15 +54,49 @@
 		</rest>
 
 		<rest path="/DocumentReference" consumes="application/json" produces="application/json">
-			<description>Metadata</description>
+			<description>Document Metadata Interace</description>
 
 			<!-- this is a rest GET to view an user by the given id -->
 			<get uri="/{id}" >
-				<description>Used for retrieving meta data stored against a document. Information can include Episode, consultant, type of document. For more information see http://www.hl7.org/FHIR/documentreference.html </description>
-				<param name="id" type="path" description="The id of the DocumentReference to get"
+				<description>Get Document Metadata for id. Metadata can include Episode, consultant, document storage, type of document.</description>
+				<param name="id" type="path" description="The id of the DocumentReference"
 					dataType="integer" />
-				<responseMessage message="The document reference that was found" />
-				<responseMessage code="404" message="Patient not found"  />
+				<responseMessage message="Ok" />
+				<responseMessage code="404" message="Resource not found"  />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<process ref="documentReferenceDummy"/>
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</get>
+			<get uri="/" >
+				<description>Find Document Reference</description>
+				<param name="class" type="path" description="NHS UK Specialty or Treatment Code"
+					dataType="string" />
+				<param name="type" type="path" description="Type of document e.g. Discharge Summary, Clinic Letter. Use SNOMED Codes "
+					dataType="string" />
+				<param name="patient" type="path" description="Id of the patient. (Patient id is retrieved via the Patient interface)"
+					dataType="string" />
+				<param name="author" type="path" description="Who created the document. Use GMC or GMP references"
+					dataType="string" />
+				<param name="created" type="path" description="When the document was created"
+					dataType="date" />
+				<param name="period" type="path" description="Time of service (Admission or Encounter date)"
+					dataType="date" />
+				<responseMessage message="Ok" />
+				<responseMessage code="404" message="Resource not found"  />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
 					<process ref="documentReferenceDummy"/>
 					<filter>
@@ -77,15 +111,42 @@
 		
 
 		<rest path="/Patient" consumes="application/json" produces="application/json">
-			<description>Patient REST service</description>
+			<description>Patient Demographic Interface</description>
+			<get uri="/{id}" >
+				<description>Get patient by id</description>
+				
+				<param name="id" type="path" description="The internal id of the patient (not NHS or CHI number)"
+					dataType="integer" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<to uri="bean:patientService?method=getPatient(${header.id})" />
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</get>
 			<get uri="/" >
-				<description>Find patient by id</description>
+				<description>Find patient</description>
 				<param name="identifier" type="path" description="Usage identifier name|id, e.g. urn:fhir.nhs.uk:id/NHSNumber|9876543210"
 					dataType="integer" />
-				<param name="_id" type="path" description="The id of the patient to get (not NHS or CHI number)"
-					dataType="integer" />
-				<responseMessage message="The patient that was found" responseModel="org.ayeup.rest.OperationOutcome" />
-				<responseMessage code="404" message="Patient not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<param name="name" type="path" description="Family or given name"
+					dataType="string" />
+				<param name="birthdate" type="path" description="Date of Birth"
+					dataType="string" />
+				<param name="phone" type="path" description="Phone number"
+					dataType="date" />
+				<param name="address-postalcode" type="path" description="Postcode"
+					dataType="date" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
