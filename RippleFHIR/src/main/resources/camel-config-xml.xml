@@ -20,17 +20,10 @@
 	<bean id="patientService" class="org.ayeup.rest.PatientService" />
 	
 	<bean id="documentReferenceService" class="org.ayeup.rest.DocumentReferenceService" />
-
+	
 	<camelContext id="FHIR" xmlns="http://camel.apache.org/schema/spring">
 
-		<!-- configure rest to use the camel-servlet component, and use json binding 
-			mode -->
-		<!-- and tell to output json in pretty print mode -->
-		<!-- setup context path and port number that Apache Tomcat will deploy 
-			this application with, as we use the servlet component, then we need to aid 
-			Camel to tell it these details so Camel knows the url to the REST services. 
-			Notice: This is optional, but needed if the RestRegistry should enlist accurate 
-			information. You can access the RestRegistry from JMX at runtime -->
+		
 		<restConfiguration component="servlet" bindingMode="json"
 			contextPath="api-fhir/rest" port="8080">
 			<dataFormatProperty key="prettyPrint" value="true" />
@@ -41,12 +34,16 @@
 			<description>Patient REST service</description>
 
 			<!-- this is a rest GET to view an user by the given id -->
-			<get uri="/{id}" outType="org.ayeup.rest.Patient">
+			<get uri="/{id}" >
 				<description>Find patient by id</description>
-				<param name="id" type="path" description="The id of the patient to get"
+				<param name="id" type="path" description="The id of the patient to get (not NHS number)"
 					dataType="integer" />
-				<responseMessage message="The patient that was found" />
-				<responseMessage code="404" message="Patient not found" />
+				<responseMessage message="The patient that was found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Patient not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
 					<to uri="bean:patientService?method=getPatient(${header.id})" />
 					<filter>
@@ -70,7 +67,7 @@
 				<param name="id" type="path" description="The id of the DocumentReference to get"
 					dataType="integer" />
 				<responseMessage message="The document reference that was found" />
-				<responseMessage code="404" message="Patient not found" />
+				<responseMessage code="404" message="Patient not found"  />
 				<route>
 					<to uri="bean:documentReferenceService?method=getDocumentReference(${header.id})" />
 					<filter>
@@ -84,20 +81,29 @@
 
 			
 		</rest>
+		
+		<rest path="/Binary" consumes="application/json" produces="application/json">
+			<description>DocumentReference REST service</description>
 
-		<!-- defines the rest services using the context-path /echo -->
-		<rest path="/echo" consumes="application/text" produces="application/text">
-			<description>Echo rest service</description>
-
-			<get uri="/ping">
-				<description>A ping service</description>
+			<!-- this is a rest GET to view an user by the given id -->
+			<get uri="/{id}" outType="org.ayeup.rest.Binary">
+				<description>Find DocumentReference by id</description>
+				<param name="id" type="path" description="The id of the Binary document to get"
+					dataType="integer" />
+				<responseMessage message="The document reference that was found" />
+				<responseMessage code="404" message="Patient not found"  />
 				<route>
-					<transform>
-						<constant>pong</constant>
-					</transform>
+					<to uri="bean:binaryService?method=getBinary(${header.id})" />
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
 				</route>
 			</get>
 
+			
 		</rest>
 
 	</camelContext>
