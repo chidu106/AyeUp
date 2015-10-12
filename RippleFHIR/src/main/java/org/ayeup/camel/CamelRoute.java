@@ -4,7 +4,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.apache.camel.model.rest.RestParamType;
-import org.ayeup.rest.Patient;
 
 public class CamelRoute extends RouteBuilder {
 
@@ -26,7 +25,6 @@ public class CamelRoute extends RouteBuilder {
 			.delete("Patient REST service")
 			.get("/{id}")
 				//.outType(org.hl7.fhir.instance.model.Patient.class)
-				.outType(org.ayeup.rest.Patient.class)
 				.param().name("id").type(RestParamType.path).description("The id of the patient to get (not NHS number)").dataType("integer").endParam()
 				.responseMessage().message("Patient not found").endResponseMessage()
 				.responseMessage().code(404).message("Patient not found").endResponseMessage()

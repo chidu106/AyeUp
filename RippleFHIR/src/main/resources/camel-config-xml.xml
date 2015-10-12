@@ -18,8 +18,8 @@
 
 	<!-- a bean for patient services -->
 	<bean id="patientService" class="org.ayeup.rest.PatientService" />
-	
 	<bean id="documentReferenceService" class="org.ayeup.rest.DocumentReferenceService" />
+	<bean id="documentReferenceDummy" class="org.ayeup.samples.DocumentReferenceProcessorDummy" />
 	
 	<camelContext id="FHIR" xmlns="http://camel.apache.org/schema/spring">
 
@@ -28,15 +28,61 @@
 			contextPath="api-fhir/rest" port="8080">
 			<dataFormatProperty key="prettyPrint" value="true" />
 		</restConfiguration>
+		
+		<rest path="/Binary" consumes="application/json,application/xml" produces="application/json,application/xml">
+			<description>Retrieval of documents</description>
+			<get uri="/{id}" >
+				<description>Used to retrieve an actual document. This API acts more like a normal html page, the document is returned with no JSON/XML</description>
+				<param name="id" type="path" description="The id of the Binary document to get"
+					dataType="integer" />
+				<responseMessage message="The document that was found" />
+				<responseMessage code="404" message="Binary not found"  />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<to uri="bean:binaryService?method=getBinary(${header.id})" />
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</get>
+		</rest>
 
-		<!-- defines the rest services using the context-path /user -->
-		<rest path="/Patient" consumes="application/json" produces="application/json">
-			<description>Patient REST service</description>
+		<rest path="/DocumentReference" consumes="application/json" produces="application/json">
+			<description>Metadata</description>
 
 			<!-- this is a rest GET to view an user by the given id -->
 			<get uri="/{id}" >
+				<description>Used for retrieving meta data stored against a document. Information can include Episode, consultant, type of document. For more information see http://www.hl7.org/FHIR/documentreference.html </description>
+				<param name="id" type="path" description="The id of the DocumentReference to get"
+					dataType="integer" />
+				<responseMessage message="The document reference that was found" />
+				<responseMessage code="404" message="Patient not found"  />
+				<route>
+					<process ref="documentReferenceDummy"/>
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</get>
+		</rest>
+		
+
+		<rest path="/Patient" consumes="application/json" produces="application/json">
+			<description>Patient REST service</description>
+			<get uri="/" >
 				<description>Find patient by id</description>
-				<param name="id" type="path" description="The id of the patient to get (not NHS number)"
+				<param name="identifier" type="path" description="Usage identifier name|id, e.g. urn:fhir.nhs.uk:id/NHSNumber|9876543210"
+					dataType="integer" />
+				<param name="_id" type="path" description="The id of the patient to get (not NHS or CHI number)"
 					dataType="integer" />
 				<responseMessage message="The patient that was found" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="404" message="Patient not found" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -54,58 +100,10 @@
 					</filter>
 				</route>
 			</get>
-
-			
 		</rest>
 		
-		<rest path="/DocumentReference" consumes="application/json" produces="application/json">
-			<description>DocumentReference REST service</description>
-
-			<!-- this is a rest GET to view an user by the given id -->
-			<get uri="/{id}" outType="org.ayeup.rest.DocumentReference">
-				<description>Find DocumentReference by id</description>
-				<param name="id" type="path" description="The id of the DocumentReference to get"
-					dataType="integer" />
-				<responseMessage message="The document reference that was found" />
-				<responseMessage code="404" message="Patient not found"  />
-				<route>
-					<to uri="bean:documentReferenceService?method=getDocumentReference(${header.id})" />
-					<filter>
-						<simple>${body} == null</simple>
-						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-							<constant>404</constant>
-						</setHeader>
-					</filter>
-				</route>
-			</get>
-
-			
-		</rest>
 		
-		<rest path="/Binary" consumes="application/json" produces="application/json">
-			<description>DocumentReference REST service</description>
-
-			<!-- this is a rest GET to view an user by the given id -->
-			<get uri="/{id}" outType="org.ayeup.rest.Binary">
-				<description>Find DocumentReference by id</description>
-				<param name="id" type="path" description="The id of the Binary document to get"
-					dataType="integer" />
-				<responseMessage message="The document reference that was found" />
-				<responseMessage code="404" message="Patient not found"  />
-				<route>
-					<to uri="bean:binaryService?method=getBinary(${header.id})" />
-					<filter>
-						<simple>${body} == null</simple>
-						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
-							<constant>404</constant>
-						</setHeader>
-					</filter>
-				</route>
-			</get>
-
-			
-		</rest>
-
+		
 	</camelContext>
 
 </beans>
