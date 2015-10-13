@@ -7,7 +7,7 @@ import java.util.Date;
 
 
 import org.ayeup.NHS.NHSEnglandConstants;
-import org.ayeup.NHS.NHSJorvik;
+import org.ayeup.NHS.NHSAcuteTrustConstants;
 import org.ayeup.NHS.NHSScotlandConstants;
 import org.hl7.fhir.instance.formats.ParserType;
 import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
@@ -39,7 +39,7 @@ public class PatientProcessorDummy {
         patient.getIdentifier().get(1).setValue("3312316"+id);
         patient.getIdentifier().get(1).setUse(IdentifierUse.OFFICIAL);
         patient.addIdentifier();
-        patient.getIdentifier().get(2).setSystem(NHSJorvik.URI_NHS_ACUTE_HOSPITAL_NUMBER);
+        patient.getIdentifier().get(2).setSystem(NHSAcuteTrustConstants.URI_NHS_ACUTE_HOSPITAL_NUMBER);
         patient.getIdentifier().get(2).setValue(id);
         patient.getIdentifier().get(2).setUse(IdentifierUse.USUAL);
         

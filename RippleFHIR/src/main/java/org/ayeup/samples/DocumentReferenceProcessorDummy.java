@@ -11,7 +11,7 @@ import java.util.Date;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.ayeup.NHS.NHSEnglandConstants;
-import org.ayeup.NHS.NHSJorvik;
+import org.ayeup.NHS.NHSAcuteTrustConstants;
 import org.hl7.fhir.instance.formats.ParserType;
 import org.hl7.fhir.instance.model.DocumentReference;
 import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
@@ -31,7 +31,7 @@ public class DocumentReferenceProcessorDummy implements Processor {
 		
 		DocumentReference document = new DocumentReference();
         document.addIdentifier();
-        document.getIdentifier().get(0).setSystem(NHSJorvik.URI_NHS_ACUTE_EDMS_ID);
+        document.getIdentifier().get(0).setSystem(NHSAcuteTrustConstants.URI_NHS_ACUTE_EDMS_ID);
         document.getIdentifier().get(0).setValue("12345");
         
         String id = exchange.getIn().getHeader("id", String.class);
