@@ -97,9 +97,12 @@
           <webResources>
             <resource>
               <directory>target/swagger-ui/</directory>
-              <includes>
+          <!--     <includes>
                 <include>**/*.*</include>
-              </includes>
+              </includes> 
+              -->
+              <excludes>
+              	<exclude>index.html</exclude> </excludes>
             </resource>
           </webResources>
         </configuration>

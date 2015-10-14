@@ -20,6 +20,6 @@
  <display-name>FHIR Swagger API</display-name>
 
  <welcome-file-list>
-  <welcome-file>index.html</welcome-file>
+  <welcome-file>FHIRindex.html</welcome-file>
  </welcome-file-list>
 </web-app>
