@@ -1,5 +1,7 @@
 package org.ayeup.camel;
 
+import java.util.Arrays;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;
@@ -25,7 +27,8 @@ public class CamelRoute extends RouteBuilder {
 			.delete("Patient REST service")
 			.get("/{id}")
 				//.outType(org.hl7.fhir.instance.model.Patient.class)
-				.param().name("id").type(RestParamType.path)..description("The id of the patient to get (not NHS number)").dataType("integer").endParam()
+				.param().name("id").type(RestParamType.path).description("The id of the patient to get (not NHS number)").dataType("integer").endParam()
+				//.param().name("format").type(RestParamType.query).description("The id of the patient to get (not NHS number)").dataType("list").allowableValues( Arrays.asList("sup1", "sup2", "sup3")).endParam()
 				.responseMessage().message("Patient not found").endResponseMessage()
 				.responseMessage().code(404).message("Patient not found").endResponseMessage()
 				.responseMessage().code(400).message("Bad Request").endResponseMessage()

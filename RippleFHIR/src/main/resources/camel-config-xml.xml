@@ -24,7 +24,7 @@
 	<camelContext id="FHIR" xmlns="http://camel.apache.org/schema/spring">
 
 		
-		<restConfiguration component="servlet" bindingMode="json"
+		<restConfiguration component="servlet" bindingMode="off"
 			contextPath="api-fhir/rest" port="8080">
 			<dataFormatProperty key="prettyPrint" value="true" />
 		</restConfiguration>
@@ -36,6 +36,7 @@
 				<!--  This API acts more like a normal html page, the document is returned with no JSON/XML -->
 				<param name="id" type="path" description="The id of the Binary document"
 					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" />
 				<responseMessage code="404" message="Resource not found"  />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -63,6 +64,7 @@
 				<!--  Metadata can include Episode, consultant, document storage, type of document. -->
 				<param name="id" type="path" description="The id of the DocumentReference"
 					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" />
 				<responseMessage code="404" message="Resource not found"  />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -93,6 +95,7 @@
 					dataType="date" />
 				<param name="period" type="query" description="Time of service (Admission or Encounter date)" required="false"
 					dataType="date" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" />
 				<responseMessage code="404" message="Resource not found"  />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -119,6 +122,7 @@
 				
 				<param name="id" type="path" description="The internal id of the patient (not NHS or CHI number)"
 					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -137,16 +141,17 @@
 			</get>
 			<get uri="/" >
 				<description>Find patient</description>
-				<param name="identifier" type="path" description="Usage identifier name|id, e.g. urn:fhir.nhs.uk:id/NHSNumber|9876543210"  required="false"
+				<param name="identifier" type="query" description="Usage identifier name|id, e.g. urn:fhir.nhs.uk:id/NHSNumber|9876543210"  required="false"
 					dataType="integer" />
-				<param name="name" type="path" description="Family or given name" required="false"
+				<param name="name" type="query" description="Family or given name" required="false"
 					dataType="string" />
-				<param name="birthdate" type="path" description="Date of Birth" required="false"
+				<param name="birthdate" type="query" description="Date of Birth" required="false"
 					dataType="string" />
-				<param name="phone" type="path" description="Phone number" required="false"
+				<param name="phone" type="query" description="Phone number" required="false"
 					dataType="string" />
-				<param name="address-postalcode" type="path" description="Postcode" required="false"
+				<param name="address-postalcode" type="query" description="Postcode" required="false"
 					dataType="string" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
@@ -154,7 +159,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<to uri="bean:patientService?method=getPatient(${header.id})" />
+					<to uri="http://data.developer.nhs.uk/fhir/gpsoc-im2/Profile.patient/bundlepatientexample.xml?bridgeEndpoint=true" />
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
