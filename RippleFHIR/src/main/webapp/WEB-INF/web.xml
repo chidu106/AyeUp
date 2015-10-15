@@ -14,7 +14,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
 
-	<display-name>HL7 FHIR REST Swagger API</display-name>
+	<display-name>HL7 FHIR (UK) RESTful API</display-name>
 
 	<!-- location of Camel Spring xml files -->
 	<context-param>
@@ -59,19 +59,19 @@
 		</init-param>
 		<init-param>
 			<param-name>api.version</param-name>
-			<param-value>1.2.3</param-value>
+			<param-value>0.0.1-DRAFT</param-value>
 		</init-param>
 		<init-param>
 			<param-name>api.title</param-name>
-			<param-value>FHIR Engine</param-value>
+			<param-value>HL7 FHIR (UK) - RESTful API </param-value>
 		</init-param>
 		<init-param>
 			<param-name>api.description</param-name>
-			<param-value>HL7 FHIR API</param-value>
+			<param-value>RESTful API for use within Health and Social Care Organisations</param-value>
 		</init-param>
 		<init-param>
 			<param-name>api.contact.name</param-name>
-			<param-value>The Health Informatics Service (THIS) and mayfield-is.co.uk</param-value>
+			<param-value>Kevin Mayfield - mayfield.g.kev@gmail.com</param-value>
 		</init-param>
 		<load-on-startup>2</load-on-startup>
 	</servlet>
