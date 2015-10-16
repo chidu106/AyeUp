@@ -10,7 +10,7 @@
   <name value="Condition-RippleOSI" />
   <status value="draft" />
   <date value="2015-09-22T20:02:49+10:00" />
-  <description value="Base StructureDefinition for Condition Resource" />
+  <description value="Sample Structure for Condition Resource" />
   <fhirVersion value="1.0.1" />
   <kind value="resource" />
   <constrainedType value="Condition" />
@@ -346,7 +346,7 @@
     </element>
     <element>
       <path value="Condition.identifier.system" />
-      <short value="The namespace for the identifier" />
+      <short value="RippleOSI-IDCR: ProblemSummary.source Id (Organization). The namespace for the identifier" />
       <definition value="Establishes the namespace in which set of possible id values is unique." />
       <requirements value="There are many sequences of identifiers.  To perform matching, we need to know what sequence we're dealing with. The system identifies a particular sequence or set of unique identifiers." />
       <min value="0" />
@@ -359,7 +359,7 @@
       <type>
         <code value="uri" />
       </type>
-      <exampleUri value="http://www.acme.com/identifiers/patient or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
+      <exampleUri value="http://www.jorvik.nhs.uk/EPR/" />
       <isSummary value="true" />
       <mapping>
         <identity value="v2" />
@@ -376,7 +376,7 @@
     </element>
     <element>
       <path value="Condition.identifier.value" />
-      <short value="The value that is unique" />
+      <short value="RippleOSI-IDCR: ProblemSummary.source Id (Organization).The value that is unique " />
       <definition value="The portion of the identifier typically displayed to the user and which is unique within the context of the system." />
       <comments value="If the value is a full URI, then the system SHALL be urn:ietf:rfc:3986." />
       <min value="0" />
@@ -589,7 +589,7 @@
     </element>
     <element>
       <path value="Condition.patient.reference" />
-      <short value="Relative, internal or absolute URL reference" />
+      <short value="RippleOSI-IDCR: /Patient/${PatientSummary.id}. Relative, internal or absolute URL reference" />
       <definition value="A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources." />
       <comments value="Using absolute URLs provides a stable scalable approach suitable for a cloud/web context, while using relative/logical references provides a flexible approach suitable for use when trading across closed eco-system boundaries.   Absolute URLs do not need to point to a FHIR RESTful server, though this is the preferred approach. If the URL conforms to the structure &quot;/[type]/[id]&quot; then it should be assumed that the reference is to a FHIR RESTful server." />
       <min value="0" />
@@ -706,7 +706,7 @@
     <element>
       <path value="Condition.asserter" />
       <short value="Person who asserts this condition" />
-      <definition value="Individual who is making the condition statement." />
+      <definition value="RippleOSI-IDCR: ProblemSummary.source and source Id (Practitioner). Individual who is making the condition statement." />
       <min value="0" />
       <max value="1" />
       <base>
@@ -717,10 +717,6 @@
       <type>
         <code value="Reference" />
         <profile value="http://hl7.org/fhir/StructureDefinition/Practitioner" />
-      </type>
-      <type>
-        <code value="Reference" />
-        <profile value="http://hl7.org/fhir/StructureDefinition/Patient" />
       </type>
       <isSummary value="true" />
       <mapping>
@@ -920,7 +916,7 @@
     </element>
     <element>
       <path value="Condition.code.coding.display" />
-      <short value="Representation defined by the system" />
+      <short value="IDCR: ProblemSummary.problem. Representation defined by the system" />
       <definition value="A representation of the meaning of the code in the system, following the rules of the system." />
       <requirements value="Need to be able to carry a human-readable meaning of the code for readers that do not know  the system." />
       <min value="0" />
@@ -933,6 +929,7 @@
       <type>
         <code value="string" />
       </type>
+      <mustSupport value="true" />
       <isSummary value="true" />
       <mapping>
         <identity value="v2" />
@@ -1286,6 +1283,7 @@
       <path value="Condition.verificationStatus" />
       <short value="provisional | differential | confirmed | refuted | entered-in-error | unknown" />
       <definition value="The verification status to support the clinical status of the condition." />
+      <comments value="Default to unknown." />
       <min value="1" />
       <max value="1" />
       <base>
@@ -1563,7 +1561,7 @@
     </element>
     <element>
       <path value="Condition.onset[x]" />
-      <short value="Estimated or actual date,  date-time, or age" />
+      <short value="RippleOSI-IDCR: ProblemSummary.dateOfOnset. Estimated or actual date,  date-time, or age" />
       <definition value="Estimated or actual date or date-time  the condition began, in the opinion of the clinician." />
       <comments value="Age is generally used when the patient reports an age at which the Condition began to occur." />
       <min value="0" />
@@ -1575,16 +1573,6 @@
       </base>
       <type>
         <code value="dateTime" />
-      </type>
-      <type>
-        <code value="Quantity" />
-        <profile value="http://hl7.org/fhir/StructureDefinition/Age" />
-      </type>
-      <type>
-        <code value="Period" />
-      </type>
-      <type>
-        <code value="Range" />
       </type>
       <type>
         <code value="string" />
@@ -1942,7 +1930,7 @@
       <definition value="Supporting Evidence / manifestations that are the basis on which this condition is suspected or confirmed." />
       <comments value="The evidence may be a simple list of coded symptoms/manifestations, or references to observations or formal assessments, or both." />
       <min value="0" />
-      <max value="*" />
+      <max value="0" />
       <base>
         <path value="Condition.evidence" />
         <min value="0" />
@@ -2547,6 +2535,240 @@
       <mapping>
         <identity value="w5" />
         <map value="clinical.general" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.identifier.system" />
+      <short value="RippleOSI-IDCR: ProblemSummary.source Id (Organization). The namespace for the identifier" />
+      <definition value="Establishes the namespace in which set of possible id values is unique." />
+      <requirements value="There are many sequences of identifiers.  To perform matching, we need to know what sequence we're dealing with. The system identifies a particular sequence or set of unique identifiers." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Identifier.system" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="uri" />
+      </type>
+      <exampleUri value="http://www.jorvik.nhs.uk/EPR/" />
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="CX.4 / EI-2-4" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value="II.root or Role.id.root" />
+      </mapping>
+      <mapping>
+        <identity value="servd" />
+        <map value="./IdentifierType" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.identifier.value" />
+      <short value="RippleOSI-IDCR: ProblemSummary.source Id (Organization).The value that is unique " />
+      <definition value="The portion of the identifier typically displayed to the user and which is unique within the context of the system." />
+      <comments value="If the value is a full URI, then the system SHALL be urn:ietf:rfc:3986." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Identifier.value" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="string" />
+      </type>
+      <exampleString value="123456" />
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="CX.1 / EI.1" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value="II.extension or II.root if system indicates OID or GUID (Or Role.id.extension or root)" />
+      </mapping>
+      <mapping>
+        <identity value="servd" />
+        <map value="./Value" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.patient.reference" />
+      <short value="RippleOSI-IDCR: /Patient/${PatientSummary.id}. Relative, internal or absolute URL reference" />
+      <definition value="A reference to a location at which the other resource is found. The reference may be a relative reference, in which case it is relative to the service base URL, or an absolute URL that resolves to the location where the resource is found. The reference may be version specific or not. If the reference is not to a FHIR RESTful server, then it should be assumed to be version specific. Internal fragment references (start with '#') refer to contained resources." />
+      <comments value="Using absolute URLs provides a stable scalable approach suitable for a cloud/web context, while using relative/logical references provides a flexible approach suitable for use when trading across closed eco-system boundaries.   Absolute URLs do not need to point to a FHIR RESTful server, though this is the preferred approach. If the URL conforms to the structure &quot;/[type]/[id]&quot; then it should be assumed that the reference is to a FHIR RESTful server." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Reference.reference" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="string" />
+      </type>
+      <condition value="ref-1" />
+      <isSummary value="true" />
+      <mapping>
+        <identity value="rim" />
+        <map value="N/A" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.asserter" />
+      <short value="Person who asserts this condition" />
+      <definition value="RippleOSI-IDCR: ProblemSummary.source and source Id (Practitioner). Individual who is making the condition statement." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Condition.asserter" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="Reference" />
+        <profile value="http://hl7.org/fhir/StructureDefinition/Practitioner" />
+      </type>
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="REL-7.1 identifier + REL-7.12 type code" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value=".participation[typeCode=AUT].role" />
+      </mapping>
+      <mapping>
+        <identity value="w5" />
+        <map value="who.author" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.code.coding.display" />
+      <short value="IDCR: ProblemSummary.problem. Representation defined by the system" />
+      <definition value="A representation of the meaning of the code in the system, following the rules of the system." />
+      <requirements value="Need to be able to carry a human-readable meaning of the code for readers that do not know  the system." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Coding.display" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="string" />
+      </type>
+      <mustSupport value="true" />
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="C*E.2 - but note this is not well followed" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value="CV.displayName" />
+      </mapping>
+      <mapping>
+        <identity value="orim" />
+        <map value="fhir:Coding.display rdfs:subPropertyOf dt:CDCoding.displayName" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.verificationStatus" />
+      <short value="provisional | differential | confirmed | refuted | entered-in-error | unknown" />
+      <definition value="The verification status to support the clinical status of the condition." />
+      <comments value="Default to unknown." />
+      <min value="1" />
+      <max value="1" />
+      <base>
+        <path value="Condition.verificationStatus" />
+        <min value="1" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="code" />
+      </type>
+      <isModifier value="true" />
+      <isSummary value="true" />
+      <binding>
+        <strength value="required" />
+        <description value="The verification status to support or decline the clinical status of the condition or diagnosis." />
+        <valueSetReference>
+          <reference value="http://hl7.org/fhir/ValueSet/condition-ver-status" />
+        </valueSetReference>
+      </binding>
+      <mapping>
+        <identity value="v2" />
+        <map value="PRB-13" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value=".code (pre or post-coordinated in)  Can use valueNegationInd for refuted" />
+      </mapping>
+      <mapping>
+        <identity value="w5" />
+        <map value="status" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.onset[x]" />
+      <short value="RippleOSI-IDCR: ProblemSummary.dateOfOnset. Estimated or actual date,  date-time, or age" />
+      <definition value="Estimated or actual date or date-time  the condition began, in the opinion of the clinician." />
+      <comments value="Age is generally used when the patient reports an age at which the Condition began to occur." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Condition.onset[x]" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="dateTime" />
+      </type>
+      <type>
+        <code value="string" />
+      </type>
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="PRB-16" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value=".effectiveTime.low or .inboundRelationship[typeCode=SUBJ].source[classCode=OBS, moodCode=EVN, code=&quot;age at onset&quot;].value" />
+      </mapping>
+      <mapping>
+        <identity value="w5" />
+        <map value="when.init" />
+      </mapping>
+    </element>
+    <element>
+      <path value="Condition.evidence" />
+      <short value="Supporting evidence" />
+      <definition value="Supporting Evidence / manifestations that are the basis on which this condition is suspected or confirmed." />
+      <comments value="The evidence may be a simple list of coded symptoms/manifestations, or references to observations or formal assessments, or both." />
+      <min value="0" />
+      <max value="0" />
+      <base>
+        <path value="Condition.evidence" />
+        <min value="0" />
+        <max value="*" />
+      </base>
+      <constraint>
+        <key value="con-2" />
+        <severity value="error" />
+        <human value="evidence SHALL have code or details" />
+        <xpath value="exists(f:code) or exists(f:detail)" />
+      </constraint>
+      <isSummary value="true" />
+      <mapping>
+        <identity value="rim" />
+        <map value=".outboundRelationship[typeCode=SPRT].target[classCode=OBS, moodCode=EVN]" />
       </mapping>
     </element>
   </differential>
