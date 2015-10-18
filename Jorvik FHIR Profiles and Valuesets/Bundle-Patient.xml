@@ -6,12 +6,27 @@
   <extension url="http://hl7.org/fhir/StructureDefinition/structuredefinition-fmm">
     <valueInteger value="3" />
   </extension>
-  <url value="http://chftews-fusefhir.rhcloud.com/StructureDefinition/Bundle-Condition" />
-  <name value="Bundle-Condition" />
+  <url value="http://chftews-fusefhir.rhcloud.com/StructureDefinition/Bundle-Patient" />
+  <name value="Bundle-Patient" />
   <status value="draft" />
   <date value="2015-09-22T20:02:49+10:00" />
   <description value="Base StructureDefinition for Bundle Resource" />
   <fhirVersion value="1.0.1" />
+  <mapping>
+    <identity value="v2" />
+    <uri value="http://hl7.org/v2" />
+    <name value="HL7 v2" />
+  </mapping>
+  <mapping>
+    <identity value="rim" />
+    <uri value="http://hl7.org/v3" />
+    <name value="RIM" />
+  </mapping>
+  <mapping>
+    <identity value="w5" />
+    <uri value="http://hl7.org/fhir/w5" />
+    <name value="W5 Mapping" />
+  </mapping>
   <kind value="resource" />
   <constrainedType value="Bundle" />
   <abstract value="false" />
@@ -497,7 +512,7 @@
     </element>
     <element>
       <path value="Bundle.entry" />
-      <name value="Condition" />
+      <name value="Patient" />
       <short value="Entry in the bundle - will have a resource, or information" />
       <definition value="An entry in a bundle resource - will either contain a resource, or information about a resource (transactions and history only)." />
       <min value="0" />
@@ -507,7 +522,7 @@
         <min value="0" />
         <max value="*" />
       </base>
-      <nameReference value="Condition" />
+      <nameReference value="Patient" />
       <constraint>
         <key value="bdl-5" />
         <severity value="error" />
@@ -569,7 +584,7 @@
       </type>
       <type>
         <code value="Reference" />
-        <profile value="http://hl7.org/fhir/Condition" />
+        <profile value="http://hl7.org/fhir/Patient" />
       </type>
       <isSummary value="true" />
     </element>
@@ -1239,7 +1254,7 @@
     </element>
     <element>
       <path value="Bundle.entry" />
-      <name value="Condition" />
+      <name value="Patient" />
       <short value="Entry in the bundle - will have a resource, or information" />
       <definition value="An entry in a bundle resource - will either contain a resource, or information about a resource (transactions and history only)." />
       <min value="0" />
@@ -1249,7 +1264,7 @@
         <min value="0" />
         <max value="*" />
       </base>
-      <nameReference value="Condition" />
+      <nameReference value="Patient" />
       <constraint>
         <key value="bdl-5" />
         <severity value="error" />
@@ -1280,7 +1295,7 @@
       </type>
       <type>
         <code value="Reference" />
-        <profile value="http://hl7.org/fhir/Condition" />
+        <profile value="http://hl7.org/fhir/Patient" />
       </type>
       <isSummary value="true" />
     </element>

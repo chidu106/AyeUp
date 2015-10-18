@@ -6,8 +6,8 @@
   <extension url="http://hl7.org/fhir/StructureDefinition/structuredefinition-fmm">
     <valueInteger value="3" />
   </extension>
-  <url value="http://chftews-fusefhir.rhcloud.com/StructureDefinition/Bundle-Condition" />
-  <name value="Bundle-Condition" />
+  <url value="http://chftews-fusefhir.rhcloud.com/StructureDefinition/Bundle-DocumentReference" />
+  <name value="Bundle-DocumentReference" />
   <status value="draft" />
   <date value="2015-09-22T20:02:49+10:00" />
   <description value="Base StructureDefinition for Bundle Resource" />
@@ -497,7 +497,7 @@
     </element>
     <element>
       <path value="Bundle.entry" />
-      <name value="Condition" />
+      <name value="DocumentReference" />
       <short value="Entry in the bundle - will have a resource, or information" />
       <definition value="An entry in a bundle resource - will either contain a resource, or information about a resource (transactions and history only)." />
       <min value="0" />
@@ -507,7 +507,6 @@
         <min value="0" />
         <max value="*" />
       </base>
-      <nameReference value="Condition" />
       <constraint>
         <key value="bdl-5" />
         <severity value="error" />
@@ -566,10 +565,11 @@
       </base>
       <type>
         <code value="Resource" />
+        <profile value="http://hl7.org/fhir/DocumentReference" />
       </type>
       <type>
         <code value="Reference" />
-        <profile value="http://hl7.org/fhir/Condition" />
+        <profile value="http://hl7.org/fhir/DocumentReference" />
       </type>
       <isSummary value="true" />
     </element>
@@ -1239,7 +1239,7 @@
     </element>
     <element>
       <path value="Bundle.entry" />
-      <name value="Condition" />
+      <name value="DocumentReference" />
       <short value="Entry in the bundle - will have a resource, or information" />
       <definition value="An entry in a bundle resource - will either contain a resource, or information about a resource (transactions and history only)." />
       <min value="0" />
@@ -1249,7 +1249,6 @@
         <min value="0" />
         <max value="*" />
       </base>
-      <nameReference value="Condition" />
       <constraint>
         <key value="bdl-5" />
         <severity value="error" />
@@ -1277,10 +1276,11 @@
       </base>
       <type>
         <code value="Resource" />
+        <profile value="http://hl7.org/fhir/DocumentReference" />
       </type>
       <type>
         <code value="Reference" />
-        <profile value="http://hl7.org/fhir/Condition" />
+        <profile value="http://hl7.org/fhir/DocumentReference" />
       </type>
       <isSummary value="true" />
     </element>
