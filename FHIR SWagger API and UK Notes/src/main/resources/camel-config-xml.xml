@@ -55,6 +55,80 @@
 			</get>
 		</rest>
 
+		<rest path="/Bundle" consumes="application/xml" produces="application/xml">
+			<description>Document Set Submission Interface</description>
+			<post uri="/" >
+				<description>Post Document Submission Set</description>
+				<!--  This API acts more like a normal html page, the document is returned with no JSON/XML -->
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" />
+				<responseMessage code="404" message="Resource not found"  />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<to uri="bean:binaryService?method=getBinary(${header.id})" />
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</post>
+			
+		</rest>
+	
+	
+	<rest path="/Condition" consumes="application/xml+fhir" produces="application/xml+fhir,application/xml+json">
+			<description>Condition Interface</description>
+			<get uri="/{id}" >
+				<description>Get condition by id</description>
+				
+				<param name="id" type="path" description="The internal id of the condition"
+					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<to uri="bean:patientService?method=getPatient(${header.id})" />
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</get>
+			<get uri="/" >
+				<description>Find Conditions</description>
+				<param name="subject" type="query" description="Date of Birth" required="false"
+					dataType="string" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<to uri="http://data.developer.nhs.uk/fhir/gpsoc-im2/Profile.patient/bundlepatientexample.xml?bridgeEndpoint=true" />
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</get>
+		</rest>
+		
+
 		<rest path="/DocumentReference" consumes="application/xml+json" produces="application/xml+fhir,application/xml+json">
 			<description>Document Metadata Interace</description>
 
@@ -112,9 +186,31 @@
 					</filter>
 				</route>
 			</get>
+			<delete uri="/{id}" >
+				<description>Delete Document Metadata for id.</description>
+				<!--  Metadata can include Episode, consultant, document storage, type of document. -->
+				<param name="id" type="path" description="The id of the DocumentReference"
+					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" />
+				<responseMessage code="404" message="Resource not found"  />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<process ref="documentReferenceDummy"/>
+					<filter>
+						<simple>${body} == null</simple>
+						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+							<constant>404</constant>
+						</setHeader>
+					</filter>
+				</route>
+			</delete>
 		</rest>
 		
-
+		
 		<rest path="/Patient" consumes="application/xml+fhir" produces="application/xml+fhir,application/xml+json">
 			<description>Patient Demographic Interface</description>
 			<get uri="/{id}" >
