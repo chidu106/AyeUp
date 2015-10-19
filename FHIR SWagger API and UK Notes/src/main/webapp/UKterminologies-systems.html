@@ -125,16 +125,16 @@
 </p>
 <ul>
  <li>This list of names is incomplete and subject to change. </li>
-<li>The list has been extracted from <a href="http://data.developer.nhs.uk/fhir/fgm/Chapter.1.About/index.html">HSCIC FGM Risk Indication System<img style="text-align: baseline" src="./files/external.png"/></a>, <a href="http://data.developer.nhs.uk/fhir/gpsoc-im2/Chapter.1.About/index.html">HSCIC FHIR Implementation guide for GPSoc IM2 <img style="text-align: baseline" src="./files/external.png"/></a> and <a href="http://www.endeavourhealth.org/">Endeavour Health.<img style="text-align: baseline" src="./files/external.png"/></a> 
+<li>The list has been extracted from <a href="http://www.hl7.org.uk/version3group/downloads/OidRootHl7UkOnly.html">HL7 UK Issued OIDs</a>, <a href="http://data.developer.nhs.uk/fhir/fgm/Chapter.1.About/index.html">HSCIC FGM Risk Indication System<img style="text-align: baseline" src="./files/external.png"/></a>, <a href="http://data.developer.nhs.uk/fhir/gpsoc-im2/Chapter.1.About/index.html">HSCIC FHIR Implementation guide for GPSoc IM2 <img style="text-align: baseline" src="./files/external.png"/></a> and <a href="http://www.endeavourhealth.org/">Endeavour Health.<img style="text-align: baseline" src="./files/external.png"/></a> 
 </ul>
 
 
 <table class="grid">
  <tr>
-   <th width="80">URI</th>
+   <th width="80">Preferred URI</th>
    <th width="80">Source</th>
    <th width="80">Comment</th>
-   <th width="80">OID</th>
+   <th width="80">Alternate URI (OID)</th>
  </tr>
  <tr>
    <td colspan="4" style="background: #EFEFEF"><b>Externally Published code systems</b> <a name="external"> </a></td>
@@ -144,9 +144,17 @@
    <td width="80">http://snomed.info/sct <a name="http://snomed.info/sct"> </a></td>
    <td>SNOMED CT (<a href="http://ihtsdo.org">IHTSDO <img style="text-align: baseline" src="./files/external.png"/></a>)</td>
    <td>See <a href="http://www.hl7.org/FHIR/snomedct.html">Using SNOMED CT with FHIR <img style="text-align: baseline" src="./files/external.png"/></a></td>
-   <td>2.16.840.1.113883.6.96</td>
+   <td>urn:oid:2.16.840.1.113883.6.96</td>
  </tr>
- 
+ <tr>
+   <td colspan="4" style="background: #EFEFEF"><b>Document.class</b></td>
+ </tr>
+ <tr>
+   <td></td>
+   <td><a name="http://www.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp">NHS UK Main Specialty and Treatment Function Codes<img style="text-align: baseline" src="./files/external.png"/></a></td>
+   <td>or use SNOMED codes. <a href="http://wiki.ihe-uk.org/AppendixB">IHE UK XDS - Annex B</a></td>
+   <td>urn:oid:2.16.840.1.113883.2.1.6.8</td>
+ </tr> 
  <tr>
    <td colspan="4" style="background: #EFEFEF"><b>Patient.identifiers</b></td>
  </tr>  
@@ -215,7 +223,7 @@
  <tr>
    <td>urn:fhir.nhs.uk/id/GeneralPractitionerPPDCode</td>
    <td>NHS GP Numbers</td>
-   <td>Identifiers of General Medical Practitioners in the UK National Health Service.</td>
+   <td>Identifiers of <a href="http://systems.hscic.gov.uk/data/ods/datadownloads/gppractice">General Medical Practitioners in the UK National Health Service.</a></td>
    <td>urn:oid:2.16.840.1.113883.2.1.4.2</td>
  </tr>
  <tr>
@@ -233,7 +241,7 @@
  <tr>
    <td>urn:fhir.nhs.uk/id/ODSOrganisationCode<br>urn:fhir.nhs.uk/id/ODSCode</td>
    <td>NHS OCS Organisation Codes</td>
-   <td>Identifiers of Organisations in the UK National Health Service.</td>
+   <td>Identifiers of <a href="http://systems.hscic.gov.uk/data/ods/datadownloads">Organisations in the UK National Health Service.</a></td>
    <td>urn:oid:2.16.840.1.113883.2.1.4.3</td>
  </tr>
 </table>

@@ -30,7 +30,7 @@
 		</restConfiguration>
 		
 		<rest path="/Binary" consumes="application/xml" produces="application/xml">
-			<description>Document Interface</description>
+			<description>(Raw Document)</description>
 			<get uri="/{id}" >
 				<description>Get physical document by id.</description>
 				<!--  This API acts more like a normal html page, the document is returned with no JSON/XML -->
@@ -56,7 +56,7 @@
 		</rest>
 
 		<rest path="/Bundle" consumes="application/xml" produces="application/xml">
-			<description>Document Set Submission Interface</description>
+			<description>(Document Submission Set)</description>
 			<post uri="/" >
 				<description>Post Document Submission Set</description>
 				<!--  This API acts more like a normal html page, the document is returned with no JSON/XML -->
@@ -82,7 +82,7 @@
 	
 	
 	<rest path="/Condition" consumes="application/xml+fhir" produces="application/xml+fhir,application/xml+json">
-			<description>Condition Interface</description>
+			<description>(Problems)</description>
 			<get uri="/{id}" >
 				<description>Get condition by id</description>
 				
@@ -130,7 +130,7 @@
 		
 
 		<rest path="/DocumentReference" consumes="application/xml+json" produces="application/xml+fhir,application/xml+json">
-			<description>Document Metadata Interace</description>
+			<description>(Document Metadata)</description>
 
 			<!-- this is a rest GET to view an user by the given id -->
 			<get uri="/{id}" >
@@ -212,7 +212,7 @@
 		
 		
 		<rest path="/Patient" consumes="application/xml+fhir" produces="application/xml+fhir,application/xml+json">
-			<description>Patient Demographic Interface</description>
+			<description>(Demographic)</description>
 			<get uri="/{id}" >
 				<description>Get patient by id</description>
 				
