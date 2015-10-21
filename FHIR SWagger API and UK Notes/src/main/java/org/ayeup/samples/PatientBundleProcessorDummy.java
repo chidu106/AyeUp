@@ -10,7 +10,7 @@ import org.hl7.fhir.instance.model.Patient;
 
 
 
-public class PatientProcessorDummy implements Processor  {
+public class PatientBundleProcessorDummy implements Processor  {
 	
 		
 		public void process(Exchange exchange) throws Exception {
@@ -22,7 +22,7 @@ public class PatientProcessorDummy implements Processor  {
 			}
 			if (id.isEmpty() ) 
 			{
-				id = "123";
+				id = "612898_A00387543-9051675";
 			}
 	        
 			PatientService patService = new PatientService();

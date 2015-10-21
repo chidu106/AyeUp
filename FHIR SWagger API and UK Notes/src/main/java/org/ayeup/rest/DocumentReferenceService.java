@@ -1,59 +1,112 @@
 package org.ayeup.rest;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 
+import org.ayeup.NHS.NHSAcuteTrustConstants;
+import org.hl7.fhir.instance.model.Attachment;
+import org.hl7.fhir.instance.model.CodeableConcept;
+import org.hl7.fhir.instance.model.DocumentReference;
+import org.hl7.fhir.instance.model.Encounter;
+import org.hl7.fhir.instance.model.Identifier;
+import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Period;
+import org.hl7.fhir.instance.model.Reference;
+import org.hl7.fhir.instance.model.Encounter.EncounterClass;
+import org.hl7.fhir.instance.model.Encounter.EncounterState;
+
 public class DocumentReferenceService {
-	
 
-	    // use a tree map so they become sorted
-	    private final Map<String, DocumentReference> documents = new TreeMap<String, DocumentReference>();
-
-	    private Random ran = new Random();
-
-	    public DocumentReferenceService() {
-	        documents.put("123", new DocumentReference(123, "John Doe"));
-	        documents.put("456", new DocumentReference(456, "Donald Duck"));
-	        documents.put("789", new DocumentReference(789, "Slow Turtle"));
-	    }
-
-	    /**
-	     * Gets a user by the given id
-	     *
-	     * @param id  the id of the user
-	     * @return the user, or <tt>null</tt> if no user exists
-	     */
-	    public DocumentReference getDocumentReference(String id) {
-	        if ("789".equals(id)) {
-	            // simulate some cpu processing time when returning the slow turtle
-	            int delay = 500 + ran.nextInt(1500);
-	            try {
-	                Thread.sleep(delay);
-	            } catch (Exception e) {
-	                // ignore
-	            }
-	        }
-	        return documents.get(id);
-	    }
-
-	    /**
-	     * List all users
-	     *
-	     * @return the list of all users
-	     */
-	    public Collection<DocumentReference> listDocumentReferences() {
-	        return documents.values();
-	    }
-
-	    /**
-	     * Updates or creates the given user
-	     *
-	     * @param user the user
-	     */
-	    public void updateDocumentReference(DocumentReference document) {
-	        documents.put("" + document.getId(), document);
-	    }
+	    
+	    public DocumentReference DummyDocRef1(String id)
+		{
+			DocumentReference document = new DocumentReference();
+			
+			
+			document.setId(id);
+			
+			Identifier ident = new Identifier();
+			ident.setSystem(NHSAcuteTrustConstants.URI_NHS_ACUTE_DOCUMENT_REGISTRY);
+			ident.setValue("12345");
+			document.setMasterIdentifier(ident);
+					
+	        document.addIdentifier()
+	        	.setSystem(NHSAcuteTrustConstants.URI_NHS_ACUTE_EDMS_ID)
+	        	.setValue("67890");
+	        
+	        
+	        
+	        CodeableConcept typeCode = new CodeableConcept();
+	        typeCode.addCoding()
+	        	.setSystem("http://snomed.info/sct")
+	        	.setCode("823681000000100")
+	        	.setDisplay("Outpatient letter");
+	        document.setType(typeCode);
+	        
+	        CodeableConcept classCode = new CodeableConcept();
+	        classCode.addCoding()
+	        	.setSystem("urn:oid:2.16.840.1.113883.2.1.6.8")
+	        	.setCode("110")
+	        	.setDisplay("ORTHOPAEDICS");
+	        document.setClass_(classCode);
+	        
+	        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+	        Date createDate;
+			try {
+				createDate = sdf.parse("21/12/2012");
+				document.setCreated(createDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        
+	        document.addContent();
+	        Attachment docAttachment = new Attachment();
+	        docAttachment.setContentType("application/msword");
+	        docAttachment.setUrl("http://edms.jorvuk.nhs.uk:8083/Binary/612898_A00387543-9051675");
+	        document.getContent().get(0).setAttachment(docAttachment);
+	        
+	        
+	        Encounter encounter = new Encounter();
+	        encounter.setId("#enc");
+	        encounter.addIdentifier()
+	        	.setSystem(NHSAcuteTrustConstants.URI_NHS_ACUTE_EPISODE_ID)
+	        	.setValue("9066683-1");
+	        encounter.setStatus(EncounterState.FINISHED);
+	        encounter.setClass_(EncounterClass.OUTPATIENT);
+	        Period period = new Period();
+	        Date startDate;
+			try {
+				startDate = sdf.parse("19/12/2012");
+				period.setStart(startDate);
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	        
+	        encounter.setPeriod(period);
+	        document.getContained().add(encounter);
+	        
+	        Reference encRef = new Reference();
+	        encRef.setReference("#enc");
+	        document.getContext().setEncounter(encRef);
+	        document.getContext().setEncounterTarget(encounter);
+	        
+	        PatientService patService = new PatientService();
+			
+			Patient patient = patService.PatientDummy1("#pat");
+			Reference patRef = new Reference();
+	        patRef.setReference("#pat");
+	        document.setSubject(patRef);
+	        document.getContained().add(patient);
+	        
+	        return document;
+		}
 
 }

@@ -14,7 +14,7 @@ import org.hl7.fhir.instance.model.DocumentReference;
 
 
 
-public class DocumentReferenceProcessorDummy implements Processor {
+public class DocumentReferenceBundleProcessorDummy implements Processor {
 	
 	//private static final Logger log = LoggerFactory.getLogger(CamelRoutes.class);
 	

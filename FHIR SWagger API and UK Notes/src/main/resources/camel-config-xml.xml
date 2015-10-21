@@ -17,8 +17,9 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<!-- a bean for patient services -->
-	<bean id="patientService" class="org.ayeup.rest.PatientService" />
-	<bean id="documentReferenceService" class="org.ayeup.rest.DocumentReferenceService" />
+	<bean id="patientBundleDummy" class="org.ayeup.samples.PatientBundleProcessorDummy" />
+	<bean id="patientDummy" class="org.ayeup.samples.PatientProcessorDummy" />
+	<bean id="documentReferenceBundleDummy" class="org.ayeup.samples.DocumentReferenceBundleProcessorDummy" />
 	<bean id="documentReferenceDummy" class="org.ayeup.samples.DocumentReferenceProcessorDummy" />
 	
 	<camelContext id="FHIR" xmlns="http://camel.apache.org/schema/spring">
@@ -177,7 +178,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<process ref="documentReferenceDummy"/>
+					<process ref="documentReferenceBundleDummy"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -226,7 +227,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<to uri="bean:patientService?method=getPatient(${header.id})" />
+					<process ref="patientDummy"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -266,6 +267,7 @@
 			</get>
 		</rest>
 		
+	
 		
 		
 	</camelContext>
