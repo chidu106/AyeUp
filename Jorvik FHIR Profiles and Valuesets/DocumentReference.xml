@@ -7,14 +7,14 @@
     <valueInteger value="2" />
   </extension>
   <url value="http://chftews-fusefhir.rhcloud.com/StructureDefinition/DocumentReference" />
-  <name value="DocumentReference-CHFT" />
+  <name value="DocumentReference" />
   <status value="draft" />
   <contact>
     <name value="Kevin Mayfield" />
     <telecom>
       <system value="email" />
-      <value value="mayfield.g.kev@gmail.com" />
-      <use value="home" />
+      <value value="kevin.mayfield@nhs.net" />
+      <use value="work" />
     </telecom>
   </contact>
   <date value="2015-09-22T20:02:49+10:00" />
@@ -378,7 +378,7 @@
       <type>
         <code value="uri" />
       </type>
-      <exampleUri value="http://www.acme.com/identifiers/patient or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
+      <exampleUri value="http://fhir.jorvik.nhs.uk/DocumentReference/Registry/ or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
       <isSummary value="true" />
       <mapping>
         <identity value="v2" />
@@ -898,7 +898,7 @@
       <type>
         <code value="uri" />
       </type>
-      <exampleUri value="http://www.acme.com/identifiers/patient or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
+      <exampleUri value="http://fhir.jorvik.nhs.uk/DocumentReference/EDMS/ or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
       <isSummary value="true" />
       <mapping>
         <identity value="v2" />
@@ -1101,7 +1101,7 @@
       <path value="DocumentReference.subject" />
       <short value="Who/what is the subject of the document" />
       <definition value="Who or what the document is about. The document can be about a person, (patient or healthcare practitioner), a device (e.g. a machine) or even a group of subjects (such as a document about a herd of farm animals, or a set of patients that share a common exposure)." />
-      <min value="0" />
+      <min value="1" />
       <max value="1" />
       <base>
         <path value="DocumentReference.subject" />
@@ -1144,7 +1144,7 @@
     </element>
     <element>
       <path value="DocumentReference.type" />
-      <short value="Kind of document - See http://wiki.ihe-uk.org/AppendixA for codes" />
+      <short value="Kind of document" />
       <definition value="Specifies the particular kind of document referenced  (e.g. History and Physical, Discharge Summary, Progress Note). This usually equates to the purpose of making the document referenced." />
       <comments value="Key metadata element describing the document, used in searching/filtering." />
       <min value="1" />
@@ -1161,9 +1161,7 @@
       <binding>
         <strength value="preferred" />
         <description value="Precise type of clinical document." />
-        <valueSetReference>
-          <reference value="http://hl7.org/fhir/ValueSet/c80-doc-typecodes" />
-        </valueSetReference>
+        <valueSetUri value="http://wiki.ihe-uk.org/AppendixA" />
       </binding>
       <mapping>
         <identity value="xds" />
@@ -1389,7 +1387,7 @@
       <comments value="This is a metadata field from [XDS/MHD](http://wiki.ihe.net/index.php?title=Mobile_access_to_Health_Documents_(MHD))." />
       <requirements value="Helps humans to assess whether the document is of interest when viewing a list of documents." />
       <alias value="kind" />
-      <min value="0" />
+      <min value="1" />
       <max value="1" />
       <base>
         <path value="DocumentReference.class" />
@@ -1422,7 +1420,6 @@
     </element>
     <element>
       <path value="DocumentReference.class.coding" />
-      <name value="SNOMED Specialty" />
       <slicing>
         <rules value="openAtEnd" />
       </slicing>
@@ -1619,6 +1616,10 @@
         <code value="Coding" />
       </type>
       <isSummary value="true" />
+      <binding>
+        <strength value="preferred" />
+        <valueSetUri value="http://wiki.ihe-uk.org/AppendixB" />
+      </binding>
       <mapping>
         <identity value="v2" />
         <map value="C*E.1-8, C*E.10-22" />
@@ -1798,6 +1799,10 @@
         <code value="Coding" />
       </type>
       <isSummary value="true" />
+      <binding>
+        <strength value="preferred" />
+        <valueSetUri value="http://www.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp" />
+      </binding>
       <mapping>
         <identity value="v2" />
         <map value="C*E.1-8, C*E.10-22" />
@@ -2930,7 +2935,7 @@
       <short value="Mime type of the content, with charset etc." />
       <definition value="Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate." />
       <requirements value="Processors of the data need to be able to know how to interpret the data." />
-      <min value="0" />
+      <min value="1" />
       <max value="1" />
       <base>
         <path value="Attachment.contentType" />
@@ -3128,7 +3133,7 @@
       <definition value="An identifier of the document encoding, structure, and template that the document conforms to beyond the base format indicated in the mimeType." />
       <comments value="Note that while IHE mostly issues URNs for format types, not all documents can be identified by a URI." />
       <min value="0" />
-      <max value="*" />
+      <max value="0" />
       <base>
         <path value="DocumentReference.content.format" />
         <min value="0" />
@@ -3393,7 +3398,7 @@
       <definition value="This list of codes represents the main clinical acts, such as a colonoscopy or an appendectomy, being documented. In some cases, the event is inherent in the typeCode, such as a &quot;History and Physical Report&quot; in which the procedure being documented is necessarily a &quot;History and Physical&quot; act." />
       <comments value="An event can further specialize the act inherent in the type, such as  where it is simply &quot;Procedure Report&quot; and the procedure was a &quot;colonoscopy&quot;. If one or more event codes are included, they shall not conflict with the values inherent in the class or type elements as such a conflict would create an ambiguous situation." />
       <min value="0" />
-      <max value="*" />
+      <max value="0" />
       <base>
         <path value="DocumentReference.context.event" />
         <min value="0" />
@@ -4873,8 +4878,113 @@
       </mapping>
     </element>
     <element>
+      <path value="DocumentReference.masterIdentifier.system" />
+      <short value="The namespace for the identifier" />
+      <definition value="Establishes the namespace in which set of possible id values is unique." />
+      <requirements value="There are many sequences of identifiers.  To perform matching, we need to know what sequence we're dealing with. The system identifies a particular sequence or set of unique identifiers." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Identifier.system" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="uri" />
+      </type>
+      <exampleUri value="http://fhir.jorvik.nhs.uk/DocumentReference/Registry/ or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="CX.4 / EI-2-4" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value="II.root or Role.id.root" />
+      </mapping>
+      <mapping>
+        <identity value="servd" />
+        <map value="./IdentifierType" />
+      </mapping>
+    </element>
+    <element>
+      <path value="DocumentReference.identifier.system" />
+      <short value="The namespace for the identifier" />
+      <definition value="Establishes the namespace in which set of possible id values is unique." />
+      <requirements value="There are many sequences of identifiers.  To perform matching, we need to know what sequence we're dealing with. The system identifies a particular sequence or set of unique identifiers." />
+      <min value="0" />
+      <max value="1" />
+      <base>
+        <path value="Identifier.system" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="uri" />
+      </type>
+      <exampleUri value="http://fhir.jorvik.nhs.uk/DocumentReference/EDMS/ or urn:ietf:rfc:3986 if the Identifier.value itself is a full uri" />
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="CX.4 / EI-2-4" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value="II.root or Role.id.root" />
+      </mapping>
+      <mapping>
+        <identity value="servd" />
+        <map value="./IdentifierType" />
+      </mapping>
+    </element>
+    <element>
+      <path value="DocumentReference.subject" />
+      <short value="Who/what is the subject of the document" />
+      <definition value="Who or what the document is about. The document can be about a person, (patient or healthcare practitioner), a device (e.g. a machine) or even a group of subjects (such as a document about a herd of farm animals, or a set of patients that share a common exposure)." />
+      <min value="1" />
+      <max value="1" />
+      <base>
+        <path value="DocumentReference.subject" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="Reference" />
+        <profile value="http://hl7.org/fhir/StructureDefinition/Patient" />
+      </type>
+      <type>
+        <code value="Reference" />
+        <profile value="http://hl7.org/fhir/StructureDefinition/Practitioner" />
+      </type>
+      <type>
+        <code value="Reference" />
+        <profile value="http://hl7.org/fhir/StructureDefinition/Group" />
+      </type>
+      <type>
+        <code value="Reference" />
+        <profile value="http://hl7.org/fhir/StructureDefinition/Device" />
+      </type>
+      <isSummary value="true" />
+      <mapping>
+        <identity value="v2" />
+        <map value="PID-3 (No standard way to define a Practitioner or Group subject in HL7 v2 MDM message)" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value=".participation[typeCode=&quot;SBJ&quot;].role[typeCode=&quot;PAT&quot;]" />
+      </mapping>
+      <mapping>
+        <identity value="xds" />
+        <map value="DocumentEntry.patientId" />
+      </mapping>
+      <mapping>
+        <identity value="w5" />
+        <map value="who.focus" />
+      </mapping>
+    </element>
+    <element>
       <path value="DocumentReference.type" />
-      <short value="Kind of document - See http://wiki.ihe-uk.org/AppendixA for codes" />
+      <short value="Kind of document" />
       <definition value="Specifies the particular kind of document referenced  (e.g. History and Physical, Discharge Summary, Progress Note). This usually equates to the purpose of making the document referenced." />
       <comments value="Key metadata element describing the document, used in searching/filtering." />
       <min value="1" />
@@ -4891,9 +5001,7 @@
       <binding>
         <strength value="preferred" />
         <description value="Precise type of clinical document." />
-        <valueSetReference>
-          <reference value="http://hl7.org/fhir/ValueSet/c80-doc-typecodes" />
-        </valueSetReference>
+        <valueSetUri value="http://wiki.ihe-uk.org/AppendixA" />
       </binding>
       <mapping>
         <identity value="xds" />
@@ -4902,36 +5010,6 @@
       <mapping>
         <identity value="w5" />
         <map value="class" />
-      </mapping>
-    </element>
-    <element>
-      <path value="DocumentReference.type.coding" />
-      <short value="Code defined by a terminology system" />
-      <definition value="A reference to a code defined by a terminology system." />
-      <comments value="Codes may be defined very casually in enumerations, or code lists, up to very formal definitions such as SNOMED CT - see the HL7 v3 Core Principles for more information.  Ordering of codings is undefined and SHALL NOT be used to infer meaning. Generally, at most only one of the coding values will be labelled as UserSelected = true." />
-      <requirements value="Allows for translations and alternate encodings within a code system.  Also supports communication of the same instance to systems requiring different encodings." />
-      <min value="0" />
-      <max value="*" />
-      <base>
-        <path value="CodeableConcept.coding" />
-        <min value="0" />
-        <max value="*" />
-      </base>
-      <type>
-        <code value="Coding" />
-      </type>
-      <isSummary value="true" />
-      <mapping>
-        <identity value="v2" />
-        <map value="C*E.1-8, C*E.10-22" />
-      </mapping>
-      <mapping>
-        <identity value="rim" />
-        <map value="union(., ./translation)" />
-      </mapping>
-      <mapping>
-        <identity value="orim" />
-        <map value="fhir:CodeableConcept.coding rdfs:subPropertyOf dt:CD.coding" />
       </mapping>
     </element>
     <element>
@@ -4972,7 +5050,7 @@
       <comments value="This is a metadata field from [XDS/MHD](http://wiki.ihe.net/index.php?title=Mobile_access_to_Health_Documents_(MHD))." />
       <requirements value="Helps humans to assess whether the document is of interest when viewing a list of documents." />
       <alias value="kind" />
-      <min value="0" />
+      <min value="1" />
       <max value="1" />
       <base>
         <path value="DocumentReference.class" />
@@ -5005,7 +5083,6 @@
     </element>
     <element>
       <path value="DocumentReference.class.coding" />
-      <name value="SNOMED Specialty" />
       <slicing>
         <rules value="openAtEnd" />
       </slicing>
@@ -5114,6 +5191,10 @@
         <code value="Coding" />
       </type>
       <isSummary value="true" />
+      <binding>
+        <strength value="preferred" />
+        <valueSetUri value="http://wiki.ihe-uk.org/AppendixB" />
+      </binding>
       <mapping>
         <identity value="v2" />
         <map value="C*E.1-8, C*E.10-22" />
@@ -5264,6 +5345,10 @@
         <code value="Coding" />
       </type>
       <isSummary value="true" />
+      <binding>
+        <strength value="preferred" />
+        <valueSetUri value="http://www.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp" />
+      </binding>
       <mapping>
         <identity value="v2" />
         <map value="C*E.1-8, C*E.10-22" />
@@ -5419,6 +5504,101 @@
       <mapping>
         <identity value="xds" />
         <map value="DocumentEntry Associations reference" />
+      </mapping>
+    </element>
+    <element>
+      <path value="DocumentReference.content.attachment.contentType" />
+      <short value="Mime type of the content, with charset etc." />
+      <definition value="Identifies the type of the data in the attachment and allows a method to be chosen to interpret or render the data. Includes mime type parameters such as charset where appropriate." />
+      <requirements value="Processors of the data need to be able to know how to interpret the data." />
+      <min value="1" />
+      <max value="1" />
+      <base>
+        <path value="Attachment.contentType" />
+        <min value="0" />
+        <max value="1" />
+      </base>
+      <type>
+        <code value="code" />
+      </type>
+      <exampleCode value="text/plain; charset=UTF-8, image/png" />
+      <isSummary value="true" />
+      <binding>
+        <strength value="required" />
+        <description value="The mime type of an attachment. Any valid mime type is allowed." />
+        <valueSetUri value="http://www.rfc-editor.org/bcp/bcp13.txt" />
+      </binding>
+      <mapping>
+        <identity value="v2" />
+        <map value="ED.2+ED.3/RP.2+RP.3. Note conversion may be needed if old style values are being used" />
+      </mapping>
+      <mapping>
+        <identity value="rim" />
+        <map value="./mediaType, ./charset" />
+      </mapping>
+    </element>
+    <element>
+      <path value="DocumentReference.content.format" />
+      <short value="Format/content rules for the document" />
+      <definition value="An identifier of the document encoding, structure, and template that the document conforms to beyond the base format indicated in the mimeType." />
+      <comments value="Note that while IHE mostly issues URNs for format types, not all documents can be identified by a URI." />
+      <min value="0" />
+      <max value="0" />
+      <base>
+        <path value="DocumentReference.content.format" />
+        <min value="0" />
+        <max value="*" />
+      </base>
+      <type>
+        <code value="Coding" />
+      </type>
+      <isSummary value="true" />
+      <binding>
+        <strength value="preferred" />
+        <description value="Document Format Codes." />
+        <valueSetReference>
+          <reference value="http://hl7.org/fhir/ValueSet/formatcodes" />
+        </valueSetReference>
+      </binding>
+      <mapping>
+        <identity value="rim" />
+        <map value="document.text" />
+      </mapping>
+      <mapping>
+        <identity value="xds" />
+        <map value="DocumentEntry.formatCode" />
+      </mapping>
+    </element>
+    <element>
+      <path value="DocumentReference.context.event" />
+      <short value="Main Clinical Acts Documented" />
+      <definition value="This list of codes represents the main clinical acts, such as a colonoscopy or an appendectomy, being documented. In some cases, the event is inherent in the typeCode, such as a &quot;History and Physical Report&quot; in which the procedure being documented is necessarily a &quot;History and Physical&quot; act." />
+      <comments value="An event can further specialize the act inherent in the type, such as  where it is simply &quot;Procedure Report&quot; and the procedure was a &quot;colonoscopy&quot;. If one or more event codes are included, they shall not conflict with the values inherent in the class or type elements as such a conflict would create an ambiguous situation." />
+      <min value="0" />
+      <max value="0" />
+      <base>
+        <path value="DocumentReference.context.event" />
+        <min value="0" />
+        <max value="*" />
+      </base>
+      <type>
+        <code value="CodeableConcept" />
+      </type>
+      <isSummary value="true" />
+      <binding>
+        <strength value="example" />
+        <description value="This list of codes represents the main clinical acts being documented." />
+        <valueSetReference>
+          <reference value="http://hl7.org/fhir/ValueSet/v3-ActCode" />
+        </valueSetReference>
+      </binding>
+      <mapping>
+        <identity value="rim" />
+        <map value=".code" />
+      </mapping>
+      <mapping>
+        <identity value="xds" />
+        <map value="DocumentEntry.eventCodeList" />
       </mapping>
     </element>
   </differential>
