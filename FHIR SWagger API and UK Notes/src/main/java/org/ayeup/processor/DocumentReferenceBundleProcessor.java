@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.ayeup.samples.DocumentReferenceSamples;
 import org.hl7.fhir.instance.formats.ParserType;
+import org.hl7.fhir.instance.model.Bundle;
 import org.hl7.fhir.instance.model.DocumentReference;
 
 
@@ -32,8 +33,14 @@ public class DocumentReferenceBundleProcessor implements Processor {
         
 		DocumentReferenceSamples docService = new DocumentReferenceSamples();
 		
-		DocumentReference document = docService.DummyDocRef1(id);
+		Bundle bundle = new Bundle();
 		
+		DocumentReference document = docService.DummyDocRef1("123");
+		
+		bundle.addEntry().setResource(document);
+		
+		document = docService.DummyDocRef2("456");
+		bundle.addEntry().setResource(document);
         
 		try 
 		{
@@ -51,12 +58,12 @@ public class DocumentReferenceBundleProcessor implements Processor {
 			if (format.contains("json"))	
 			{
 				exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
-				exchange.getIn().setBody(ResourceSerialiser.serialise(document, ParserType.JSON));
+				exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.JSON));
 			}
 			else
 			{
 				exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
-				exchange.getIn().setBody(ResourceSerialiser.serialise(document, ParserType.XML));
+				exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.XML));
 			}
 		}
 		catch (Exception e)

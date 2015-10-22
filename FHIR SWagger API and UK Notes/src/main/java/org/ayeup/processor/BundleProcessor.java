@@ -1,15 +1,16 @@
 package org.ayeup.processor;
 
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.ayeup.samples.PatientSamples;
+import org.ayeup.samples.BinarySamples;
+import org.ayeup.samples.DocumentReferenceSamples;
+
 import org.hl7.fhir.instance.formats.ParserType;
-import org.hl7.fhir.instance.model.Patient;
+import org.hl7.fhir.instance.model.Bundle;
+import org.hl7.fhir.instance.model.DocumentReference;
 
-
-
-
-public class PatientProcessor implements Processor  {
+public class BundleProcessor implements Processor  {
 	
 		
 		public void process(Exchange exchange) throws Exception {
@@ -21,14 +22,22 @@ public class PatientProcessor implements Processor  {
 			}
 			if (id.isEmpty() ) 
 			{
-				id = "123";
+				id = "612898_A00387543-9051675";
 			}
 	        
-			PatientSamples patService = new PatientSamples();
+			DocumentReferenceSamples docService = new DocumentReferenceSamples();
 			
-			Patient patient = patService.PatientDummy1(id,true);
+			Bundle bundle = new Bundle();
 			
-	        
+			DocumentReference document = docService.DummyDocRef1("123");
+			
+			bundle.addEntry().setResource(document);
+			
+			
+			BinarySamples binSample = new BinarySamples();
+			
+			bundle.addEntry().setResource(binSample.DummyBinary1(""));
+			
 			try 
 			{
 				String format = exchange.getIn().getHeader("_format", String.class);
@@ -38,19 +47,16 @@ public class PatientProcessor implements Processor  {
 				}
 				
 				
-				
-				exchange.getIn().setHeader(Exchange.HTTP_QUERY, "_id="+exchange.getIn().getHeader(Exchange.FILE_NAME, String.class)); //+exchange.getIn().
-				
 				// the + is removed in processing
 				if (format.contains("json"))	
 				{
 					exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
-					exchange.getIn().setBody(ResourceSerialiser.serialise(patient, ParserType.JSON));
+					exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.JSON));
 				}
 				else
 				{
 					exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
-					exchange.getIn().setBody(ResourceSerialiser.serialise(patient, ParserType.XML));
+					exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.XML));
 				}
 			}
 			catch (Exception e)

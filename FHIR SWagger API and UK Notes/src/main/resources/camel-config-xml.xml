@@ -17,10 +17,12 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
 	<!-- a bean for patient services -->
-	<bean id="patientBundleDummy" class="org.ayeup.samples.PatientBundleProcessorDummy" />
-	<bean id="patientDummy" class="org.ayeup.samples.PatientProcessorDummy" />
-	<bean id="documentReferenceBundleDummy" class="org.ayeup.samples.DocumentReferenceBundleProcessorDummy" />
-	<bean id="documentReferenceDummy" class="org.ayeup.samples.DocumentReferenceProcessorDummy" />
+	<bean id="patientBundle" class="org.ayeup.processor.PatientBundleProcessor" />
+	<bean id="patient" class="org.ayeup.processor.PatientProcessor" />
+	<bean id="documentReferenceBundle" class="org.ayeup.processor.DocumentReferenceBundleProcessor" />
+	<bean id="documentReference" class="org.ayeup.processor.DocumentReferenceProcessor" />
+	<bean id="binary" class="org.ayeup.processor.BinaryProcessor" />
+	<bean id="bundle" class="org.ayeup.processor.BundleProcessor" />
 	
 	<camelContext id="FHIR" xmlns="http://camel.apache.org/schema/spring">
 
@@ -45,7 +47,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<to uri="bean:binaryService?method=getBinary(${header.id})" />
+					<process ref="binary"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -69,7 +71,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<to uri="bean:binaryService?method=getBinary(${header.id})" />
+					<process ref="bundle"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -147,7 +149,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<process ref="documentReferenceDummy"/>
+					<process ref="documentReference"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -178,7 +180,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<process ref="documentReferenceBundleDummy"/>
+					<process ref="documentReferenceBundle"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -200,7 +202,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<process ref="documentReferenceDummy"/>
+					<process ref="documentReference"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -227,7 +229,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<process ref="patientDummy"/>
+					<process ref="patient"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -256,7 +258,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<to uri="http://data.developer.nhs.uk/fhir/gpsoc-im2/Profile.patient/bundlepatientexample.xml?bridgeEndpoint=true" />
+					<process ref="patientBundle"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">

@@ -4,6 +4,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.ayeup.samples.PatientSamples;
 import org.hl7.fhir.instance.formats.ParserType;
+import org.hl7.fhir.instance.model.Bundle;
 import org.hl7.fhir.instance.model.Patient;
 
 
@@ -26,8 +27,11 @@ public class PatientBundleProcessor implements Processor  {
 	        
 			PatientSamples patService = new PatientSamples();
 			
-			Patient patient = patService.PatientDummy1(id);
+			Patient patient = patService.PatientDummy1(id,false);
 			
+			Bundle bundle = new Bundle();
+			
+			bundle.addEntry().setResource(patient);
 	        
 			try 
 			{
@@ -45,12 +49,12 @@ public class PatientBundleProcessor implements Processor  {
 				if (format.contains("json"))	
 				{
 					exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
-					exchange.getIn().setBody(ResourceSerialiser.serialise(patient, ParserType.JSON));
+					exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.JSON));
 				}
 				else
 				{
 					exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
-					exchange.getIn().setBody(ResourceSerialiser.serialise(patient, ParserType.XML));
+					exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.XML));
 				}
 			}
 			catch (Exception e)
