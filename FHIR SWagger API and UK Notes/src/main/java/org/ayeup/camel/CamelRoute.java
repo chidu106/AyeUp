@@ -34,7 +34,7 @@ public class CamelRoute extends RouteBuilder {
 				.responseMessage().code(400).message("Bad Request").endResponseMessage()
 				.responseMessage().code(403).message("Not Authorized").endResponseMessage()
 				.responseMessage().code(405).message("Not Allowed").endResponseMessage()
-				.responseMessage().code(422).message("Unprocessable Entity").responseModel(org.ayeup.rest.OperationOutcome.class).endResponseMessage()
+				.responseMessage().code(422).message("Unprocessable Entity").responseModel(org.ayeup.samples.OperationOutcome.class).endResponseMessage()
 				.route()
 					.to("bean:patientService?method=getPatient(${header.id})")
 					.filter(simple("${body} == null"))

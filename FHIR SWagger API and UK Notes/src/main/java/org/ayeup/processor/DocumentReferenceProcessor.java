@@ -1,11 +1,9 @@
-package org.ayeup.samples;
+package org.ayeup.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-
-import org.ayeup.rest.DocumentReferenceService;
+import org.ayeup.samples.DocumentReferenceSamples;
 import org.hl7.fhir.instance.formats.ParserType;
-
 import org.hl7.fhir.instance.model.DocumentReference;
 
 
@@ -14,7 +12,7 @@ import org.hl7.fhir.instance.model.DocumentReference;
 
 
 
-public class DocumentReferenceBundleProcessorDummy implements Processor {
+public class DocumentReferenceProcessor implements Processor {
 	
 	//private static final Logger log = LoggerFactory.getLogger(CamelRoutes.class);
 	
@@ -32,7 +30,7 @@ public class DocumentReferenceBundleProcessorDummy implements Processor {
 			id = "612898_A00387543-9051675";
 		}
         
-		DocumentReferenceService docService = new DocumentReferenceService();
+		DocumentReferenceSamples docService = new DocumentReferenceSamples();
 		
 		DocumentReference document = docService.DummyDocRef1(id);
 		

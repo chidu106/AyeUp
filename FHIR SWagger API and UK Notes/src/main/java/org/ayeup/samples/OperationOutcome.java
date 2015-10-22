@@ -1,4 +1,4 @@
-package org.ayeup.rest;
+package org.ayeup.samples;
 
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;

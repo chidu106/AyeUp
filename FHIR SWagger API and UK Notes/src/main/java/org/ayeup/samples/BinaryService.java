@@ -1,4 +1,4 @@
-package org.ayeup.rest;
+package org.ayeup.samples;
 
 import java.util.Collection;
 import java.util.Map;

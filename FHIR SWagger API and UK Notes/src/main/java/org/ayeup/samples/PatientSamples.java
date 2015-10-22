@@ -1,4 +1,4 @@
-package org.ayeup.rest;
+package org.ayeup.samples;
 
 
 import java.text.ParseException;
@@ -15,7 +15,7 @@ import org.hl7.fhir.instance.model.Reference;
 import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
 import org.hl7.fhir.instance.model.Identifier.IdentifierUse;
 
-public class PatientService {
+public class PatientSamples {
 	
 		public Patient PatientDummy1(String id)
 		{

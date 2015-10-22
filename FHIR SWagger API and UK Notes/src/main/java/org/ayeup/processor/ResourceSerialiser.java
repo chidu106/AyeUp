@@ -1,4 +1,4 @@
-package org.ayeup.samples;
+package org.ayeup.processor;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;

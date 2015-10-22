@@ -1,12 +1,9 @@
-package org.ayeup.rest;
+package org.ayeup.samples;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
 import java.util.Date;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+
 
 import org.ayeup.NHS.NHSAcuteTrustConstants;
 import org.hl7.fhir.instance.model.Attachment;
@@ -20,7 +17,7 @@ import org.hl7.fhir.instance.model.Reference;
 import org.hl7.fhir.instance.model.Encounter.EncounterClass;
 import org.hl7.fhir.instance.model.Encounter.EncounterState;
 
-public class DocumentReferenceService {
+public class DocumentReferenceSamples {
 
 	    
 	    public DocumentReference DummyDocRef1(String id)
@@ -98,7 +95,7 @@ public class DocumentReferenceService {
 	        document.getContext().setEncounter(encRef);
 	        document.getContext().setEncounterTarget(encounter);
 	        
-	        PatientService patService = new PatientService();
+	        PatientSamples patService = new PatientSamples();
 			
 			Patient patient = patService.PatientDummy1("#pat");
 			Reference patRef = new Reference();

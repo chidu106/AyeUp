@@ -1,16 +1,15 @@
-package org.ayeup.samples;
+package org.ayeup.processor;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-
-import org.ayeup.rest.PatientService;
+import org.ayeup.samples.PatientSamples;
 import org.hl7.fhir.instance.formats.ParserType;
 import org.hl7.fhir.instance.model.Patient;
 
 
 
 
-public class PatientBundleProcessorDummy implements Processor  {
+public class PatientBundleProcessor implements Processor  {
 	
 		
 		public void process(Exchange exchange) throws Exception {
@@ -25,7 +24,7 @@ public class PatientBundleProcessorDummy implements Processor  {
 				id = "612898_A00387543-9051675";
 			}
 	        
-			PatientService patService = new PatientService();
+			PatientSamples patService = new PatientSamples();
 			
 			Patient patient = patService.PatientDummy1(id);
 			
