@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Bundle xmlns="http://hl7.org/fhir">
+    <entry>
+        <resource>
+            <DocumentReference>
+                <id value="123"/>
+                <contained>
+                    <Encounter>
+                        <id value="#enc"/>
+                        <identifier>
+                            <system value="http://fhir.jorvik.nhs.uk/Encounter/HSI/"/>
+                            <value value="9066683-1"/>
+                        </identifier>
+                        <status value="finished"/>
+                        <class value="outpatient"/>
+                        <period>
+                            <start value="2012-12-19T00:00:00+00:00"/>
+                        </period>
+                    </Encounter>
+                </contained>
+                <contained>
+                    <Patient>
+                        <id value="#pat"/>
+                        <identifier>
+                            <use value="official"/>
+                            <system value="urn:fhir.nhs.uk:id/NHSNumber"/>
+                            <value value="9123456#pat"/>
+                        </identifier>
+                        <identifier>
+                            <use value="official"/>
+                            <system value="http://fhir.nhs.scot.uk/Patient/CHINumber"/>
+                            <value value="3312316#pat"/>
+                        </identifier>
+                        <identifier>
+                            <use value="usual"/>
+                            <system value="http://fhir.jorvik.nhs.uk/FHIR/Patient/hospitalNumber/"/>
+                            <value value="#pat"/>
+                        </identifier>
+                        <name>
+                            <family value="Spidimus"/>
+                            <given value="Horatio"/>
+                            <prefix value="Mr"/>
+                        </name>
+                        <telecom>
+                            <system value="phone"/>
+                            <value value="01634631628"/>
+                            <use value="mobile"/>
+                        </telecom>
+                        <gender value="male"/>
+                        <birthDate value="1916-12-05"/>
+                        <address>
+                            <line value="6 Gertrude Reed Avenue"/>
+                            <line value="Barnbow"/>
+                            <city value="Leeds"/>
+                            <postalCode value="LS15 0RF"/>
+                        </address>
+                        <careProvider>
+                            <reference value="Organization/urn:oid:2.16.840.1.113883.2.1.4.3|B86016"/>
+                            <display value="Churchview Surgery"/>
+                        </careProvider>
+                    </Patient>
+                </contained>
+                <masterIdentifier>
+                    <system value="http://fhir.jorvik.nhs.uk/FHIR/DocumentReference/Registry/"/>
+                    <value value="12345"/>
+                </masterIdentifier>
+                <identifier>
+                    <system value="http://fhir.jorvik.nhs.uk/FHIR/DocumentReference/EDMS/"/>
+                    <value value="67890"/>
+                </identifier>
+                <subject>
+                    <reference value="#pat"/>
+                </subject>
+                <type>
+                    <coding>
+                        <system value="http://snomed.info/sct"/>
+                        <code value="823681000000100"/>
+                        <display value="Outpatient letter"/>
+                    </coding>
+                </type>
+                <class>
+                    <coding>
+                        <system value="urn:oid:2.16.840.1.113883.2.1.6.8"/>
+                        <code value="110"/>
+                        <display value="ORTHOPAEDICS"/>
+                    </coding>
+                </class>
+                <created value="2012-12-21T00:00:00+00:00"/>
+                <content>
+                    <attachment>
+                        <contentType value="application/msword"/>
+                        <url value="http://edms.jorvik.nhs.uk:8083/Binary/612898_A00387543-9051675"/>
+                    </attachment>
+                </content>
+                <context>
+                    <encounter>
+                        <reference value="#enc"/>
+                    </encounter>
+                </context>
+            </DocumentReference>
+        </resource>
+    </entry>
+    <entry>
+        <resource>
+            <Binary>
+                <contentType value="text/html"/>
+                <content value="PCFET0NUWVBFIGh0bWw+PGh0bWwgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGh0bWwiIHhtbDpsYW5nPSJlbiIgbGFuZz0iZW4iPjxoZWFkPjwvaGVhZD48Ym9keT5JbiBhIFJFU1QgaW50ZXJmYWNlIEJpbmFyeSBpcyB0aGUgcmF3IGRvY3VtZW50LCBubyBYTUwgb3IgSlNPTiB2ZXJzaW9uIG9mIHRoZSBCaW5hcnkgcmVzb3VyY2U8L2JvZHk+PC9odG1sPg=="/>
+            </Binary>
+        </resource>
+    </entry>
+</Bundle>

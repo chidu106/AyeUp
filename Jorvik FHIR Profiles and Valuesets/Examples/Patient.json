@@ -1,0 +1,94 @@
+{
+  "resourceType": "Patient",
+  "id": "1",
+  "identifier": [
+    {
+      "use": "official",
+      "system": "urn:fhir.nhs.uk:id/NHSNumber",
+      "value": "91234561"
+    },
+    {
+      "use": "official",
+      "system": "http://fhir.nhs.scot.uk/Patient/CHINumber",
+      "value": "33123161"
+    },
+    {
+      "use": "usual",
+      "system": "http://fhir.jorvik.nhs.uk/FHIR/Patient/hospitalNumber/",
+      "value": "1"
+    }
+  ],
+  "name": [
+    {
+      "family": [
+        "Spidimus"
+      ],
+      "given": [
+        "Horatio"
+      ],
+      "prefix": [
+        "Mr"
+      ]
+    }
+  ],
+  "telecom": [
+    {
+      "system": "phone",
+      "value": "01634631628",
+      "use": "mobile"
+    }
+  ],
+  "gender": "male",
+  "birthDate": "1916-12-05",
+  "address": [
+    {
+      "line": [
+        "6 Gertrude Reed Avenue",
+        "Barnbow"
+      ],
+      "city": "Leeds",
+      "postalCode": "LS15 0RF"
+    }
+  ],
+  "maritalStatus": {
+    "coding": [
+      {
+        "system": "urn:fhir.nhs.uk:vs/MaritalStatus",
+        "code": "S",
+        "display": "Single"
+      }
+    ]
+  },
+  "communication": [
+    {
+      "language": {
+        "coding": [
+          {
+            "system": "urn:fhir.nhs.uk:vs/Language",
+            "code": "004",
+            "display": "Arabic"
+          }
+        ]
+      },
+      "preferred": false
+    },
+    {
+      "language": {
+        "coding": [
+          {
+            "system": "urn:fhir.nhs.uk:vs/Language",
+            "code": "012",
+            "display": "English"
+          }
+        ]
+      },
+      "preferred": true
+    }
+  ],
+  "careProvider": [
+    {
+      "reference": "Organization/urn:oid:2.16.840.1.113883.2.1.4.3|B86016",
+      "display": "Churchview Surgery"
+    }
+  ]
+}

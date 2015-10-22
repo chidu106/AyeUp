@@ -1,0 +1,57 @@
+{
+  "resourceType": "Condition",
+  "id": "a31957ec-9f7c-4c7b-aeb9-555ff4067d95::ripple_osi.ehrscape.c4h::1",
+  "contained": [
+    {
+      "resourceType": "Practitioner",
+      "id": "#dr",
+      "name": {
+        "text": "Dr Tony Shannon",
+        "family": [
+          "Shannon"
+        ],
+        "given": [
+          "Tony"
+        ],
+        "prefix": [
+          "Dr"
+        ]
+      }
+    },
+    {
+      "resourceType": "Encounter",
+      "id": "#enc",
+      "class": "other",
+      "period": {
+        "start": "2015-10-19T12:49:10+01:00"
+      }
+    }
+  ],
+  "identifier": [
+    {
+      "system": "http://fhir.Skarthiborough.gov.uk/openEHR/problemDiagnosis",
+      "value": "64ed73f2-50e2-44e4-9ea5-a2d383be6b97"
+    }
+  ],
+  "patient": {
+    "reference": "Patient/64ed73f2-50e2-44e4-9ea5-a2d383be6b97"
+  },
+  "encounter": {
+    "reference": "Encounter/#enc"
+  },
+  "asserter": {
+    "reference": "Practitioner/#dr"
+  },
+  "code": {
+    "coding": [
+      {
+        "system": "http://snomed.info/sct",
+        "code": "22298006",
+        "display": "myocardial infarction"
+      }
+    ]
+  },
+  "verificationStatus": "confirmed",
+  "onsetDateTime": "2015-10-19T12:32:17+01:00",
+  "notes": "A comment"
+}

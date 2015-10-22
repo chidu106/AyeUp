@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Condition xmlns="http://hl7.org/fhir">
+    <id value="a31957ec-9f7c-4c7b-aeb9-555ff4067d95::ripple_osi.ehrscape.c4h::1"/>
+    <contained>
+        <Practitioner>
+            <id value="#dr"/>
+            <name>
+                <text value="Dr Tony Shannon"/>
+                <family value="Shannon"/>
+                <given value="Tony"/>
+                <prefix value="Dr"/>
+            </name>
+        </Practitioner>
+    </contained>
+    <contained>
+        <Encounter>
+            <id value="#enc"/>
+            <class value="other"/>
+            <period>
+                <start value="2015-10-19T12:49:10+01:00"/>
+            </period>
+        </Encounter>
+    </contained>
+    <identifier>
+        <system value="http://fhir.Skarthiborough.gov.uk/openEHR/problemDiagnosis"/>
+        <value value="64ed73f2-50e2-44e4-9ea5-a2d383be6b97"/>
+    </identifier>
+    <patient>
+        <reference value="Patient/64ed73f2-50e2-44e4-9ea5-a2d383be6b97"/>
+    </patient>
+    <encounter>
+        <reference value="Encounter/#enc"/>
+    </encounter>
+    <asserter>
+        <reference value="Practitioner/#dr"/>
+    </asserter>
+    <code>
+        <coding>
+            <system value="http://snomed.info/sct"/>
+            <code value="22298006"/>
+            <display value="myocardial infarction"/>
+        </coding>
+    </code>
+    <verificationStatus value="confirmed"/>
+    <onsetDateTime value="2015-10-19T12:32:17+01:00"/>
+    <notes value="A comment"/>
+</Condition>

@@ -7,7 +7,7 @@
     <valueInteger value="0" />
   </extension>
   <url value="http://chftews-fusefhir.rhcloud.com/StructureDefinition/Condition" />
-  <name value="Condition-RippleOSI" />
+  <name value="Condition" />
   <status value="draft" />
   <date value="2015-09-22T20:02:49+10:00" />
   <description value="Sample Structure for Condition Resource" />
