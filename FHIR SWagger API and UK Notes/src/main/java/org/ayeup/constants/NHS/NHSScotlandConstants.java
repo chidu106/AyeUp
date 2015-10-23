@@ -1,4 +1,4 @@
-package org.ayeup.NHS;
+package org.ayeup.constants.NHS;
 
 public class NHSScotlandConstants {
     public final static String URI_NHS_NUMBER_SCOTLAND = "http://fhir.nhs.scot.uk/Patient/NHSNumber";

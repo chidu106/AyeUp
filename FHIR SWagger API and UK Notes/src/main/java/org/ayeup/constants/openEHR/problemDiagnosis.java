@@ -1,4 +1,4 @@
-package org.ayeup.openEHR;
+package org.ayeup.constants.openEHR;
 
 public class problemDiagnosis {
 	

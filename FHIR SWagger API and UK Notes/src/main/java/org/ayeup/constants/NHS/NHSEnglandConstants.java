@@ -1,4 +1,4 @@
-package org.ayeup.NHS;
+package org.ayeup.constants.NHS;
 
 public class NHSEnglandConstants {
 			    

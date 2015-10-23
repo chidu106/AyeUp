@@ -6,8 +6,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.ayeup.constants.NHS.NHSFicitiousTrustConstants;
-import org.ayeup.constants.NHS.NHSEnglandConstants;
 import org.ayeup.constants.NHS.NHSScotlandConstants;
+import org.ayeup.constants.NHS.NHSEnglandConstants;
 import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
 import org.hl7.fhir.instance.model.Narrative;
 import org.hl7.fhir.instance.model.Patient;

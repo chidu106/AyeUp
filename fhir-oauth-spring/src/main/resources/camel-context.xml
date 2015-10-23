@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<!-- START SNIPPET: example -->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+         http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
+
+	<context:property-placeholder location="classpath:mongodb.properties"/>
+
+  <spring-security:http realm="User Restrict Realm">
+    <spring-security:intercept-url pattern="/rest/**" access="ROLE_USER"/>
+    <spring-security:http-basic/>
+    <spring-security:remember-me/>
+  </spring-security:http>
+
+    <!--  set up the user configuration here -->
+  <spring-security:authentication-manager alias="authenticationManager">
+    <spring-security:authentication-provider user-service-ref="userDetailsService"/>
+  </spring-security:authentication-manager>
+
+  <spring-security:user-service id="userDetailsService">
+    <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
+    <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
+  </spring-security:user-service>
+
+  	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+    	<property name="allowIfAllAbstainDecisions" value="true"/>
+    	<property name="decisionVoters">
+      		<list>
+        		<bean class="org.springframework.security.access.vote.RoleVoter"/>
+      		</list>
+    	</property>
+ 	</bean>
+   <!-- db.createUser( { user: "admin", pwd: "-----", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]  } )  -->
+  	<bean id="patientBundle" class="org.ayeup.processor.PatientBundleProcessor" />
+	<bean id="patient" class="org.ayeup.processor.PatientProcessor" />
+	<bean id="documentReferenceBundle" class="org.ayeup.processor.DocumentReferenceBundleProcessor" />
+	<bean id="documentReference" class="org.ayeup.processor.DocumentReferenceProcessor" />
+	<bean id="binary" class="org.ayeup.processor.BinaryProcessor" />
+	<bean id="bundle" class="org.ayeup.processor.BundleProcessor" />
+	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
+	<bean id="condition" class="org.ayeup.processor.ConditionProcessor" />
+	
+	
+    <bean id="mongoBean" class="com.mongodb.Mongo">
+        <constructor-arg name="host" value="${mongodb.host}" />
+        <constructor-arg name="port" value="${mongodb.port}" />
+    </bean>
+
+
+  <!-- The Policy for checking the authentication role of ADMIN -->
+  <authorizationPolicy id="admin" access="ROLE_ADMIN"
+                       authenticationManager="authenticationManager"
+                       accessDecisionManager="accessDecisionManager"
+                       xmlns="http://camel.apache.org/schema/spring-security"/>
+
+  <!-- The Policy for checking the authentication role of USER -->
+  <authorizationPolicy id="user" access="ROLE_USER"
+                       xmlns="http://camel.apache.org/schema/spring-security"/>
+
+  <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
+    <!-- Catch the authorization exception and set the Access Denied message back -->
+    <onException>
+      <exception>org.apache.camel.CamelAuthorizationException</exception>
+      <handled>
+        <constant>true</constant>
+      </handled>
+      <to uri="bean:outcome?method=getOutcome(401,'Unauthorized'+${exception.policyId}, '')" />
+    </onException>
+    
+    <restConfiguration component="servlet" bindingMode="off"
+			contextPath="fhir-oauth-spring-security/rest" port="8080">
+			<dataFormatProperty key="prettyPrint" value="true" />
+	</restConfiguration>
+
+    <rest path="/Patient" consumes="application/xml,application/json" produces="application/xml+fhir,application/xml+json">
+			<description>(Demographic)</description>
+			<get uri="/{id}" >
+			 	<description>Get patient by id</description>
+				<param name="id" type="path" description="The internal id of the patient (not NHS or CHI number)"
+					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<policy ref="admin">
+						<process ref="patient"/>
+						<filter>
+							<simple>${body} == null</simple>
+							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+								<constant>404</constant>
+							</setHeader>
+						</filter>
+					</policy>
+				</route>
+			</get>
+			<get uri="/" >
+				<description>Find patient</description>
+				<param name="identifier" type="query" description="Usage identifier name|id, e.g. urn:fhir.nhs.uk:id/NHSNumber|9876543210"  required="false"
+					dataType="integer" />
+				<param name="name" type="query" description="Family or given name" required="false"
+					dataType="string" />
+				<param name="birthdate" type="query" description="Date of Birth" required="false"
+					dataType="string" />
+				<param name="phone" type="query" description="Phone number" required="false"
+					dataType="string" />
+				<param name="address-postalcode" type="query" description="Postcode" required="false"
+					dataType="string" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
+				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route>
+					<policy ref="user">
+						<process ref="patientBundle"/>
+						<filter>
+							<simple>${body} == null</simple>
+							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+								<constant>404</constant>
+							</setHeader>
+						</filter>
+					</policy>
+				</route>
+			</get>
+		</rest>
+
+  </camelContext>
+
+</beans>
+  <!-- END SNIPPET: example -->
