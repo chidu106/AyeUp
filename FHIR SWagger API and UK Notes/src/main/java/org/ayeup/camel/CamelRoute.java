@@ -1,7 +1,5 @@
 package org.ayeup.camel;
 
-import java.util.Arrays;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.model.rest.RestBindingMode;

@@ -1,6 +1,6 @@
 <!DOCTYPE html>
  
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" lang="en">
 
 <head>
 <meta charset="utf-8" />
@@ -137,11 +137,11 @@
    <th width="80">Alternate URI (OID)</th>
  </tr>
  <tr>
-   <td colspan="4" style="background: #EFEFEF"><b>Externally Published code systems</b> <a name="external"> </a></td>
+   <td colspan="4" style="background: #EFEFEF"><b>Externally Published code systems</b></td>
  </tr>  
 
  <tr>
-   <td width="80">http://snomed.info/sct <a name="http://snomed.info/sct"> </a></td>
+   <td width="80">http://snomed.info/sct <a href="http://snomed.info/sct"> </a></td>
    <td>SNOMED CT (<a href="http://ihtsdo.org">IHTSDO <img style="text-align: baseline" src="./files/external.png"/></a>)</td>
    <td>See <a href="http://www.hl7.org/FHIR/snomedct.html">Using SNOMED CT with FHIR <img style="text-align: baseline" src="./files/external.png"/></a></td>
    <td>urn:oid:2.16.840.1.113883.6.96</td>
@@ -151,7 +151,7 @@
  </tr>
  <tr>
    <td></td>
-   <td><a name="http://www.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp">NHS UK Main Specialty and Treatment Function Codes <img style="text-align: baseline" src="./files/external.png"/></a></td>
+   <td><a href="http://www.datadictionary.nhs.uk/web_site_content/supporting_information/main_specialty_and_treatment_function_codes_table.asp">NHS UK Main Specialty and Treatment Function Codes <img style="text-align: baseline" src="./files/external.png"/></a></td>
    <td>or use SNOMED codes. <a href="http://wiki.ihe-uk.org/AppendixB">IHE UK XDS - Annex B</a></td>
    <td>urn:oid:2.16.840.1.113883.2.1.6.8</td>
  </tr> 
@@ -160,7 +160,7 @@
  </tr>  
  <tr>
    <td>urn:fhir.nhs.uk:id/NHSNumber</td>
-   <td><a name="http://systems.hscic.gov.uk/nhsnumber">NHS Number (England and Wales) <img style="text-align: baseline" src="./files/external.png"/></a></td>
+   <td><a href="http://systems.hscic.gov.uk/nhsnumber">NHS Number (England and Wales) <img style="text-align: baseline" src="./files/external.png"/></a></td>
    <td>Range [400-000-000 to 499-999-999] and [600-000-000 to 708-800-001]</td>
    <td>urn:oid:2.16.840.1.113883.2.1.4.1</td>
  </tr>
@@ -172,8 +172,8 @@
  </tr>
  <tr>
    <td>http://fhir.nhs.scot.uk/Patient/CHINumber</td>
-   <td><a name="http://www.ndc.scot.nhs.uk/Data-Dictionary/SMR-Datasets/Patient-Identification-and-Demographic-Information/Community-Health-Index-Number/">CHI Number (Scotland) <img style="text-align: baseline" src="./files/external.png"/></a></td>
-   <td/>Range [001-000-000 to 319-999-999]. Patient may be reassigned CHI number due to gender re-assignement.
+   <td><a href="http://www.ndc.scot.nhs.uk/Data-Dictionary/SMR-Datasets/Patient-Identification-and-Demographic-Information/Community-Health-Index-Number/">CHI Number (Scotland) <img style="text-align: baseline" src="./files/external.png"/></a></td>
+   <td>Range [001-000-000 to 319-999-999]. Patient may be reassigned CHI number due to gender re-assignement.</td>
    <td>urn:oid:2.16.840.1.113883.2.1.3.2.4.16.53</td>
  </tr>
  <tr>
@@ -200,6 +200,7 @@
    <td></td>
    <td>urn:oid:2.16.840.1.113883.2.1.3.2.4.16.82</td>
  </tr>
+ <tr>
   <td colspan="4" style="background: #EFEFEF"><b>Patient.communication.language</b></td>
  </tr>
  <tr>
@@ -244,8 +245,8 @@
    <td></td>
    <td>urn:oid:2.16.840.1.113883.2.1.3.2.4.11</td>
  </tr>
- 
- <td colspan="4" style="background: #EFEFEF"><b>Organisation.identifiers</b> <a name="pracid"> </a></td>
+ <tr>
+ <td colspan="4" style="background: #EFEFEF"><b>Organisation.identifiers</b></td>
  </tr>  
  <tr>
    <td>urn:fhir.nhs.uk/id/ODSOrganisationCode<br>urn:fhir.nhs.uk/id/ODSCode</td>
@@ -273,10 +274,8 @@
             
         </div>
     <!-- /segment-content -->
-			
-			
-		</div>
-	</div>
+	
+	
 	  <div id="segment-footer" class="segment">
             <!-- segment-footer -->
             <div class="container">

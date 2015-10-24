@@ -160,7 +160,7 @@
                 <untar src="${project.build.directory}/swagger-ui-${swagger-ui.version}.tar" dest="${project.build.directory}" />
                 <echo message="moving resources" />
                 <move todir="${destDir}" overwrite="yes">
-                  <fileset dir="${project.build.directory}/swagger-ui-${swagger-ui.version}/dist" />
+                  <fileset dir="${project.build.directory}/swagger-ui-${swagger-ui.version}/dist/" />
                 </move>
               </target>
             </configuration>
