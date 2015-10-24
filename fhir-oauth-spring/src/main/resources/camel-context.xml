@@ -22,6 +22,7 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
          http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
@@ -52,7 +53,7 @@
       		</list>
     	</property>
  	</bean>
-   <!-- db.createUser( { user: "admin", pwd: "-----", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]  } )  -->
+   <!-- db.createUser( { user: "admin", pwd: "removed", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]  } )  -->
   	<bean id="patientBundle" class="org.ayeup.processor.PatientBundleProcessor" />
 	<bean id="patient" class="org.ayeup.processor.PatientProcessor" />
 	<bean id="documentReferenceBundle" class="org.ayeup.processor.DocumentReferenceBundleProcessor" />
@@ -62,12 +63,12 @@
 	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
 	<bean id="condition" class="org.ayeup.processor.ConditionProcessor" />
 	
-	
+	<!--  
     <bean id="mongoBean" class="com.mongodb.Mongo">
         <constructor-arg name="host" value="${mongodb.host}" />
         <constructor-arg name="port" value="${mongodb.port}" />
     </bean>
-
+ 	-->
 
   <!-- The Policy for checking the authentication role of ADMIN -->
   <authorizationPolicy id="admin" access="ROLE_ADMIN"
