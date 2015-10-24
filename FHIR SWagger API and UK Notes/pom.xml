@@ -120,7 +120,8 @@
 
 	<build>
 		<!-- we do not want version in the WAR name -->
-		<finalName>${project.artifactId}</finalName>
+	 	<finalName>${project.artifactId}</finalName>
+	 	<pluginManagement>
 	  <plugins>
       <!-- Step 1. - Download Swagger UI project from GitHub -->
       <plugin>
@@ -215,6 +216,7 @@
 
       
     </plugins>
+    </pluginManagement>
 	</build>
 
 </project>
