@@ -3,10 +3,9 @@ package org.ayeup.processor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.ayeup.samples.ConditionSamples;
-import org.ayeup.samples.DocumentReferenceSamples;
 import org.hl7.fhir.instance.formats.ParserType;
 import org.hl7.fhir.instance.model.Condition;
-import org.hl7.fhir.instance.model.DocumentReference;
+
 
 public class ConditionProcessor implements Processor {
 		
