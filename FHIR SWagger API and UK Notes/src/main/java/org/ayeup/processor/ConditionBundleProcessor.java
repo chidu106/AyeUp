@@ -5,14 +5,15 @@ import org.apache.camel.Processor;
 import org.ayeup.samples.ConditionSamples;
 
 import org.hl7.fhir.instance.formats.ParserType;
+import org.hl7.fhir.instance.model.Bundle;
 import org.hl7.fhir.instance.model.Condition;
 
 
-public class ConditionProcessor implements Processor {
-		
-		//private static final Logger log = LoggerFactory.getLogger(CamelRoutes.class);
-		
-		
+
+
+
+public class ConditionBundleProcessor implements Processor  {
+	
 		
 		public void process(Exchange exchange) throws Exception {
 			
@@ -28,18 +29,11 @@ public class ConditionProcessor implements Processor {
 	        
 			ConditionSamples conditionService = new ConditionSamples();
 			
-			Condition condition = null;
-			if (id=="2")
-			{
-				condition = conditionService.DummyCondition1(id);
-			}
-			else
-			{
-				condition = conditionService.DummyConditionAnswer(id);
-			}
+			Condition condition = conditionService.DummyConditionAnswer(id);
 			
-				
+			Bundle bundle = new Bundle();
 			
+			bundle.addEntry().setResource(condition);
 	        
 			try 
 			{
@@ -57,12 +51,12 @@ public class ConditionProcessor implements Processor {
 				if (format.contains("json"))	
 				{
 					exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
-					exchange.getIn().setBody(ResourceSerialiser.serialise(condition, ParserType.JSON));
+					exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.JSON));
 				}
 				else
 				{
 					exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
-					exchange.getIn().setBody(ResourceSerialiser.serialise(condition, ParserType.XML));
+					exchange.getIn().setBody(ResourceSerialiser.serialise(bundle, ParserType.XML));
 				}
 			}
 			catch (Exception e)

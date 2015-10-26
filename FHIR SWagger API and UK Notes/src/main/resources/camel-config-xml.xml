@@ -26,6 +26,7 @@
 	<bean id="bundle" class="org.ayeup.processor.BundleProcessor" />
 	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
 	<bean id="condition" class="org.ayeup.processor.ConditionProcessor" />
+	<bean id="conditionBundle" class="org.ayeup.processor.ConditionBundleProcessor" />
 	
 	<camel:camelContext id="FHIR" xmlns="http://camel.apache.org/schema/spring">
 
@@ -125,7 +126,7 @@
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<to uri="http://data.developer.nhs.uk/fhir/gpsoc-im2/Profile.patient/bundlepatientexample.xml?bridgeEndpoint=true" />
+					<process ref="conditionBundle"/>
 					<filter>
 						<simple>${body} == null</simple>
 						<to uri="bean:outcome?method=getOutcome(404,'Not Found', ${_format})" />
