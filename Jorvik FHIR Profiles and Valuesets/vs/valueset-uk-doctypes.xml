@@ -1,0 +1,49 @@
+<ValueSet xmlns="http://hl7.org/fhir">
+  <id value="doc-uk-typecodes"/>
+  <meta>
+    <lastUpdated value="2015-09-30T23:39:40.637+10:00"/>
+    <profile value="http://hl7.org/fhir/StructureDefinition/valueset-shareable-definition"/>
+  </meta>
+  <text>
+    <status value="generated"/>
+    <div xmlns="http://www.w3.org/1999/xhtml">
+      <h2>UK Document Type Codes</h2>
+      <p>An </p>
+      <p>
+        
+      <p>This value set includes codes from the following code systems:</p>
+      <ul>
+        <li>Include codes from http://loinc.org where SCALE_TYP  =  Doc</li>
+      </ul>
+    </div>
+  </text>
+  <extension url="http://hl7.org/fhir/StructureDefinition/valueset-oid">
+    <valueUri value="urn:oid:2.16.840.1.113883.4.642.2.121"/>
+  </extension>
+  <url value="http://hl7.org/fhir/ValueSet/doc-typecodes"/>
+  <version value="1.0.1"/>
+  <name value="FHIR Document Type Codes"/>
+  <status value="draft"/>
+  <experimental value="true"/>
+  <publisher value="HL7"/>
+  <contact>
+    <telecom>
+      <system value="other"/>
+      <value value="http://hl7.org"/>
+    </telecom>
+  </contact>
+  <date value="2015-09-30T23:39:40+10:00"/>
+  <description value="FHIR Document Codes - all LOINC codes where scale type = 'DOC'."/>
+  <copyright value="This content from LOINC® is copyright © 1995 Regenstrief Institute, Inc. and the LOINC
+   Committee, and available at no cost under the license at http://loinc.org/terms-of-use."/>
+  <compose>
+    <include>
+      <system value="http://loinc.org"/>
+      <filter>
+        <property value="SCALE_TYP"/>
+        <op value="="/>
+        <value value="Doc"/>
+      </filter>
+    </include>
+  </compose>
+</ValueSet>
