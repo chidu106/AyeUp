@@ -13,6 +13,22 @@
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd">
 
 	<context:property-placeholder location="classpath:mongodb.properties"/>
+	
+	<bean id="mongoBean" class="com.mongodb.Mongo">
+		<constructor-arg index="0"> 
+        	<bean class="com.mongodb.MongoURI"> 
+            	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
+        	</bean> 
+    	</constructor-arg> 
+    </bean>
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongoBean" />
+		<constructor-arg value="${mongodb.dbname}" />
+	</bean>
+	
+	<bean id="mongoUserDetailsService" class="org.jorvik.security.MongoDBAuthenticationProvider">
+	</bean>
 
   <spring-security:http realm="User Restrict Realm">
     <spring-security:intercept-url pattern="/rest/**" access="ROLE_USER"/>
@@ -45,19 +61,7 @@
 	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
 	
 	
-	<bean id="mongoBean" class="com.mongodb.Mongo">
-		<constructor-arg index="0"> 
-        	<bean class="com.mongodb.MongoURI"> 
-            	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
-        	</bean> 
-    	</constructor-arg> 
-    </bean>
-
-	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-		<constructor-arg ref="mongoBean" />
-		<constructor-arg value="${mongodb.dbname}" />
-	</bean>
-
+	
   <!-- The Policy for checking the authentication role of ADMIN -->
   <authorizationPolicy id="admin" access="ROLE_ADMIN"
                        authenticationManager="authenticationManager"
