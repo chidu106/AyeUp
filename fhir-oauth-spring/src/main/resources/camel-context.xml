@@ -46,15 +46,17 @@
 	
 	
 	<bean id="mongoBean" class="com.mongodb.Mongo">
-	
 		<constructor-arg index="0"> 
         	<bean class="com.mongodb.MongoURI"> 
             	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
         	</bean> 
     	</constructor-arg> 
-	
     </bean>
 
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg ref="mongoBean" />
+		<constructor-arg value="${mongodb.dbname}" />
+	</bean>
 
   <!-- The Policy for checking the authentication role of ADMIN -->
   <authorizationPolicy id="admin" access="ROLE_ADMIN"
@@ -91,7 +93,7 @@
 				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
 				  <policy ref="user">
-				  	<camel:log message="Header identifier =  $(headers.identifier)"></camel:log>
+				  	
 					<process ref="patientBSON" />
 					<to uri="mongodb:mongoBean?database=jorvik&amp;collection=Patient&amp;operation=findOneByQuery" />
 					<process ref="singleBSON" />

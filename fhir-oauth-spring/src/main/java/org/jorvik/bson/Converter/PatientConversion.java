@@ -60,7 +60,10 @@ public class PatientConversion implements Processor  {
 		}
 		if (!ident.isEmpty() ) 
 		{
-			String[] parts = ident.split("|");
+			ident = ident.replace("|", ",");
+			//String[] parts = ident.split("\0x7C");
+			// You'd think the above line of code would work.
+			String[] parts = ident.split(",");
 			String System = null;
 			String Value = null;
 			if (parts[0].isEmpty())
@@ -77,7 +80,7 @@ public class PatientConversion implements Processor  {
 			List<BasicDBObject> obj = new ArrayList<BasicDBObject>();
 			obj.add(new BasicDBObject("identifier.system", System));
 			obj.add(new BasicDBObject("identifier.value", Value));
-			mongoObj.put("$or", obj);
+			mongoObj.put("$and", obj);
 		}
 		
 		exchange.getIn().setBody(mongoObj,com.mongodb.DBObject.class);
