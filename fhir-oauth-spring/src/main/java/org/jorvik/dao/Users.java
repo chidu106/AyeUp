@@ -1,4 +1,4 @@
-package org.jorvik.mongodb;
+package org.jorvik.dao;
 
 
 import java.util.List;
