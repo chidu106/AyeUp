@@ -1,22 +1,5 @@
 
 
-<!--
-    Licensed to the Apache Software Foundation (ASF) under one or more
-    contributor license agreements.  See the NOTICE file distributed with
-    this work for additional information regarding copyright ownership.
-    The ASF licenses this file to You under the Apache License, Version 2.0
-    (the "License"); you may not use this file except in compliance with
-    the License.  You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-    Unless required by applicable law or agreed to in writing, software
-    distributed under the License is distributed on an "AS IS" BASIS,
-    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-    See the License for the specific language governing permissions and
-    limitations under the License.
--->
-<!-- START SNIPPET: example -->
 <beans xmlns="http://www.springframework.org/schema/beans"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:spring-security="http://www.springframework.org/schema/security"
@@ -55,22 +38,23 @@
       		</list>
     	</property>
  	</bean>
-   <!-- db.createUser( { user: "admin", pwd: "removed", roles: [ { role: "userAdminAnyDatabase", db: "admin" } ]  } )  -->
-  	<bean id="patientBundle" class="org.ayeup.processor.PatientBundleProcessor" />
-	<bean id="patient" class="org.ayeup.processor.PatientProcessor" />
-	<bean id="documentReferenceBundle" class="org.ayeup.processor.DocumentReferenceBundleProcessor" />
-	<bean id="documentReference" class="org.ayeup.processor.DocumentReferenceProcessor" />
-	<bean id="binary" class="org.ayeup.processor.BinaryProcessor" />
-	<bean id="bundle" class="org.ayeup.processor.BundleProcessor" />
+  	
+	<bean id="patientBSON" class="org.jorvik.bson.Converter.PatientConversion" />
+	<bean id="singleBSON" class="org.jorvik.bson.Converter.DBObjectToString" />
+	<bean id="arrayBSON" class="org.jorvik.bson.Converter.DBCursorToString" />
 	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
-	<bean id="condition" class="org.ayeup.processor.ConditionProcessor" />
 	
-	<!--  
-    <bean id="mongoBean" class="com.mongodb.Mongo">
-        <constructor-arg name="host" value="${mongodb.host}" />
-        <constructor-arg name="port" value="${mongodb.port}" />
+	
+	<bean id="mongoBean" class="com.mongodb.Mongo">
+	
+		<constructor-arg index="0"> 
+        	<bean class="com.mongodb.MongoURI"> 
+            	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
+        	</bean> 
+    	</constructor-arg> 
+	
     </bean>
- 	-->
+
 
   <!-- The Policy for checking the authentication role of ADMIN -->
   <authorizationPolicy id="admin" access="ROLE_ADMIN"
@@ -99,27 +83,25 @@
 
     <rest path="/Patient" consumes="application/xml,application/json" produces="application/xml+fhir,application/xml+json">
 			<description>(Demographic)</description>
-			<get uri="/{id}" >
+			<get uri="/{_id}" >
 			 	<description>Get patient by id</description>
-				<param name="id" type="path" description="The internal id of the patient (not NHS or CHI number)"
+				<param name="_id" type="path" description="The internal id of the patient (not NHS or CHI number)"
 					dataType="integer" />
 				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
-				<responseMessage code="404" message="Resource not found" responseModel="org.ayeup.rest.OperationOutcome" />
-				<responseMessage code="400" message="Bad Request" responseModel="org.ayeup.rest.OperationOutcome" />
-				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
-				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
-				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
-					<policy ref="admin">
-						<process ref="patient"/>
-						<filter>
+				  <policy ref="user">
+				  	<camel:log message="Header identifier =  $(headers.identifier)"></camel:log>
+					<process ref="patientBSON" />
+					<to uri="mongodb:mongoBean?database=jorvik&amp;collection=Patient&amp;operation=findOneByQuery" />
+					<process ref="singleBSON" />
+					<filter>
 							<simple>${body} == null</simple>
 							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
 								<constant>404</constant>
 							</setHeader>
-						</filter>
-					</policy>
+					</filter>
+				  </policy>	
 				</route>
 			</get>
 			<get uri="/" >
@@ -143,7 +125,9 @@
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route>
 					<policy ref="user">
-						<process ref="patientBundle"/>
+						<process ref="patientBSON" />
+						<to uri="mongodb:mongoBean?database=jorvik&amp;collection=Patient&amp;operation=findAll" />
+						<process ref="arrayBSON" />
 						<filter>
 							<simple>${body} == null</simple>
 							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
