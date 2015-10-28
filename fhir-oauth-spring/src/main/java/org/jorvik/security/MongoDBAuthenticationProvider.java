@@ -1,38 +1,78 @@
 package org.jorvik.security;
 
 import org.jorvik.dao.Users;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.mongodb.core.MongoOperations;
+import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.security.authentication.InternalAuthenticationServiceException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.authentication.dao.AbstractUserDetailsAuthenticationProvider;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-public class MongoDBAuthenticationProvider extends
-		AbstractUserDetailsAuthenticationProvider {
 
-	@Autowired
-	MongoOperations mongo;
+//https://codesilo.wordpress.com/2012/07/08/mongodb-spring-data-and-spring-security-with-custom-userdetailsservice/
+
+
+public class MongoDBAuthenticationProvider implements UserDetailsService {
+
+	//extends AbstractUserDetailsAuthenticationProvider
 	
-	@Override
+	private MongoTemplate mongoTemplate;
+	
+	private static final Logger log = LoggerFactory.getLogger(MongoDBAuthenticationProvider.class);
+	
+	public UserDetails loadUserByUsername(String username)
+			 throws UsernameNotFoundException {
+			 log.info("In UserDetails class Username="+username);
+			 User user = getUserDetail(username);
+			 log.info("Username="+username);
+			 log.info("User="+user.toString());
+			 //System.out.println(username);
+			 //User userDetail = new org.springframework.security.core.userdetails.User(user.getUsername(),user.getPassword(),true,true,true,true,getAuthorities(user. getRole()));
+			 return user;
+			 }
+	
 	protected void additionalAuthenticationChecks(UserDetails userDetails,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
 		// TODO Auto-generated method stub
 
 	}
-
-	@Override
+	
+	@Autowired
+	 public void setMongoTemplate(MongoTemplate mongoTemplate) {
+	 this.mongoTemplate = mongoTemplate;
+	 }
+	
+	public User getUserDetail(String username){
+		 
+		 log.info("In getUserDetails class Username="+username);
+		 MongoOperations mongo = (MongoOperations)mongoTemplate;
+		 log.info("In getUserDetails-1 class Username="+username);
+		 Users user = mongo.findOne(
+		 new Query(Criteria.where("username").is(username)),
+		 Users.class);
+		 log.info("In getUserDetails-2 class Username="+username);
+		 User sUser = new User(user.getUserName(), user.getPassword(), user.getRoles());
+		 log.info("User="+user.toString());
+		 return sUser;
+		 }
+	
 	protected UserDetails retrieveUser(String userName,
 			UsernamePasswordAuthenticationToken authentication)
 			throws AuthenticationException {
 		UserDetails loadedUser;
 
         try {
+        	log.info("In retrieveUser class Username="+userName);
+        	MongoOperations mongo = (MongoOperations)mongoTemplate;
             Users client = mongo.findOne(Query.query(Criteria.where("username").is(userName)), Users.class);
             
             loadedUser = new User(client.getUserName(), client.getPassword(), client.getRoles());

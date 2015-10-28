@@ -44,12 +44,13 @@
   <spring-security:http realm="User Restrict Realm">
     <spring-security:intercept-url pattern="/rest/**" access="ROLE_USER"/>
     <spring-security:http-basic/>
-    <spring-security:remember-me/>
+    <!--   <spring-security:remember-me/>  -->
   </spring-security:http>
 
     <!--  set up the user configuration here -->
   <spring-security:authentication-manager alias="authenticationManager">
-    <spring-security:authentication-provider user-service-ref="userDetailsService"/>
+   <!--  <spring-security:authentication-provider user-service-ref="userDetailsService"/>  -->
+   <spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/>
   </spring-security:authentication-manager>
 
   <spring-security:user-service id="userDetailsService">
@@ -83,6 +84,9 @@
   <authorizationPolicy id="user" access="ROLE_USER"
                        xmlns="http://camel.apache.org/schema/spring-security"/>
 
+	 <context:annotation-config />
+	 
+	 
   <camel:camelContext id="OAuthFHIR" xmlns="http://camel.apache.org/schema/spring">
     <!-- Catch the authorization exception and set the Access Denied message back -->
     <onException>

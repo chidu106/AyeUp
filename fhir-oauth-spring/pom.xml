@@ -42,7 +42,7 @@
 		<springframework-version>4.2.1.RELEASE</springframework-version>
 		<spring-security-version>4.0.2.RELEASE</spring-security-version>
 		<spring-data-mongodb>1.5.4.RELEASE</spring-data-mongodb>
-	
+		<mongo>2.13.0</mongo>
 		<slf4j-version>1.7.12</slf4j-version>
 		<jetty-plugin-version>9.3.1-SNAPSHOT</jetty-plugin-version>
 	</properties>
@@ -112,7 +112,12 @@
 			<artifactId>jsr250-api</artifactId>
 			<version>1.0</version>
 		</dependency>
-	
+		<!-- need to check correct mongo driver version spring seems 2.12.x friendly -->
+		<dependency>
+			<groupId>org.mongodb</groupId>
+			<artifactId>mongo-java-driver</artifactId>
+			<version>${mongo}</version>
+		</dependency>
 		
 		<!-- for testing -->
 		<dependency>
