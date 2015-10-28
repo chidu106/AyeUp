@@ -23,23 +23,24 @@
         	</bean> 
     	</constructor-arg> 
     </bean>
-    
-    <mongo:db-factory id="MongoDbFactory" 
+    <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}" />
+
+    <mongo:db-factory id="mongoDbFactory" 
     				host="${mongodb.host}"
     				port="${mongodb.port}"
     				dbname="${mongodb.dbname}"
     				username="${mongodb.dbname}"
     				password="${mongodb.password}"
+    				mongo-ref="mongo"
     				/>
     	
 	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-		<constructor-arg ref="MongoDbFactory" />
-		<constructor-arg value="${mongodb.dbname}" />
+		<constructor-arg ref="mongoDbFactory"/>
 	</bean>
-	
+	 
 	<bean id="mongoUserDetailsService" class="org.jorvik.security.MongoDBAuthenticationProvider">
 	</bean>
-
+	
   <spring-security:http realm="User Restrict Realm">
     <spring-security:intercept-url pattern="/rest/**" access="ROLE_USER"/>
     <spring-security:http-basic/>
