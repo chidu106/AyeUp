@@ -50,7 +50,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="BinaryGet">
 					<process ref="binary"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -74,7 +74,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="BundlePost">
 					<process ref="bundle"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -91,7 +91,7 @@
 	
 	<rest path="/Condition" consumes="application/xml+fhir" produces="application/xml+fhir,application/xml+json">
 			<description>(Problems)</description>
-			<get uri="/{id}" >
+			<get  uri="/{id}" >
 				<description>Get condition by id</description>
 				
 				<param name="id" type="path" description="The internal id of the condition"
@@ -103,7 +103,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="ConditionGet">
 					<process ref="condition" />
 					<filter>
 						<simple>${body} == null</simple>
@@ -125,7 +125,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="ConditionFind">
 					<process ref="conditionBundle"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -155,7 +155,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="DocumentReferenceGet">
 					<process ref="documentReference"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -187,7 +187,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="DocumentReferenceFind">
 					<process ref="documentReferenceBundle"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -210,7 +210,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="DocumentReferenceDelete">
 					<process ref="documentReference"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -238,7 +238,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="PatientGet">
 					<process ref="patient"/>
 					<filter>
 						<simple>${body} == null</simple>
@@ -267,7 +267,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="PatientFind">
 					<process ref="patientBundle"/>
 					<filter>
 						<simple>${body} == null</simple>
