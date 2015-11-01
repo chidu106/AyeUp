@@ -1,35 +1,14 @@
-Camel Spring Security Example
-=============
+This is currently a work in progress
 
-This example shows how to leverage the Spring Security to secure the camel endpoint. 
+It is based on camel 2.16 examples of spring security. Currently returns FHIR Patient and Conditions from a mongo db database 
+Security is Http basic and is in the progress of being converted to oauth.
 
-The example consumes messages from a servlet endpoint which is secured by Spring Security 
-with http basic authentication, there are two service:
- "http://localhost:8080/camel/user" is for the authenticated user whose role is ROLE_USER
- "http://localhost:8080/camel/admin" is for the authenticated user whose role is ROLE_ADMIN
+Idea is to use:
 
-You will need to compile this example first:
-  mvn clean install
+AngularJS for client
+Spring Security for locking down resources (OAuth2)
+Apache Camel for the routing and REST interface
+HL7 FHIR as the resource API (both json and xml)
+MongoDB for backend (this is a quick win to get the system running quickly)
 
-To run the example, you need to start up the server by typing
-  mvn jetty:run
 
-To stop the server hit ctrl + c
-
-Then you can use the script in the client directory to send the request and check the response,
-or use browser to access upper urls with the user/password 
-("jim/jimspassword" with the admin and user role  or "bob/bobspassword" with user role).
-
-This example is documented at
-  http://camel.apache.org/spring-security-example.html
-
-If you hit any problems please talk to us on the Camel Forums
-  http://camel.apache.org/discussion-forums.html
-
-Please help us make Apache Camel better - we appreciate any feedback you
-may have.
-
-Enjoy!
-
-------------------------
-The Camel riders!

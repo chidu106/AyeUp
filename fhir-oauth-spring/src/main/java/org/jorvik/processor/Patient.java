@@ -5,8 +5,8 @@ import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-
 import org.ayeup.constants.NHS.NHSEnglandConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -137,6 +137,8 @@ private MongoTemplate mongoTemplate;
 			Response = Response + "}";
 			
 			exchange.getIn().setBody(Response);
+			
+		
 		}
 		
 	}

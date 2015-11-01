@@ -59,9 +59,16 @@ public class MongoDBAuthenticationProvider implements UserDetailsService {
 		 Users user = mongo.findOne(
 		 new Query(Criteria.where("username").is(username)),
 		 Users.class);
-		 log.info("In getUserDetails-2 class Username="+username);
-		 User sUser = new User(user.getUserName(), user.getPassword(), user.getRoles());
-		 log.info("User="+user.toString());
+		 User sUser = null;
+		 if(user == null){
+	            throw new UsernameNotFoundException(username);
+	        }
+		 else
+		 {
+			 log.info("In getUserDetails-2 class Username="+username);
+			 sUser = new User(user.getUserName(), user.getPassword(), user.getRoles());
+			 log.info("User="+user.toString());
+		 }
 		 return sUser;
 		 }
 	
@@ -83,4 +90,38 @@ public class MongoDBAuthenticationProvider implements UserDetailsService {
         return loadedUser;
 	}
 
+	/*
+	Users yorkie = new Users();
+	yorkie.setUserName("jim");
+	yorkie.setPassword("r0binh00d");
+	List<GrantedAuthority> roles = new ArrayList<GrantedAuthority>();
+	SimpleGrantedAuthority role = new SimpleGrantedAuthority("ADMIN");
+	roles.add(role);
+	role = new SimpleGrantedAuthority("USER");
+	roles.add(role);
+	yorkie.setItems(roles);
+	
+	mongo.insert(yorkie,"usersJorvik"); 
+	*/
+	
+	/* Sample JSON file for collection usersJorvik
+	 * 
+	 * {
+    "_id" : ObjectId("5636181e02d30e09340f79fa"),
+    "_class" : "org.jorvik.dao.Users",
+    "username" : "jim",
+    "password" : "password",
+    "roles" : [ 
+        {
+            "role" : "ROLE_USER",
+            "_class" : "org.springframework.security.core.authority.SimpleGrantedAuthority"
+        }, 
+        {
+            "role" : "ROLE_ADMIN",
+            "_class" : "org.springframework.security.core.authority.SimpleGrantedAuthority"
+        }
+    ]
+}
+	 */
+	
 }

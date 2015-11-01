@@ -20,15 +20,16 @@
 
     <!--  set up the user configuration here -->
   <authentication-manager alias="authenticationManager">
-    	<authentication-provider user-service-ref="userDetailsService"/> 
-  		<!--  <spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/> -->
+    	<!--  <authentication-provider user-service-ref="userDetailsService"/>  --> 
+  		<spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/>
   </authentication-manager>
 
+<!-- 
   <user-service id="userDetailsService">
     <user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
     <user name="bob" password="bobspassword" authorities="ROLE_USER"/>
   </user-service>
-
+ -->
      	
 	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
     	<beans:property name="allowIfAllAbstainDecisions" value="true"/>

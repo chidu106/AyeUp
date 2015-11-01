@@ -7,7 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 
-@Document(collection = "users")
+@Document(collection = "usersJorvik")
 public class Users {
 
 	@Id
