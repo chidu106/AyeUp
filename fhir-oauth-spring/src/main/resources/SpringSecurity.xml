@@ -19,17 +19,26 @@
   
 
     <!--  set up the user configuration here -->
-  <spring-security:authentication-manager alias="authenticationManager">
-    <spring-security:authentication-provider user-service-ref="userDetailsService"/> 
-  <!--  <spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/> -->
-  </spring-security:authentication-manager>
+  <authentication-manager alias="authenticationManager">
+    	<authentication-provider user-service-ref="userDetailsService"/> 
+  		<!--  <spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/> -->
+  </authentication-manager>
 
-  <spring-security:user-service id="userDetailsService">
-    <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
-    <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
-  </spring-security:user-service>
+  <user-service id="userDetailsService">
+    <user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
+    <user name="bob" password="bobspassword" authorities="ROLE_USER"/>
+  </user-service>
 
      	
+	<beans:bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+    	<beans:property name="allowIfAllAbstainDecisions" value="true"/>
+    	<beans:property name="decisionVoters">
+      		<beans:list>
+        		<beans:bean class="org.springframework.security.access.vote.RoleVoter"/>
+      		</beans:list>
+    	</beans:property>
+ 	</beans:bean>
+	
 	
     	
 </beans:beans>

@@ -12,19 +12,6 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.16.0.xsd
          http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.0.xsd">
 
-	<context:property-placeholder location="classpath:mongodb.properties"/>
-	
-	
-	
-
-	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
-    	<property name="allowIfAllAbstainDecisions" value="true"/>
-    	<property name="decisionVoters">
-      		<list>
-        		<bean class="org.springframework.security.access.vote.RoleVoter"/>
-      		</list>
-    	</property>
- 	</bean>
 	
 	
   <!-- The Policy for checking the authentication role of ADMIN -->
@@ -38,20 +25,9 @@
                        xmlns="http://camel.apache.org/schema/spring-security"/>
 
 
-<bean id="mongoBean" class="com.mongodb.Mongo">
-		<constructor-arg index="0"> 
-        	<bean class="com.mongodb.MongoURI"> 
-            	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
-        	</bean> 
-    	</constructor-arg> 
-    </bean>
-    	  	
-	<bean id="patientBSON" class="org.jorvik.bson.Converter.PatientConversion" />
-	<bean id="singleBSON" class="org.jorvik.bson.Converter.DBObjectToString" />
-	<bean id="arrayBSON" class="org.jorvik.bson.Converter.DBCursorToString" />
 	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
 	<bean id="condition" class="org.jorvik.processor.Condition" />
-	
+	<bean id="patient" class="org.jorvik.processor.Patient" />
 
 <context:annotation-config />
 	 
@@ -84,9 +60,7 @@
 				<route id="PatientGet">
 				  <policy ref="user">
 				  	
-					<process ref="patientBSON" />
-					<to uri="mongodb:mongoBean?database=jorvik&amp;collection=Patient&amp;operation=findOneByQuery" />
-					<process ref="singleBSON" />
+					<process ref="patient" />
 					<filter>
 							<simple>${body} == null</simple>
 							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
@@ -117,9 +91,7 @@
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
 				<route id="PatientFind">
 					<policy ref="user">
-						<process ref="patientBSON" />
-						<to uri="mongodb:mongoBean?database=jorvik&amp;collection=Patient&amp;operation=findAll" />
-						<process ref="arrayBSON" />
+						<process ref="patient" />
 						<filter>
 							<simple>${body} == null</simple>
 							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">

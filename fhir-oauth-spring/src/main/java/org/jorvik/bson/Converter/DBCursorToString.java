@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
-import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 
 public class DBCursorToString implements Processor  {
