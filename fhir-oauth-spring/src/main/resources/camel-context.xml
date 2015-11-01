@@ -5,60 +5,19 @@
        xmlns:spring-security="http://www.springframework.org/schema/security"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xmlns:camel-security="http://camel.apache.org/schema/spring-security"
        xsi:schemaLocation="
-         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.16.0.xsd
-         http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.0.xsd
-         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
-         http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd">
+         http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.0.xsd">
 
 	<context:property-placeholder location="classpath:mongodb.properties"/>
 	
-	<bean id="mongoBean" class="com.mongodb.Mongo">
-		<constructor-arg index="0"> 
-        	<bean class="com.mongodb.MongoURI"> 
-            	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
-        	</bean> 
-    	</constructor-arg> 
-    </bean>
-    <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}" />
-
-    <mongo:db-factory id="mongoDbFactory" 
-    				host="${mongodb.host}"
-    				port="${mongodb.port}"
-    				dbname="${mongodb.dbname}"
-    				username="${mongodb.dbname}"
-    				password="${mongodb.password}"
-    				mongo-ref="mongo"
-    				/>
-    	
-	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
-		<constructor-arg ref="mongoDbFactory"/>
-	</bean>
-	 
-	<bean id="mongoUserDetailsService" class="org.jorvik.security.MongoDBAuthenticationProvider">
-	</bean>
 	
-  <spring-security:http realm="User Restrict Realm">
-    <spring-security:intercept-url pattern="/rest/**" access="ROLE_USER"/>
-    <spring-security:http-basic/>
-    <!--   <spring-security:remember-me/>  -->
-  </spring-security:http>
+	
 
-    <!--  set up the user configuration here -->
-  <spring-security:authentication-manager alias="authenticationManager">
-   <!--  <spring-security:authentication-provider user-service-ref="userDetailsService"/>  -->
-   <spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/>
-  </spring-security:authentication-manager>
-
-  <spring-security:user-service id="userDetailsService">
-    <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
-    <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
-  </spring-security:user-service>
-
-  	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
+	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.AffirmativeBased">
     	<property name="allowIfAllAbstainDecisions" value="true"/>
     	<property name="decisionVoters">
       		<list>
@@ -66,12 +25,6 @@
       		</list>
     	</property>
  	</bean>
-  	
-	<bean id="patientBSON" class="org.jorvik.bson.Converter.PatientConversion" />
-	<bean id="singleBSON" class="org.jorvik.bson.Converter.DBObjectToString" />
-	<bean id="arrayBSON" class="org.jorvik.bson.Converter.DBCursorToString" />
-	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
-	
 	
 	
   <!-- The Policy for checking the authentication role of ADMIN -->
@@ -84,9 +37,27 @@
   <authorizationPolicy id="user" access="ROLE_USER"
                        xmlns="http://camel.apache.org/schema/spring-security"/>
 
-	 <context:annotation-config />
+
+<bean id="mongoBean" class="com.mongodb.Mongo">
+		<constructor-arg index="0"> 
+        	<bean class="com.mongodb.MongoURI"> 
+            	<constructor-arg index="0" value="mongodb://${mongodb.username}:${mongodb.password}@${mongodb.host}:${mongodb.port}/${mongodb.dbname}" /> 
+        	</bean> 
+    	</constructor-arg> 
+    </bean>
+    	  	
+	<bean id="patientBSON" class="org.jorvik.bson.Converter.PatientConversion" />
+	<bean id="singleBSON" class="org.jorvik.bson.Converter.DBObjectToString" />
+	<bean id="arrayBSON" class="org.jorvik.bson.Converter.DBCursorToString" />
+	<bean id="outcome" class="org.ayeup.processor.operationOutcomeService" />
+	<bean id="condition" class="org.jorvik.processor.Condition" />
+	
+
+<context:annotation-config />
 	 
-	 
+
+ 	
+ 	
   <camel:camelContext id="OAuthFHIR" xmlns="http://camel.apache.org/schema/spring">
     <!-- Catch the authorization exception and set the Access Denied message back -->
     <onException>
@@ -110,7 +81,7 @@
 					dataType="integer" />
 				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
 				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="PatientGet">
 				  <policy ref="user">
 				  	
 					<process ref="patientBSON" />
@@ -144,7 +115,7 @@
 				<responseMessage code="403" message="Not Authorized" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="405" message="Not Allowed" responseModel="org.ayeup.rest.OperationOutcome" />
 				<responseMessage code="422" message="Unprocessable Entity" responseModel="org.ayeup.rest.OperationOutcome" />
-				<route>
+				<route id="PatientFind">
 					<policy ref="user">
 						<process ref="patientBSON" />
 						<to uri="mongodb:mongoBean?database=jorvik&amp;collection=Patient&amp;operation=findAll" />
@@ -159,7 +130,28 @@
 				</route>
 			</get>
 		</rest>
-
+		<rest path="/Condition" consumes="application/xml,application/json" produces="application/xml+fhir,application/xml+json">
+			<description>(Problem)</description>
+			<get uri="/{_id}" >
+			 	<description>Get condition by id</description>
+				<param name="_id" type="path" description="The internal/database id of the condition"
+					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<responseMessage message="Ok" responseModel="org.ayeup.rest.OperationOutcome" />
+				<route id="ConditionGet">
+				  <policy ref="user">
+				  	<process ref="condition" />
+					<filter>
+							<simple>${body} == null</simple>
+							<setHeader headerName="Exchange.HTTP_RESPONSE_CODE">
+								<constant>404</constant>
+							</setHeader>
+					</filter>
+				  </policy>	
+				</route>
+			</get>
+			
+		</rest>
   </camel:camelContext>
 
 </beans>

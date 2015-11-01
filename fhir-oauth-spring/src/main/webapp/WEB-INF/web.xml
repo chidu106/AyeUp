@@ -25,8 +25,9 @@
   <!-- location of spring xml files -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
-    <param-value>classpath:camel-context.xml</param-value>
+    <param-value>classpath:Spring-All.xml</param-value>
   </context-param>
+  
 
   <!-- the listener that kick-starts Spring -->
   <listener>

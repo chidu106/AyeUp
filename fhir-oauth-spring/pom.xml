@@ -40,13 +40,34 @@
 		<swagger.url>https://github.com/swagger-api/swagger-ui/archive</swagger.url>
 		<destDir>target/swagger-ui</destDir>
 		<springframework-version>4.2.1.RELEASE</springframework-version>
-		<spring-security-version>4.0.2.RELEASE</spring-security-version>
-		<spring-data-mongodb>1.5.4.RELEASE</spring-data-mongodb>
+		<spring-security-version>3.2.8.RELEASE</spring-security-version>
+		<spring-data-mongodb>1.8.0.RELEASE</spring-data-mongodb>
+		<spring-data-commons>1.11.0.RELEASE</spring-data-commons>
 		<mongo>2.13.0</mongo>
 		<slf4j-version>1.7.12</slf4j-version>
 		<jetty-plugin-version>9.3.1-SNAPSHOT</jetty-plugin-version>
 	</properties>
 
+	<dependencyManagement>
+	    <dependencies>
+	        <dependency>
+	            <groupId>org.springframework</groupId>
+	            <artifactId>spring-framework-bom</artifactId>
+	            <version>${springframework-version}</version>
+	            <type>pom</type>
+	            <scope>import</scope>
+	        </dependency>
+	        <dependency>
+				<groupId>org.springframework.security</groupId>
+				<artifactId>spring-security-bom</artifactId>
+				<version>${spring-security-version}</version>
+				<type>pom</type>
+	            <scope>import</scope>
+	    
+			</dependency>
+	        
+    	</dependencies>
+	</dependencyManagement>
 
 	<dependencies>
 		<dependency>
@@ -60,11 +81,6 @@
 			<version>${camel-version}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-web</artifactId>
-			<version>${spring-security-version}</version>
-	    </dependency>
-		<dependency>
 			<groupId>org.apache.camel</groupId>
 			<artifactId>camel-servlet</artifactId>
 			<version>${camel-version}</version>
@@ -74,18 +90,28 @@
     		<artifactId>camel-mongodb</artifactId>
     		<version>${camel-version}</version>
     	</dependency>
-    
+    	
+    	 <dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+	    </dependency>
+	    
+	     <dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+	    </dependency>
+    	
 		<dependency>
             <groupId>org.springframework</groupId>
-            <artifactId>spring-web</artifactId>
-			<version>${springframework-version}</version>
+            <artifactId>spring-web</artifactId>		
         </dependency>
-        
-         <dependency>
+	    <dependency>
     		<groupId>org.springframework.data</groupId>
     		<artifactId>spring-data-mongodb</artifactId>
     		<version>${spring-data-mongodb}</version>
-  		</dependency>
+    	
+  		</dependency> 
+       
         <!-- logging -->
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -133,7 +159,7 @@
 	<build>
 		<finalName>${project.artifactId}</finalName>
 		<plugins>
-			<!-- so we can run mvn jetty:run -->
+			<!-- so we can run mvn jetty:run 
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
@@ -146,7 +172,7 @@
                       </connector>
                    </connectors>                   
                 </configuration>
-            </plugin>
+            </plugin> -->
         </plugins>
 
 	</build>

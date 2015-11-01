@@ -16,6 +16,7 @@ public class DBCursorToString implements Processor  {
 						 + " \"resourceType\": \"Bundle\", \n";
 						
 		Response = Response + " \"entry\": [ \n";
+		@SuppressWarnings("unchecked")
 		ArrayList<DBObject> cursor = (ArrayList<DBObject>) exchange.getIn().getBody(); 
 		DBObject content = null;
 		for (int i=0; i<cursor.size(); i++) 

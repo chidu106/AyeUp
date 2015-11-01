@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/security"
+	   xmlns:beans="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="
+       	 http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+  
+  
+  <http realm="User Restrict Realm">
+  
+    <intercept-url pattern="/rest/**" access="ROLE_USER"/>
+    <http-basic/>
+ 	<!--  <security:remember-me/>  --> 
+  </http>
+  
+
+    <!--  set up the user configuration here -->
+  <spring-security:authentication-manager alias="authenticationManager">
+    <spring-security:authentication-provider user-service-ref="userDetailsService"/> 
+  <!--  <spring-security:authentication-provider user-service-ref="mongoUserDetailsService"/> -->
+  </spring-security:authentication-manager>
+
+  <spring-security:user-service id="userDetailsService">
+    <spring-security:user name="jim" password="jimspassword" authorities="ROLE_USER, ROLE_ADMIN"/>
+    <spring-security:user name="bob" password="bobspassword" authorities="ROLE_USER"/>
+  </spring-security:user-service>
+
+     	
+	
+    	
+</beans:beans>
