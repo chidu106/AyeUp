@@ -4,6 +4,7 @@ import org.jorvik.dao.Users;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.mongodb.core.MongoOperations;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -47,7 +48,7 @@ public class MongoDBAuthenticationProvider implements UserDetailsService {
 	}
 	
 	@Autowired
-	 public void setMongoTemplate(MongoTemplate mongoTemplate) {
+	 public void setMongoTemplate(@Qualifier("mongoTemplate") MongoTemplate mongoTemplate) {
 	 this.mongoTemplate = mongoTemplate;
 	 }
 	

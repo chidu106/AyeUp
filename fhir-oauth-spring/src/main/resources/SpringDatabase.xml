@@ -8,7 +8,7 @@
 		http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
 
-<context:property-placeholder location="classpath:mongodb.properties"/>
+<context:property-placeholder location="classpath:FHIROAuth2.properties"/>
 	
    <mongo:mongo id="mongo" host="${mongodb.host}" port="${mongodb.port}" />
 
