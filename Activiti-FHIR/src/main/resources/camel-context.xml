@@ -14,10 +14,10 @@
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
          http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd">
 	
-   	<bean id="outcome" class="uk.nhs.chft.dao.operationOutcomeService" />
- 	<bean id="outcomeProcessor" class="uk.nhs.chft.dao.OperationOutcomeProcessor" />
-    <bean id="orderProcessorGet" class="uk.nhs.chft.activiti.processor.OrderProcessorGet" />
-    <bean id="orderProcessorPost" class="uk.nhs.chft.activiti.processor.OrderProcessorPost" />
+   	<bean id="outcome" class="uk.co.mayfieldis.dao.operationOutcomeService" />
+ 	<bean id="outcomeProcessor" class="uk.co.mayfieldis.dao.OperationOutcomeProcessor" />
+    <bean id="orderProcessorGet" class="uk.co.mayfieldis.activiti.processor.OrderProcessorGet" />
+    <bean id="orderProcessorPost" class="uk.co.mayfieldis.activiti.processor.OrderProcessorPost" />
 	 
 	
 	 

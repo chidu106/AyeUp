@@ -1,4 +1,4 @@
-package uk.nhs.chft.security;
+package uk.co.mayfieldis.security;
 
 import java.io.UnsupportedEncodingException;
 import java.math.BigInteger;

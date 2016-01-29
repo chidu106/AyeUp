@@ -1,4 +1,4 @@
-package uk.nhs.chft.FHIRConstants;
+package uk.co.mayfieldis.FHIRConstants;
 
 public class Identifiers {
 	 public final static String URI_PATIENT_HOSPITAL_NUMBER = "http://fhir.chft.nhs.uk/HospitalNumber";

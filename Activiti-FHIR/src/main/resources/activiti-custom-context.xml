@@ -39,38 +39,13 @@
     </property>
     
     
-    <property name="mailServerHost" value="exchange.this.nhs.uk" />
+    <property name="mailServerHost" value="exchange.xxxx.nhs.uk" />
     <property name="mailServerPort" value="25" />
     
     
     <property name="configurators">
           <list>
-              <bean class="org.activiti.ldap.LDAPConfigurator">
-                <!-- Server connection params -->
-                <!-- <property name="server" value="ldap://THISDC00.xthis.nhs.uk" /> -->
-                <property name="server" value="ldap://192.168.141.81" />
-                <property name="port" value="389" />
-                  
-                <property name="user" value="HSF_LDAP@xthis.nhs.uk" />
-                <property name="password" value="H5fldap" />
-                
-                <property name="customConnectionParameters">
-    				<map>
-        				<entry key="java.naming.referral" value="follow" />
-    				</map>
-				</property>
-                <!-- Query params -->
-                <property name="baseDn" value="DC=xthis,DC=nhs,DC=uk" />
-                <property name="queryUserByUserId" value="(&amp;(objectClass=User)(objectCategory=Person)(sAMAccountName={0}))" />
-                <property name="queryUserByFullNameLike" value="(&amp;(objectClass=User)(|({0}=*{1}*)({2}=*{3}*)))" />
-                <property name="queryGroupsForUser" value="(&amp;(objectClass=group)(objectCategory=Group)(member={0}))" />
-                <!-- Attribute config -->
-                <property name="userIdAttribute" value="sAMAccountName" />
-                <property name="userFirstNameAttribute" value="givenName" />
-                <property name="userLastNameAttribute" value="sn" />
-                <property name="groupIdAttribute" value="sAMAccountName" />
-                <property name="groupNameAttribute" value="cn" />
-             </bean>
+          
           </list>
         </property>
   </bean>

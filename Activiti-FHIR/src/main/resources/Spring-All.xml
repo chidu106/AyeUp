@@ -8,10 +8,7 @@
 	 <context:annotation-config />
 	 
 	 <context:property-placeholder location="classpath:FHIRactiviti-Dev.properties"/>  
-	 
-	 <import resource="classpath:SpringCacheDatabase.xml" />
-	 <import resource="classpath:SpringSecurityCacheDatabase.xml" />
-	 <import resource="classpath:SpringResourceSecurity.xml" />  
+	  
 	 <import resource="classpath:camel-context.xml" />
 	 <import resource="classpath:activiti-custom-context.xml" />
 	 <import resource="classpath:activiti-login-context.xml" />

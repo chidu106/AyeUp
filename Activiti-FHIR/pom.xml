@@ -213,9 +213,9 @@
       		<version>${activiti-version}</version>
     	</dependency>
     	<dependency>
-  			<groupId>org.activiti</groupId>
-  			<artifactId>activiti-ldap</artifactId>
-  			<version>${activiti-version}</version>
+  			<groupId>mysql</groupId>
+  			<artifactId>mysql-connector-java</artifactId>
+  			<version>5.1.6</version>
 		</dependency>
 		
 	</dependencies>
