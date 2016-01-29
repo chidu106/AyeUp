@@ -1,0 +1,92 @@
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring-2.16.0.xsd
+         http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security-2.16.0.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+         http://www.springframework.org/schema/data/mongo http://www.springframework.org/schema/data/mongo/spring-mongo-1.5.xsd">
+	
+   	<bean id="outcome" class="uk.nhs.chft.dao.operationOutcomeService" />
+ 	<bean id="outcomeProcessor" class="uk.nhs.chft.dao.OperationOutcomeProcessor" />
+    <bean id="orderProcessorGet" class="uk.nhs.chft.activiti.processor.OrderProcessorGet" />
+    <bean id="orderProcessorPost" class="uk.nhs.chft.activiti.processor.OrderProcessorPost" />
+	 
+	
+	 
+  <camel:camelContext id="Activiti-FHIR" xmlns="http://camel.apache.org/schema/spring">
+     <redeliveryPolicyProfile id="activitiRedelivery" redeliveryDelay="${http.delay}" maximumRedeliveries="${http.max}"/>
+    
+    <!-- Catch the authorization exception and set the Access Denied message back -->
+    <onException>
+      <exception>org.apache.camel.CamelAuthorizationException</exception>
+      <handled>
+        <constant>true</constant>
+      </handled>
+      <to uri="bean:outcome?method=getOutcome(401,'Unauthorized', '')" />
+      <process ref="outcomeProcessor" />
+    </onException>
+    
+    <onException redeliveryPolicyRef="activitiRedelivery">
+    	<exception>org.apache.camel.ExchangeTimedOutException</exception>
+    	<handled>
+      		<constant>true</constant>
+      	</handled>
+      	<to uri="bean:outcome?method=getOutcome(408,${exception.message}, ${in.header.Content-Type})" />
+      	<process ref="outcomeProcessor" />
+    </onException>
+   
+    <onException>
+      <exception>org.apache.camel.http.common.HttpOperationFailedException</exception>
+      <handled>
+      	<constant>true</constant>
+      </handled>
+      <to uri="bean:outcome?method=getOutcome(522,${exception.message}, ${in.header.Content-Type})" />
+      <process ref="outcomeProcessor" />
+    </onException>
+    
+    <restConfiguration component="servlet" bindingMode="off"
+			contextPath="fhir-activiti/rest" port="8080">
+			<dataFormatProperty key="prettyPrint" value="true" />
+	</restConfiguration>
+
+    <rest path="/Order" consumes="application/xml,application/json" produces="application/xml+fhir,application/xml+json">
+			<description>(Order)</description>
+			<post uri="/" >
+				<description>Start Business Process</description>
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<route id="Add Business Process">
+				    <process ref="orderProcessorPost" />
+				</route>
+			</post>
+			<get uri="/{_id}" >
+				<description>Get Business Process</description>
+				<param name="_id" type="path" description="The internal id of the encounter"
+					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<route id="Get Business Process">
+				    <process ref="orderProcessorGet" />
+				</route>
+			</get>
+			<get uri="/" >
+				<description>Get Business Process</description>
+				<param name="_id" type="path" description="The internal id of the encounter"
+					dataType="integer" />
+				<param name="_format" type="query" dataType="string" description="Response Format" required="false" defaultValue="application/json" />
+				<route id="Find Business Process">
+				    <process ref="orderProcessorGet" />
+				</route>
+			</get>
+	</rest>
+	
+  </camel:camelContext>
+
+</beans>
+  

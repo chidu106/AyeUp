@@ -1,0 +1,78 @@
+
+
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:spring-security="http://www.springframework.org/schema/security"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:oauth2="http://www.springframework.org/schema/security/oauth2"
+      
+       xsi:schemaLocation="
+         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+         http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+         http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security.xsd
+         http://www.springframework.org/schema/security/oauth2 http://www.springframework.org/schema/security/spring-security-oauth2.xsd">
+	
+	<bean id="client-details-service" class="uk.nhs.chft.security.jdbcCacheClientDetailsService">
+	</bean>
+	
+	<oauth2:expression-handler id="oauthExpressionHandler" />  
+ 	<oauth2:web-expression-handler id="oauthWebExpressionHandler" />
+ 	  
+	 
+    <bean id="passwordEncoder"
+                class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder" />
+     
+    <bean id="tokenStore" class="uk.nhs.chft.security.CustomTokenStore"/>                         
+
+	<bean id="tokenServices" class="org.springframework.security.oauth2.provider.token.DefaultTokenServices">  
+    	<property name="tokenStore" ref="tokenStore"/>  
+    	<property name="supportRefreshToken" value="true"/>  
+    	<property name="clientDetailsService" ref="client-details-service"/>  
+	</bean>  
+	
+	 <bean id="oAuth2RequestFactory" class="org.springframework.security.oauth2.provider.request.DefaultOAuth2RequestFactory">
+        <constructor-arg ref="client-details-service"/>
+    </bean>
+    
+    <bean id="oauthAccessDeniedHandler"
+                class="org.springframework.security.oauth2.provider.error.OAuth2AccessDeniedHandler" />
+
+    <bean id="oauthAuthenticationEntryPoint"
+                class="org.springframework.security.oauth2.provider.error.OAuth2AuthenticationEntryPoint">
+        <property name="realmName" value="chft/edis"/>
+        <property name="typeName" value="Basic"/>
+    </bean>
+	  
+
+	<oauth2:resource-server id="oauth2ProviderFilter" token-services-ref="tokenServices" />
+     
+    <spring-security:http access-decision-manager-ref="accessDecisionManager" entry-point-ref="oauthAuthenticationEntryPoint" use-expressions="true" auto-config="true">
+    	<spring-security:intercept-url pattern="/rest/**" access="#oauth2.hasScope('patient/Patient.read')" />
+    	<!--  -->
+     	<spring-security:anonymous enabled="false" />
+     	<spring-security:custom-filter ref="oauth2ProviderFilter" before="PRE_AUTH_FILTER" />
+    	<spring-security:access-denied-handler ref="oauthAccessDeniedHandler" />
+    	<spring-security:expression-handler ref="oauthWebExpressionHandler"/>
+    	<spring-security:csrf disabled="true"/>
+  	</spring-security:http>
+ 
+  	<spring-security:authentication-manager alias="authenticationManager">
+    
+  	</spring-security:authentication-manager>
+ 
+  	<bean id="accessDecisionManager" class="org.springframework.security.access.vote.UnanimousBased">
+    	<constructor-arg>
+			<list>
+				<bean class="org.springframework.security.oauth2.provider.vote.ScopeVoter" />
+      			<bean class="org.springframework.security.access.vote.AuthenticatedVoter" />
+      			<bean class="org.springframework.security.web.access.expression.WebExpressionVoter">
+      				<property name="expressionHandler" ref="oauthWebExpressionHandler" />
+      			</bean>
+			</list>
+		</constructor-arg>
+
+ 	</bean>
+  
+
+</beans>
+  
