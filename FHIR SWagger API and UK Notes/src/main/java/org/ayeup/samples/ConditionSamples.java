@@ -4,7 +4,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.ayeup.constants.NHS.NHSUKConstants;
+import org.ayeup.NHS.NHSFHIRCodeSystems;
 import org.ayeup.constants.openEHR.GOVFictitiousCouncil;
 import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.Condition;
@@ -32,7 +32,7 @@ public class ConditionSamples {
 		
 		CodeableConcept code = new CodeableConcept();
 		code.addCoding()
-			.setSystem(NHSUKConstants.URI_SNOMED)
+			.setSystem(NHSFHIRCodeSystems.URI_SNOMED)
 			.setCode("22298006")
 			.setDisplay("myocardial infarction");
 		condition.setCode(code);

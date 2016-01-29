@@ -1,0 +1,215 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:activiti="http://activiti.org/bpmn" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:omgdc="http://www.omg.org/spec/DD/20100524/DC" xmlns:omgdi="http://www.omg.org/spec/DD/20100524/DI" typeLanguage="http://www.w3.org/2001/XMLSchema" expressionLanguage="http://www.w3.org/1999/XPath" targetNamespace="http://www.activiti.org/test">
+  <process id="RejectOrderProcess" name="Diagnostic Order (Unmatched Patient)" isExecutable="true">
+    <startEvent id="startevent1" name="Start"></startEvent>
+    <userTask id="diagnosticOrder" name="Diagnostic Order ${NHSNumber} ${testName}" activiti:assignee="jbray2" activiti:candidateUsers="Kevin.Mayfield" activiti:candidateGroups="PathologyIT,THIS_CSD">
+      <extensionElements>
+        <activiti:formProperty id="NHSNumber" name="NHS Number" type="string" variable="NHSNumber" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="HospitalNumber" name="Hospital Number" type="string" variable="hospitalNumber" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="givenName" name="Forename" type="string" variable="givenName" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="familyName" name="Surname" type="string" variable="familyName" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="patientDOB" name="patientDOB" type="string" variable="patientDOB" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="testName" name="Test Name" type="string" variable="testName" writable="false"></activiti:formProperty>
+        <activiti:formProperty id="alertProcessed" name="Resend this Order" type="enum" variable="alertProcessed" required="true">
+          <activiti:value id="true" name="Yes"></activiti:value>
+          <activiti:value id="false" name="No"></activiti:value>
+        </activiti:formProperty>
+        <activiti:formProperty id="explanation" name="Explanation"></activiti:formProperty>
+      </extensionElements>
+    </userTask>
+    <endEvent id="endevent1" name="End"></endEvent>
+    <serviceTask id="mailtask1" name="Mail Task" activiti:type="mail">
+      <extensionElements>
+        <activiti:field name="to">
+          <activiti:string><![CDATA[kevin.mayfield@this.nhs.uk,Jonathan.Bray@cht.nhs.uk,denise.vieira@this.nhs.uk]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="from">
+          <activiti:string><![CDATA[dev.diagnostic.orders@this.nhs.uk]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="subject">
+          <activiti:expression><![CDATA[ICE Order Patient Duplicated on Apex ${NHSNumber} ${testName}]]></activiti:expression>
+        </activiti:field>
+        <activiti:field name="text">
+          <activiti:string><![CDATA[This is a non html email]]></activiti:string>
+        </activiti:field>
+        <activiti:field name="html">
+          <activiti:expression><![CDATA[<html xmlns="http://www.w3.org/1999/xhtml">
+<head><meta name="viewport" content="width=device-width" /><meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Really Simple HTML Email Template</title>
+<style>
+* {
+margin: 0;
+	padding: 0;
+font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+	font-size: 100%;
+	line-height: 1.1;
+}
+table.body-wrap {
+width: 100%;
+	padding: 20px;
+}
+table.body-wrap .container {
+border: 1px solid #f0f0f0;
+}
+h1, h2, h3 {
+font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+color: #000;
+margin: 15px 0 10px;
+line-height: 1.2;
+font-weight: 200;
+}
+h1 {
+font-size: 24px;
+}
+h2 {
+font-size: 18px;
+}
+h3 {
+font-size: 14px;
+}
+p, ul, ol {
+margin-bottom: 5px;
+font-family: "Helvetica Neue", Helvetica, Arial, "Lucida Grande", sans-serif;
+font-weight: normal;
+font-size: 10px;
+}
+.container {
+display: block!important;
+max-width: 600px!important;
+margin: 0 auto!important; 
+clear: both!important;
+}
+.body-wrap .container {
+	padding: 20px;
+}
+.content {
+max-width: 600px;
+margin: 0 auto;
+display: block;
+}
+.content table {
+width: 100%;
+}
+</style>
+</head>
+<body bgcolor="#f6f6f6">
+<br />
+<p>ICE Order to Apex has not been processed due to quality rules. </p><br />
+<br />
+<table class="body-wrap" bgcolor="#f6f6f6">
+<tr>
+<td></td>
+		<td class="container" bgcolor="#FFFFFF">
+		<div class="content">
+<table>
+<tr>
+<td><h3>System</h3></td>
+<td><h3>Name</h3></td>
+<td><h3>Date Of Birth</h3></td>
+<td><h3>Hospital Number</h3></td>
+<td><h3>NHSNumber</h3></td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><p>ICE</p></td>
+<td><p>${givenName} ${familyName}</p></td>
+<td><p>${patientDOB}</p></td>
+<td><p>${hospitalNumber}</p></td>
+<td><p>${NHSNumber} </p></td>
+</tr>
+<tr>
+<td><p>Apex</p></td>
+<td><p>${apexgivenName} ${apexfamilyName}</p></td>
+<td><p>${apexpatientDOB}</p></td>
+<td><p>${apexhospitalNumber}</p></td>
+<td><p>${apexNHSNumber} </p></td>
+</tr>
+</table>
+</td>
+	<td></td>
+</tr>
+</table>
+<br />
+<br />
+<p>A task has been created on <a href="http://chft-tiedev:8080/activiti-explorer">Activiti</a></p>
+</body>
+</html>]]></activiti:expression>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow1" sourceRef="startevent1" targetRef="mailtask1"></sequenceFlow>
+    <sequenceFlow id="flow2" sourceRef="mailtask1" targetRef="diagnosticOrder"></sequenceFlow>
+    <exclusiveGateway id="exclusivegateway1"></exclusiveGateway>
+    <sequenceFlow id="flow3" sourceRef="diagnosticOrder" targetRef="exclusivegateway1"></sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="sendHL7task" targetRef="endevent1"></sequenceFlow>
+    <serviceTask id="sendHL7task" name="Send HL7 Task" activiti:async="true" activiti:exclusive="false" activiti:type="camel">
+      <extensionElements>
+        <activiti:field name="camelContext">
+          <activiti:string><![CDATA[ActivitiUI]]></activiti:string>
+        </activiti:field>
+      </extensionElements>
+    </serviceTask>
+    <sequenceFlow id="flow5" name="Dont send order" sourceRef="exclusivegateway1" targetRef="endevent1">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${alertProcessed==false}]]></conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="resendFlow" name="Send HL7 Message" sourceRef="exclusivegateway1" targetRef="sendHL7task">
+      <conditionExpression xsi:type="tFormalExpression"><![CDATA[${alertProcessed==true}]]></conditionExpression>
+    </sequenceFlow>
+  </process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_RejectOrderProcess">
+    <bpmndi:BPMNPlane bpmnElement="RejectOrderProcess" id="BPMNPlane_RejectOrderProcess">
+      <bpmndi:BPMNShape bpmnElement="startevent1" id="BPMNShape_startevent1">
+        <omgdc:Bounds height="30.0" width="30.0" x="100.0" y="170.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="diagnosticOrder" id="BPMNShape_diagnosticOrder">
+        <omgdc:Bounds height="55.0" width="105.0" x="420.0" y="159.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="endevent1" id="BPMNShape_endevent1">
+        <omgdc:Bounds height="28.0" width="28.0" x="1020.0" y="171.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="mailtask1" id="BPMNShape_mailtask1">
+        <omgdc:Bounds height="55.0" width="105.0" x="230.0" y="159.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="exclusivegateway1" id="BPMNShape_exclusivegateway1">
+        <omgdc:Bounds height="40.0" width="40.0" x="600.0" y="165.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="sendHL7task" id="BPMNShape_sendHL7task">
+        <omgdc:Bounds height="80.0" width="100.36219727999992" x="765.0" y="330.0"></omgdc:Bounds>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="resendFlow" id="BPMNEdge_resendFlow">
+        <omgdi:waypoint x="620.0" y="205.0"></omgdi:waypoint>
+        <omgdi:waypoint x="620.0" y="374.0"></omgdi:waypoint>
+        <omgdi:waypoint x="765.0" y="374.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow1" id="BPMNEdge_flow1">
+        <omgdi:waypoint x="129.9993985659136" y="185.13432297223207"></omgdi:waypoint>
+        <omgdi:waypoint x="230.0" y="186.02985074626866"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow2" id="BPMNEdge_flow2">
+        <omgdi:waypoint x="335.0" y="186.5"></omgdi:waypoint>
+        <omgdi:waypoint x="420.0" y="186.5"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow3" id="BPMNEdge_flow3">
+        <omgdi:waypoint x="525.0" y="186.5"></omgdi:waypoint>
+        <omgdi:waypoint x="562.5" y="186.5"></omgdi:waypoint>
+        <omgdi:waypoint x="562.5" y="185.0"></omgdi:waypoint>
+        <omgdi:waypoint x="600.0" y="185.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow5" id="BPMNEdge_flow5">
+        <omgdi:waypoint x="640.0" y="185.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1020.0" y="185.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="flow6" id="BPMNEdge_flow6">
+        <omgdi:waypoint x="865.3621972799999" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1034.0" y="377.0"></omgdi:waypoint>
+        <omgdi:waypoint x="1034.0" y="199.0"></omgdi:waypoint>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+  </bpmndi:BPMNDiagram>
+</definitions>

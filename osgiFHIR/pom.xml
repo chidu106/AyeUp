@@ -29,7 +29,7 @@
     <!-- use utf-8 encoding -->
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <fhir-version>1.2</fhir-version>
+    <hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
     <bundle.symbolicName>OSGIFHIR.Bundle</bundle.symbolicName>
     <bundle.namespace>org.openehr.bundle.fhir</bundle.namespace>
   </properties>
@@ -39,7 +39,7 @@
 		<dependency>
 			<groupId>me.fhir</groupId>
 			<artifactId>fhir-dstu2</artifactId>
-			<version>1.0.0.6881</version>
+			<version>${hl7-fhir-me-version}</version>
 		</dependency>
 
 

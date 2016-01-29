@@ -5,9 +5,8 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.ayeup.NHS.NHSFHIRCodeSystems;
 import org.ayeup.constants.NHS.NHSFicitiousTrustConstants;
-import org.ayeup.constants.NHS.NHSEnglandConstants;
-import org.ayeup.constants.NHS.NHSScotlandConstants;
 import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
 import org.hl7.fhir.instance.model.Narrative;
 import org.hl7.fhir.instance.model.Patient;
@@ -26,12 +25,12 @@ public class PatientSamples {
 			
 			// This is different to GPSoc requirement. 
 	        patient.addIdentifier()
-	        	.setSystem(NHSEnglandConstants.URI_NHS_NUMBER_ENGLAND)
+	        	.setSystem(NHSFHIRCodeSystems.URI_NHS_NUMBER_ENGLAND)
 	        	.setValue("9123456"+id)
 	        	.setUse(IdentifierUse.OFFICIAL);
 	        
 	        patient.addIdentifier()
-	        	.setSystem(NHSScotlandConstants.URI_CHI_NUMBER_SCOTLAND)
+	        	.setSystem(NHSFHIRCodeSystems.URI_CHI_NUMBER_SCOTLAND)
 	        	.setValue("3312316"+id)
 	        	.setUse(IdentifierUse.OFFICIAL);
 	        
