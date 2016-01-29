@@ -1,4 +1,4 @@
-package uk.nhs.chft.processor.activiti;
+package uk.co.mayfieldis.processor.activiti;
 
 import java.util.Date;
 
@@ -12,9 +12,9 @@ import org.hl7.fhir.instance.model.Reference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import uk.nhs.chft.dao.FHIRCodeSystems;
-import uk.nhs.chft.dao.ResourceSerialiser;
-import uk.nhs.chft.esb.activiti.ActivitiCamelRoute;
+import uk.co.mayfieldis.dao.FHIRCodeSystems;
+import uk.co.mayfieldis.dao.ResourceSerialiser;
+import uk.co.mayfieldis.esb.activiti.ActivitiCamelRoute;
 
 public class activitiTasktoFHIRTask implements Processor {
 

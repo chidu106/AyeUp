@@ -254,7 +254,11 @@
       <version>2.3.0</version>
         <scope>provided</scope>
     </dependency>
-
+	<dependency>
+  		<groupId>mysql</groupId>
+  		<artifactId>mysql-connector-java</artifactId>
+  		<version>5.1.6</version>
+	</dependency>
     <!-- Vaadin addons -->
     <!-- Must be defined both in activiti-explorer and activiti-webapp-explorer, 
       as otherwise the gwt compiler won't find it -->

@@ -26,10 +26,10 @@
        http://activemq.apache.org/schema/core http://activemq.apache.org/schema/core/activemq-core.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 	
-	<bean id="taskProcessor" class="uk.nhs.chft.processor.activiti.activitiTasktoFHIRTask" />
+	<bean id="taskProcessor" class="uk.co.mayfieldis.processor.activiti.activitiTasktoFHIRTask" />
 	
   	<camelContext id="ActivitiUI" xmlns="http://camel.apache.org/schema/spring">
-    	<package>uk.nhs.chft.esb.activiti</package>
+    	<package>uk.co.mayfieldis.esb.activiti</package>
   	</camelContext>
 
 </beans>

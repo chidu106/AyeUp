@@ -1,4 +1,4 @@
-package uk.nhs.chft.dao;
+package uk.co.mayfieldis.dao;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;

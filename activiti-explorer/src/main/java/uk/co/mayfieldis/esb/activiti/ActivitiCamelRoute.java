@@ -1,4 +1,4 @@
-package uk.nhs.chft.esb.activiti;
+package uk.co.mayfieldis.esb.activiti;
 
 
 import org.apache.camel.builder.RouteBuilder;
