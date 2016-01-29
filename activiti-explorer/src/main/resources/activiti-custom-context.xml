@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+  xmlns:jee="http://www.springframework.org/schema/jee" xmlns:aop="http://www.springframework.org/schema/aop"
+  xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.0.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.0.xsd
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+       http://www.springframework.org/schema/jee http://www.springframework.org/schema/jee/spring-jee-3.0.xsd
+       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-3.0.xsd">
+       
+  <bean id="dbProperties" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="location" value="classpath:db.properties" />
+    <property name="ignoreUnresolvablePlaceholders" value="true" />
+  </bean>
+    
+  <bean id="dataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <property name="driverClassName" value="${jdbc.driver}" />
+    <property name="url" value="${jdbc.url}" />
+    <property name="username" value="${jdbc.username}" />
+    <property name="password" value="${jdbc.password}" />
+    <property name="defaultAutoCommit" value="false" />
+  </bean>
+
+  <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+  	<property name="dataSource" ref="dataSource" />
+  </bean>
+  
+  <bean id="processEngineConfiguration" class="org.activiti.spring.SpringProcessEngineConfiguration">
+  	<property name="dataSource" ref="dataSource" />
+  	<property name="transactionManager" ref="transactionManager" />
+  	<property name="databaseSchemaUpdate" value="true" />
+  	<property name="jobExecutorActivate" value="true" />
+    <property name="enableDatabaseEventLogging" value="true" />
+    <property name="customFormTypes">
+      <list>
+        <bean class="org.activiti.explorer.form.UserFormType"/>
+        <bean class="org.activiti.explorer.form.ProcessDefinitionFormType"/> 
+        <bean class="org.activiti.explorer.form.MonthFormType"/>   
+      </list>
+    </property>
+    
+    
+    <property name="mailServerHost" value="exchange.this.nhs.uk" />
+    <property name="mailServerPort" value="25" />
+    <!--  <property name="mailServerUsername" value="my@host.com" />
+    <property name="mailServerPassword" value="hostpassword"/>  -->
+    
+    <property name="configurators">
+          <list>
+              <bean class="org.activiti.ldap.LDAPConfigurator">
+                <!-- Server connection params -->
+                <!-- <property name="server" value="ldap://THISDC00.xthis.nhs.uk" /> -->
+                <property name="server" value="ldap://192.168.141.81" />
+                <property name="port" value="389" />
+                  
+                <property name="user" value="HSF_LDAP@xthis.nhs.uk" />
+                <property name="password" value="H5fldap" />
+                
+                <property name="customConnectionParameters">
+    				<map>
+        				<entry key="java.naming.referral" value="follow" />
+    				</map>
+				</property>
+                <!-- Query params -->
+                <property name="baseDn" value="DC=xthis,DC=nhs,DC=uk" />
+                <property name="queryUserByUserId" value="(&amp;(objectClass=User)(objectCategory=Person)(sAMAccountName={0}))" />
+                <property name="queryUserByFullNameLike" value="(&amp;(objectClass=User)(|({0}=*{1}*)({2}=*{3}*)))" />
+                <property name="queryGroupsForUser" value="(&amp;(objectClass=group)(objectCategory=Group)(member={0}))" />
+                <!-- Attribute config -->
+                <property name="userIdAttribute" value="sAMAccountName" />
+                <property name="userFirstNameAttribute" value="givenName" />
+                <property name="userLastNameAttribute" value="sn" />
+                <property name="userEmailAttribute" value="mail" />
+                <property name="groupIdAttribute" value="sAMAccountName" />
+                <property name="groupNameAttribute" value="sAMAccountName" />
+             </bean>
+          </list>
+        </property>
+  </bean>
+  
+  <bean id="processEngine" class="org.activiti.spring.ProcessEngineFactoryBean" destroy-method="destroy">
+  	<property name="processEngineConfiguration" ref="processEngineConfiguration" />
+  </bean>
+  
+ 
+  
+  <bean id="repositoryService" factory-bean="processEngine" factory-method="getRepositoryService" />
+  <bean id="runtimeService" factory-bean="processEngine" factory-method="getRuntimeService" />
+  <bean id="taskService" factory-bean="processEngine" factory-method="getTaskService" />
+  <bean id="formService" factory-bean="processEngine" factory-method="getFormService" />
+  <bean id="historyService" factory-bean="processEngine" factory-method="getHistoryService" />
+  <bean id="managementService" factory-bean="processEngine" factory-method="getManagementService" />
+  <bean id="identityService" factory-bean="processEngine" factory-method="getIdentityService" />  
+  
+</beans>
