@@ -64,7 +64,7 @@ public class ExampleServerIT {
 		WebAppContext webAppContext = new WebAppContext();
 		webAppContext.setContextPath("/");
 		webAppContext.setDescriptor(path + "/src/main/webapp/WEB-INF/web.xml");
-		webAppContext.setResourceBase(path + "/target/hapi-fhir-jpaserver-example");
+		webAppContext.setResourceBase(path + "/target/hapi-fhir-jpaserver");
 		webAppContext.setParentLoaderPriority(true);
 
 		ourServer.setHandler(webAppContext);
