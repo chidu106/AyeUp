@@ -15,19 +15,20 @@ angular
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'mgcrea.ngStrap'
   ])
   .config(function ($routeProvider) {
     $routeProvider
-      .when('/', {
-        templateUrl: 'views/main.html',
-        controller: 'MainCtrl'
+      .when('/dashboard', {
+        templateUrl: 'views/dashboard.html',
+        controller: 'DashboardCtrl'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
+      .when('/watchlist/:listId', {
+        templateUrl: 'views/watchlist.html',
+        controller: 'WatchlistCtrl'
       })
       .otherwise({
-        redirectTo: '/'
+        redirectTo: '/dashboard'
       });
   });

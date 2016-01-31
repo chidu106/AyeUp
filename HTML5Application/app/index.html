@@ -1,4 +1,6 @@
 <!doctype html>
+
+<!-- https://github.com/diegonetto/stock-dog -->
 <html class="no-js">
   <head>
     <meta charset="utf-8">
@@ -15,41 +17,55 @@
     <link rel="stylesheet" href="styles/main.css">
     <!-- endbuild -->
   </head>
-  <body ng-app="stockDogApp">
-    <!--[if lt IE 7]>
-      <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
+ 
+   <body ng-app="stockDogApp" ng-controller="MainCtrl">
+    <nav class="navbar navbar-inverse" role="navigation" ng-cloak>
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle"
+            data-toggle="collapse" data-target="#main-nav">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="/">Stock Dog</a>
+        </div>
 
-    <!-- Add your site or application content here -->
-    <div class="container">
-      <div class="header">
-        <ul class="nav nav-pills pull-right">
-          <li class="active"><a ng-href="#">Home</a></li>
-          <li><a ng-href="#/about">About Now</a></li>
-          <li><a ng-href="#">Contact Wait Out</a></li>
-        </ul>
-        <h3 class="text-muted">stockDog</h3>
-      </div>
+        <!-- Collect the nav links and other content for toggling -->
+        <div class="collapse navbar-collapse" id="main-nav">
+          <ul class="nav navbar-nav navbar-right">
+            <!-- Add active class to necessary item -->
+            <li ng-class="{active: activeView === 'dashboard'}">
+              <a href="/">Dashboard</a>
+            </li>
+            <li ng-class="{active: activeView === 'watchlist'}"
+              class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown">
+                Watchlists <b class="caret"></b>
+              </a>
+              <ul class="dropdown-menu">
+                <li ng-if="!watchlists.length" class="dropdown-header">
+                  No lists found
+                </li>
+                <!-- Create a unique link for each watchlist -->
+                <li ng-repeat="list in watchlists track by $index">
+                  <a href="/#/watchlist/{{list.id}}">{{list.name}}</a>
+                </li>
+              </ul>
+            </li>
+          </ul>
+        </div><!-- /.navbar-collapse -->
+      </div><!-- /.container-fluid -->
+    </nav>
 
+    <!-- Main container -->
+    <div class="container-fluid" id="main">
       <div ng-view=""></div>
 
       <div class="footer">
-        <p><span class="glyphicon glyphicon-heart"></span> from Polar - The Ex-Yeoman Of Signals TA</p>
+        <p>Built with <span class="glyphicon glyphicon-heart"></span> by Diego and Val</p>
       </div>
     </div>
-
-
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID -->
-     <script>
-       (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
-       (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
-       m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
-       })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
-
-       ga('create', 'UA-XXXXX-X');
-       ga('send', 'pageview');
-    </script>
-
     <!-- build:js(.) scripts/oldieshim.js -->
     <!--[if lt IE 9]>
     <script src="bower_components/es5-shim/es5-shim.js"></script>
@@ -68,13 +84,20 @@
     <script src="bower_components/angular-animate/angular-animate.js"></script>
     <script src="bower_components/angular-touch/angular-touch.js"></script>
     <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-strap/dist/angular-strap.min.js"></script>
+    <script src="bower_components/angular-strap/dist/angular-strap.tpl.min.js"></script>
+    <script src="bower_components/lodash/dist/lodash.compat.js"></script>
     <!-- endbower -->
     <!-- endbuild -->
 
         <!-- build:js({.tmp,app}) scripts/scripts.js -->
         <script src="scripts/app.js"></script>
+        
+        <script src="scripts/services/watchlist-service.js"></script>
+        <script src="scripts/directives/stk-watchlist-panel.js"></script>
+        <script src="scripts/controllers/dashboard.js"></script>
+        <script src="scripts/controllers/watchlist.js"></script>
         <script src="scripts/controllers/main.js"></script>
-        <script src="scripts/controllers/about.js"></script>
         <!-- endbuild -->
 </body>
 </html>
