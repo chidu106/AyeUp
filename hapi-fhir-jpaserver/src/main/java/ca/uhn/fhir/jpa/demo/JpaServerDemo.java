@@ -5,7 +5,6 @@ import java.util.List;
 
 import javax.servlet.ServletException;
 
-import org.hl7.fhir.dstu21.model.Meta;
 import org.springframework.web.context.ContextLoaderListener;
 import org.springframework.web.context.WebApplicationContext;
 
@@ -15,10 +14,8 @@ import ca.uhn.fhir.jpa.dao.DaoConfig;
 import ca.uhn.fhir.jpa.dao.IFhirSystemDao;
 import ca.uhn.fhir.jpa.provider.JpaConformanceProviderDstu1;
 import ca.uhn.fhir.jpa.provider.JpaConformanceProviderDstu2;
-import ca.uhn.fhir.jpa.provider.JpaConformanceProviderDstu21;
 import ca.uhn.fhir.jpa.provider.JpaSystemProviderDstu1;
 import ca.uhn.fhir.jpa.provider.JpaSystemProviderDstu2;
-import ca.uhn.fhir.jpa.provider.JpaSystemProviderDstu21;
 import ca.uhn.fhir.model.api.IResource;
 import ca.uhn.fhir.model.dstu2.composite.MetaDt;
 import ca.uhn.fhir.model.dstu2.resource.Bundle;
@@ -63,8 +60,6 @@ public class JpaServerDemo extends RestfulServer {
 			resourceProviderBeanName = "myResourceProvidersDstu1";
 		} else if (fhirVersion == FhirVersionEnum.DSTU2) {
 			resourceProviderBeanName = "myResourceProvidersDstu2";
-		} else if (fhirVersion == FhirVersionEnum.DSTU2_1) {
-			resourceProviderBeanName = "myResourceProvidersDstu21";
 		} else {
 			throw new IllegalStateException();
 		}
@@ -80,8 +75,6 @@ public class JpaServerDemo extends RestfulServer {
 			systemProvider = myAppCtx.getBean("mySystemProviderDstu1", JpaSystemProviderDstu1.class);
 		} else if (fhirVersion == FhirVersionEnum.DSTU2) {
 			systemProvider = myAppCtx.getBean("mySystemProviderDstu2", JpaSystemProviderDstu2.class);
-		} else if (fhirVersion == FhirVersionEnum.DSTU2_1) {
-			systemProvider = myAppCtx.getBean("mySystemProviderDstu21", JpaSystemProviderDstu21.class);
 		} else {
 			throw new IllegalStateException();
 		}
@@ -101,13 +94,6 @@ public class JpaServerDemo extends RestfulServer {
 		} else if (fhirVersion == FhirVersionEnum.DSTU2) {
 			IFhirSystemDao<Bundle, MetaDt> systemDao = myAppCtx.getBean("mySystemDaoDstu2", IFhirSystemDao.class);
 			JpaConformanceProviderDstu2 confProvider = new JpaConformanceProviderDstu2(this, systemDao,
-					myAppCtx.getBean(DaoConfig.class));
-			confProvider.setImplementationDescription("Example Server");
-			setServerConformanceProvider(confProvider);
-		} else if (fhirVersion == FhirVersionEnum.DSTU2_1) {
-			IFhirSystemDao<org.hl7.fhir.dstu21.model.Bundle, Meta> systemDao = myAppCtx
-					.getBean("mySystemDaoDstu21", IFhirSystemDao.class);
-			JpaConformanceProviderDstu21 confProvider = new JpaConformanceProviderDstu21(this, systemDao,
 					myAppCtx.getBean(DaoConfig.class));
 			confProvider.setImplementationDescription("Example Server");
 			setServerConformanceProvider(confProvider);

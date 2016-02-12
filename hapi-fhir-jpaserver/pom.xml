@@ -45,7 +45,7 @@
 		<jetty-plugin-version>9.3.1-SNAPSHOT</jetty-plugin-version>
 		<commons-dbcp-version>1.4</commons-dbcp-version>
 		<hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
-		<hapi-fhir-version>1.4-SNAPSHOT</hapi-fhir-version>
+		<hapi-fhir-version>1.4</hapi-fhir-version>
 		<activiti-version>5.19.0.1</activiti-version>
 	</properties>
 	<dependencies>
@@ -216,8 +216,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.6</source>
-					<target>1.6</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 
