@@ -1,4 +1,4 @@
-package uk.co.mayfieldis.dao;
+package uk.co.mayfieldis.activiti.processor;
 
 import java.io.ByteArrayInputStream;
 
