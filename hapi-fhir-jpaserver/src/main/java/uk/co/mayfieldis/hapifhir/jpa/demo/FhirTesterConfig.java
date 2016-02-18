@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.demo;
+package uk.co.mayfieldis.hapifhir.jpa.demo;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

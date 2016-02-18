@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.demo;
+package uk.co.mayfield.hapifhir.jpa.demo;
 
 import static org.junit.Assert.assertEquals;
 

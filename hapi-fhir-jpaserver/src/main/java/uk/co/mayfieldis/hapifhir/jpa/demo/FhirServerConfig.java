@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.demo;
+package uk.co.mayfieldis.hapifhir.jpa.demo;
 
 import java.sql.SQLException;
 import java.util.Properties;
@@ -90,7 +90,7 @@ public class FhirServerConfig extends BaseJavaConfigDstu2 {
 		extraProperties.put("hibernate.cache.use_minimal_puts", "false");
 		extraProperties.put("hibernate.search.default.directory_provider", "filesystem");
 		// needed to set properties of this directory sudo chmod -R 777 .
-		extraProperties.put("hibernate.search.default.indexBase", "/var/lucene/indexes");
+		extraProperties.put("hibernate.search.default.indexBase", "/Development/lucene/indexes");
 		extraProperties.put("hibernate.search.lucene_version", "LUCENE_CURRENT");
 		return extraProperties;
 	}

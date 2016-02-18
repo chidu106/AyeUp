@@ -1,4 +1,4 @@
-package ca.uhn.fhir.jpa.demo;
+package uk.co.mayfieldis.hapifhir.jpa.demo;
 
 import java.util.Collection;
 import java.util.List;

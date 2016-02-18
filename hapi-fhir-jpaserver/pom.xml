@@ -4,9 +4,9 @@
 	<!-- Note: HAPI projects use the "hapi-fhir" POM as their base to provide easy management. You do not need to use this in your own projects, so the "parent" tag and it's contents below may be removed 
 		if you are using this file as a basis for your own project. -->
 	<parent>
-		<groupId>ca.uhn.hapi.fhir</groupId>
-		<artifactId>hapi-fhir</artifactId>
-		<version>1.4-SNAPSHOT</version>
+		<groupId>uk.co.mayfield-is</groupId>
+		<artifactId>Jorvik-fhir</artifactId>
+		<version>0.1</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
@@ -44,9 +44,7 @@
 		<slf4j-version>1.7.12</slf4j-version>
 		<jetty-plugin-version>9.3.1-SNAPSHOT</jetty-plugin-version>
 		<commons-dbcp-version>1.4</commons-dbcp-version>
-		<hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
-		<hapi-fhir-version>1.4</hapi-fhir-version>
-		<activiti-version>5.19.0.1</activiti-version>
+		
 	</properties>
 	<dependencies>
 
@@ -270,5 +268,4 @@
 		</plugins>
 	</build>
 
-	<!-- <groupId>uk.co.mayfieldis.ayeup</groupId>  -->
 </project>
