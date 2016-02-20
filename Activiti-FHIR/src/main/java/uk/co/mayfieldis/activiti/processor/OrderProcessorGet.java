@@ -9,7 +9,7 @@ import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.Order;
 import org.hl7.fhir.instance.model.Patient;
 import org.hl7.fhir.instance.model.Reference;
-import org.hl7.fhir.instance.model.Type;
+
 
 import uk.co.mayfieldis.dao.FHIRCodeSystems;
 import uk.co.mayfieldis.dao.ResourceSerialiser;

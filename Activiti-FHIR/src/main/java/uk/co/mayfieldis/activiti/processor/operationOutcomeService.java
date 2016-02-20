@@ -7,6 +7,8 @@ import org.hl7.fhir.instance.model.OperationOutcome;
 import org.hl7.fhir.instance.model.OperationOutcome.IssueSeverity;
 import org.hl7.fhir.instance.model.OperationOutcome.IssueType;
 
+import uk.co.mayfieldis.dao.ResourceSerialiser;
+
 public class operationOutcomeService {
 	
 	public operationOutcomeService() {
