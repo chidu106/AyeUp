@@ -14,33 +14,35 @@
   
   <packaging>war</packaging>
   
-  <properties>
-   
-    <camel-version>2.16.2</camel-version>
-    <cxf-version>3.0.4</cxf-version>
-    <hawtio-version>1.4.50</hawtio-version>
-    <hsqldb-version>1.8.0.10</hsqldb-version>
-    <junit-version>4.11</junit-version>
-    <log4j-version>1.2.17</log4j-version>
-    <spring-version>4.1.6.RELEASE</spring-version>
-    <slf4j-version>1.7.5</slf4j-version>
-    <xbean-version>3.18</xbean-version>
-    <bundle-plugin-version>2.3.7</bundle-plugin-version>
-    <jetty-plugin-version>8.1.16.v20140903</jetty-plugin-version>
-    <scala-version>2.11.5</scala-version>
-    <scala-plugin-version>3.1.6</scala-plugin-version>
-    <!-- use utf-8 encoding -->
-    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-    <fhir-version>1.2</fhir-version>
-    <hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
-    <insight-log4j>1.2.0.Beta4</insight-log4j>
-    <bundle.symbolicName>EDMSCamelRoute.Bundle</bundle.symbolicName>
-    <bundle.namespace>uk.co.mayfieldis.esb.SDSHAPI</bundle.namespace>
-        <springframework-version>4.2.1.RELEASE</springframework-version>
+  	<properties>
+   		<camel-version>2.16.2</camel-version>
+	    <cxf-version>3.0.4</cxf-version>
+	    <hawtio-version>1.4.50</hawtio-version>
+	    <hsqldb-version>1.8.0.10</hsqldb-version>
+	    <junit-version>4.11</junit-version>
+	    <log4j-version>1.2.17</log4j-version>
+	    <spring-version>4.1.6.RELEASE</spring-version>
+	    <slf4j-version>1.7.5</slf4j-version>
+	    <xbean-version>3.18</xbean-version>
+	    <bundle-plugin-version>2.3.7</bundle-plugin-version>
+	    <jetty-plugin-version>8.1.16.v20140903</jetty-plugin-version>
+	    <scala-version>2.11.5</scala-version>
+	    <scala-plugin-version>3.1.6</scala-plugin-version>
+	    <!-- use utf-8 encoding -->
+	    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+	    <fhir-version>1.2</fhir-version>
+	    <hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
+	    <insight-log4j>1.2.0.Beta4</insight-log4j>
+    	<bundle.symbolicName>EDMSCamelRoute.Bundle</bundle.symbolicName>
+    	<bundle.namespace>uk.co.mayfieldis.esb.SDSHAPI</bundle.namespace>
+    	<springframework-version>4.2.1.RELEASE</springframework-version>
 		<spring-security-version>4.0.2.RELEASE</spring-security-version>
 		<spring-security-oauth2>2.0.7.RELEASE</spring-security-oauth2>
-  </properties>
+		<derby-version>10.12.1.1</derby-version>
+			<hibernate_version>5.0.7.Final</hibernate_version>
+		<hibernate_validator_version>5.2.2.Final</hibernate_validator_version>
+  	</properties>
 
 	<build>
 	 	<finalName>${project.artifactId}</finalName>
@@ -175,13 +177,54 @@
 		<artifactId>fhir-dstu2</artifactId>
 		<version>${hl7-fhir-me-version}</version>
 	</dependency>
-	<!-- 
+	
 	<dependency>
-		<groupId>org.docx4j</groupId>
-		<artifactId>docx4j</artifactId>
-		<version>3.2.1</version>
+		<groupId>org.apache.derby</groupId>
+		<artifactId>derby</artifactId>
+		<version>${derby-version}</version>
 	</dependency>
-	 -->
+	<dependency>
+		<groupId>org.apache.derby</groupId>
+		<artifactId>derbynet</artifactId>
+		<version>${derby-version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.apache.derby</groupId>
+		<artifactId>derbyclient</artifactId>
+		<version>${derby-version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+		<version>${hibernate_version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-ehcache</artifactId>
+		<version>${hibernate_version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-entitymanager</artifactId>
+		<version>${hibernate_version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-validator</artifactId>
+		<version>${hibernate_validator_version}</version>
+	</dependency>
+	<dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-search-orm</artifactId>
+		<version>5.5.2.Final</version>
+	</dependency>
+	<dependency>
+		<groupId>org.javassist</groupId>
+		<artifactId>javassist</artifactId>
+		<version>3.20.0-GA</version>
+	</dependency>
+
+	
 	<dependency>
 		<groupId>org.slf4j</groupId>
 		<artifactId>slf4j-api</artifactId>
@@ -194,9 +237,15 @@
         <dependency>  
    			<groupId>org.springframework</groupId>  
    			<artifactId>spring-webmvc</artifactId>  
-     
-  		</dependency>  
-		
+     	</dependency>
+     	<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-jdbc</artifactId>
+        </dependency>  
+		<dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-orm</artifactId>
+        </dependency>  
   </dependencies>
 
   

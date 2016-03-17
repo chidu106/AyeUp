@@ -26,12 +26,12 @@ public class SDSCamelRoute extends RouteBuilder {
     	  */
     	
     		// Should follow Practice upload otherwise practice won't exist
-    	    from("scheduler://egcur?delay=24h&initialDelay=20m")
+    	   /* from("scheduler://egcur?delay=24h&initialDelay=20m")
     	    	.routeId("Retrieve NHS GP Practitioner Zip")
     	    	.setHeader(Exchange.HTTP_METHOD, constant("GET"))
     	    	.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/data-files/egpcur.zip")
     	    	.to("file:C:/NHSSDS/zip?fileName=${date:now:yyyyMMdd}-egpcur.zip");
-    	    
+    	    */
     	    from("scheduler://epraccur?delay=24h")
     	    	.routeId("Retrieve NHS Surgery Organizations Zip")
 	    		.setHeader(Exchange.HTTP_METHOD, constant("GET"))
