@@ -1,38 +1,85 @@
 package uk.co.mayfieldis.dao;
 
+import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.hl7.fhir.instance.formats.JsonParser;
 import org.hl7.fhir.instance.formats.ParserType;
+import org.hl7.fhir.instance.formats.XmlParser;
 import org.hl7.fhir.instance.model.Address;
+import org.hl7.fhir.instance.model.Bundle;
 import org.hl7.fhir.instance.model.CodeableConcept;
-import org.hl7.fhir.instance.model.ContactPoint.ContactPointSystem;
-import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
 import org.hl7.fhir.instance.model.HumanName;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Period;
 import org.hl7.fhir.instance.model.Practitioner;
-import org.hl7.fhir.instance.model.Practitioner.PractitionerPractitionerRoleComponent;
 import org.hl7.fhir.instance.model.Reference;
+import org.hl7.fhir.instance.model.ContactPoint.ContactPointSystem;
+import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
+import org.hl7.fhir.instance.model.Practitioner.PractitionerPractitionerRoleComponent;
 import org.hl7.fhir.instance.model.valuesets.PractitionerRole;
 
-public class NHSEntitiestoFHIRResources implements Processor {
+public class EnrichwithParentOrganisation implements AggregationStrategy  {
 
 	@Override
-	public void process(Exchange exchange) throws Exception {
+	public Exchange aggregate(Exchange exchange, Exchange enrichment) 
+	{
 		
 		NHSEntities entity = exchange.getIn().getBody(NHSEntities.class);
 		
-		String Id = entity.OrganistionCode; 
+		Organization parentOrganisation = null;
+		if (enrichment.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE).equals("200"))
+		{
+			ByteArrayInputStream xmlContentBytes = new ByteArrayInputStream ((byte[]) enrichment.getIn().getBody(byte[].class));
+			
+			
+			if (enrichment.getIn().getHeader(Exchange.CONTENT_TYPE).equals("application/json"))
+			{
+				JsonParser composer = new JsonParser();
+				try
+				{
+					Bundle bundle = (Bundle) composer.parse(xmlContentBytes);
+					if (bundle.getEntry().size()>0)
+					{
+						parentOrganisation = (Organization) bundle.getEntry().get(0).getResource();
+					}
+				}
+				catch(Exception ex)
+				{
+					
+				}
+			}
+			else
+			{
+				XmlParser composer = new XmlParser();
+				try
+				{
+					Bundle bundle = (Bundle) composer.parse(xmlContentBytes);
+					if (bundle.getEntry().size()>0)
+					{
+						parentOrganisation = (Organization) bundle.getEntry().get(0).getResource();
+					}
+				}
+				catch(Exception ex)
+				{
+					
+				}
+			}
+			  
+		}
+		
+		String Id = entity.OrganisationCode; 
 		
 		if (Id.length()==8 && Id.startsWith("G"))
 		{
 			Practitioner gp = new Practitioner();
-			gp.setId(entity.OrganistionCode);
+			gp.setId(entity.OrganisationCode);
 			
 			gp.addIdentifier()
-				.setValue(entity.OrganistionCode)
+				.setValue(entity.OrganisationCode)
 				.setSystem(FHIRCodeSystems.URI_NHS_GMP_CODE);
 			
 			String[] names = entity.Name.split(" ");
@@ -98,10 +145,10 @@ public class NHSEntitiestoFHIRResources implements Processor {
 			
 			PractitionerPractitionerRoleComponent role = gp.addPractitionerRole();
 			
-			if (entity.ParentOrganisationCode != null && !entity.ParentOrganisationCode.isEmpty())
+			if (parentOrganisation !=null)
 			{
 				Reference practice = new Reference();
-				practice.setReference("Organiszation/"+entity.ParentOrganisationCode);
+				practice.setReference("Organiszation/"+parentOrganisation.getId());
 				role.setManagingOrganization(practice);
 			}			
 			
@@ -142,10 +189,9 @@ public class NHSEntitiestoFHIRResources implements Processor {
 			
 			
 			String Response = ResourceSerialiser.serialise(gp, ParserType.JSON);
-		
+			exchange.getIn().setHeader("FHIRResource","Practitioner?identifier="+gp.getIdentifier().get(0).getSystem()+"|"+gp.getIdentifier().get(0).getSystem());
 			exchange.getIn().setBody(Response);
-			exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
-			exchange.getIn().setHeader(Exchange.HTTP_METHOD,"POST");
+			
 		}
 		if (Id.length()==6)
 		{
@@ -202,19 +248,23 @@ public class NHSEntitiestoFHIRResources implements Processor {
 				organisation.setActive(false);
 			}
 			
-			if (entity.ParentOrganisationCode !=null && !entity.ParentOrganisationCode.isEmpty())
+			if (parentOrganisation !=null)
 			{
 				Reference ccg = new Reference();
-				ccg.setReference("Organization/"+entity.ParentOrganisationCode);
+				ccg.setReference("Organization/"+parentOrganisation.getId());
 				organisation.setPartOf(ccg);
 			}
 			
 			String Response = ResourceSerialiser.serialise(organisation, ParserType.JSON);
+			exchange.getIn().setHeader("FHIRResource","Organization?identifier="+organisation.getIdentifier().get(0).getSystem()+"|"+organisation.getIdentifier().get(0).getSystem());
 			exchange.getIn().setBody(Response);
-			exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
-			exchange.getIn().setHeader(Exchange.HTTP_METHOD,"POST");
+			
+	
 		}
-		
+		exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
+		exchange.getIn().setHeader(Exchange.HTTP_METHOD,"GET");
+		return exchange;
 	}
-
 }
+
+

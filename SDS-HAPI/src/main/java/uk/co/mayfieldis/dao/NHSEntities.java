@@ -7,7 +7,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 public class NHSEntities {
 
 	@DataField(pos = 1, trim = true)
-	public String OrganistionCode;
+	public String OrganisationCode;
 	
 	@DataField(pos = 2, trim = true)
 	public String Name;

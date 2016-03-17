@@ -193,6 +193,8 @@
 		<artifactId>derbyclient</artifactId>
 		<version>${derby-version}</version>
 	</dependency>
+	
+	<!-- 
 	<dependency>
 		<groupId>org.hibernate</groupId>
 		<artifactId>hibernate-core</artifactId>
@@ -223,13 +225,9 @@
 		<artifactId>javassist</artifactId>
 		<version>3.20.0-GA</version>
 	</dependency>
-
+ -->
 	
-	<dependency>
-		<groupId>org.slf4j</groupId>
-		<artifactId>slf4j-api</artifactId>
-		<version>1.6.1</version>
-	</dependency>	
+	
 		<dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>

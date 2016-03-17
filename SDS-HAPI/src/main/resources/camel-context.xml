@@ -30,16 +30,20 @@
 	<bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
         init-method="start" destroy-method="stop"/>
 	
-	<bean id="entitytoFHIR" class="uk.co.mayfieldis.dao.NHSEntitiestoFHIRResources" />
+	<bean id="entitytoHeader" class="uk.co.mayfieldis.dao.NHSEntitiestoHeaderVars" />
 	<bean id="zipFileDataFormat" class="org.apache.camel.dataformat.zipfile.ZipFileDataFormat">
     	<property name="usingIterator" value="true"/>
 	</bean>
+	
+	<camelContext id="NHSSDSRoutetoHAPI" xmlns="http://camel.apache.org/schema/spring">
+    	<package>uk.co.mayfieldis.esb.SDSHAPI</package>
+  	</camelContext>
 	
 	<bean id="dataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
 		<property name="url"
-			value="jdbc:derby:target/database/SDS;create=true" />
+			value="jdbc:derby:c:\\temp\\database\\SDS;create=true" />
 		<property name="username" value="" />
 		<property name="password" value="" />
 	</bean>
@@ -66,8 +70,6 @@
     <property name="dataSource" ref="dataSource" />
   </bean>
 	 -->
-  	<camelContext id="NHSSDSRoutetoHAPI" xmlns="http://camel.apache.org/schema/spring">
-    	<package>uk.co.mayfieldis.esb.SDSHAPI</package>
-  	</camelContext>
+  
 
 </beans>
