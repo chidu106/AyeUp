@@ -64,39 +64,41 @@ public class SDSCamelRoute extends RouteBuilder {
     	    	.routeId("Process entries")
     	    	.process("entitytoHeader")
     	    	.log("Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
-    	    	.enrich("direct:org",enrichOrg)
-    	    	.enrich("direct:lookup",enrichUpdateType)
-    	    	.log("Update type ${header.CamelHttpMethod}")
-    	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("POST")).to("direct:Update")
-    	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("PUT")).to("direct:Update");
+    	    	.enrich("vm:org",enrichOrg)
+    	    	.enrich("vm:lookup",enrichUpdateType)
+    	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("POST")).to("vm:Update")
+    	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("PUT")).to("vm:Update");
     	    	
     	    	// Gets are discarded
     	    
-    	    from("direct:Update")
+    	    from("vm:Update")
     	    	.routeId("Update JPA Server")
+    	    	.log("Update type ${header.CamelHttpMethod} ${header.FHIRResource} ")
     	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
 		    	.removeHeader(Exchange.HTTP_QUERY)
-    	    	.to("direct:hapi");
+    	    	.to("vm:hapi");
     	    	
-    	    from("direct:org")
+    	    from("vm:org")
     	    	.routeId("Lookup FHIR Organisation")
     	    	.setBody(simple(""))
     	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
     	    	.setHeader(Exchange.HTTP_PATH, simple("/Organization",String.class))
 		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier=urn:fhir.nhs.uk/id/ODSOrganisationCode|${header.ParentOrganisationCode}",String.class))
-    	    	.to("direct:hapi");
+		    	.log("Lookup Parent Organization?identifier=urn:fhir.nhs.uk/id/ODSOrganisationCode|${header.ParentOrganisationCode}")
+    	    	.to("vm:hapi");
     	    
-    	    from("direct:lookup")
+    	    from("vm:lookup")
 		    	.routeId("Lookup FHIR Resources")
 		    	.setBody(simple(""))
 		    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 		    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
 		    	.setHeader(Exchange.HTTP_QUERY,simple("${header.FHIRQuery}",String.class))
 		    	.log("Lookup ${header.FHIRResource}?${header.FHIRQuery}")
-		    	.to("direct:hapi");
+		    	.to("vm:hapi");
 		    	
     	    
-    	    from("direct:hapi")
+    	    from("vm:hapi")
+    	    	.routeId("Call FHIR Server")
     	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/json+fhir"))
     	    	.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
     }

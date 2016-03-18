@@ -34,7 +34,7 @@
 	    <fhir-version>1.2</fhir-version>
 	    <hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
 	    <insight-log4j>1.2.0.Beta4</insight-log4j>
-    	<bundle.symbolicName>EDMSCamelRoute.Bundle</bundle.symbolicName>
+    	<bundle.symbolicName>SDSHAPICamelRoute.Bundle</bundle.symbolicName>
     	<bundle.namespace>uk.co.mayfieldis.esb.SDSHAPI</bundle.namespace>
     	<springframework-version>4.2.1.RELEASE</springframework-version>
 		<spring-security-version>4.0.2.RELEASE</spring-security-version>

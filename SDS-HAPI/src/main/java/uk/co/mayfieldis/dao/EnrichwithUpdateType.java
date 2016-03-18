@@ -27,6 +27,29 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 		{
 			same = false;
 		}
+		// Check organisations - bit more involved to cope with organisations not being in the database
+		if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() == null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null)
+		{
+			same = false;
+		}
+		else
+		{
+			if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() == null)
+			{
+				same = false;
+			}
+			else
+			{
+				if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null)
+				{
+					
+					if (!oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference().equals(newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference()))
+					{
+						same = false;
+					}
+				}
+			}
+		}
 		return same;
 	}
 	
