@@ -76,7 +76,7 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 		if (Id.length()==8 && Id.startsWith("G"))
 		{
 			Practitioner gp = new Practitioner();
-			gp.setId(entity.OrganisationCode);
+			//gp.setId(entity.OrganisationCode);
 			
 			gp.addIdentifier()
 				.setValue(entity.OrganisationCode)
@@ -189,7 +189,8 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 			
 			
 			String Response = ResourceSerialiser.serialise(gp, ParserType.JSON);
-			exchange.getIn().setHeader("FHIRResource","Practitioner?identifier="+gp.getIdentifier().get(0).getSystem()+"|"+gp.getIdentifier().get(0).getSystem());
+			exchange.getIn().setHeader("FHIRResource","/Practitioner");
+			exchange.getIn().setHeader("FHIRQuery","identifier="+gp.getIdentifier().get(0).getSystem()+"|"+gp.getIdentifier().get(0).getValue());
 			exchange.getIn().setBody(Response);
 			
 		}
@@ -197,12 +198,19 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 		{
 			Organization organisation = new Organization();
 			
-			organisation.setId(Id);
+			//organisation.setId(Id);
 			organisation.addIdentifier()
 				.setValue(Id)
 				.setSystem(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE);
 			
 			organisation.setName(entity.Name);
+			
+			CodeableConcept type=new CodeableConcept();
+			type.addCoding()
+				.setSystem(FHIRCodeSystems.URI_NHS_ORGANISATION_TYPE)
+				.setCode("PR");
+			organisation.setType(type);
+			
 			
 			Address address = organisation.addAddress();
 			
@@ -256,7 +264,8 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 			}
 			
 			String Response = ResourceSerialiser.serialise(organisation, ParserType.JSON);
-			exchange.getIn().setHeader("FHIRResource","Organization?identifier="+organisation.getIdentifier().get(0).getSystem()+"|"+organisation.getIdentifier().get(0).getSystem());
+			exchange.getIn().setHeader("FHIRResource","/Organization");
+			exchange.getIn().setHeader("FHIRQuery","identifier="+organisation.getIdentifier().get(0).getSystem()+"|"+organisation.getIdentifier().get(0).getValue());
 			exchange.getIn().setBody(Response);
 			
 	

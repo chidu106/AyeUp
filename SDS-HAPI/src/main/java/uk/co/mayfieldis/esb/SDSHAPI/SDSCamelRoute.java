@@ -21,15 +21,14 @@ public class SDSCamelRoute extends RouteBuilder {
     	EnrichwithParentOrganisation enrichOrg = new EnrichwithParentOrganisation();
     	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
     	
-    	/*
+
     	errorHandler(deadLetterChannel("direct:error")
-        		.useOriginalMessage()
         		.maximumRedeliveries(2));
             	    
     	    from("direct:error")
             	.routeId("NHS SDS Fail Handler")
-            	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=ERROR");
-    	  */
+            	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=ERROR&showAll=true");
+
     	
     		// Should follow Practice upload otherwise practice won't exist
     	   /* from("scheduler://egcur?delay=24h&initialDelay=20m")
@@ -63,29 +62,42 @@ public class SDSCamelRoute extends RouteBuilder {
     	    
     	    from("vm:LineProcessing")
     	    	.routeId("Process entries")
+    	    	.process("entitytoHeader")
+    	    	.log("Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
     	    	.enrich("direct:org",enrichOrg)
     	    	.enrich("direct:lookup",enrichUpdateType)
-    	    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute.enriched?level=INFO")
-    	    	.log("${header.CamelHttpMethod}")
+    	    	.log("Update type ${header.CamelHttpMethod}")
     	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("POST")).to("direct:Update")
     	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("PUT")).to("direct:Update");
-    	    	//.filter(header(Exchange.HTTP_METHOD).isEqualTo("GET")).to("direct:Update");
+    	    	
     	    	// Gets are discarded
     	    
     	    from("direct:Update")
     	    	.routeId("Update JPA Server")
-    	    	.toD("http://localhost:8080/hapi-fhir-jpaserver/baseDstu2/${header.FHIRResource}")
-    	    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute.update?level=INFO");
-    	    
+    	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
+		    	.removeHeader(Exchange.HTTP_QUERY)
+    	    	.to("direct:hapi");
+    	    	
     	    from("direct:org")
     	    	.routeId("Lookup FHIR Organisation")
-    	    	.process("entitytoHeader")
-    	    	.toD("http://localhost:8080/hapi-fhir-jpaserver/baseDstu2/Organization?identifier=urn:fhir.nhs.uk/id/ODSOrganisationCode|${header.ParentOrganisationCode}")
-    	    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute.org?level=INFO");
+    	    	.setBody(simple(""))
+    	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
+    	    	.setHeader(Exchange.HTTP_PATH, simple("/Organization",String.class))
+		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier=urn:fhir.nhs.uk/id/ODSOrganisationCode|${header.ParentOrganisationCode}",String.class))
+    	    	.to("direct:hapi");
     	    
     	    from("direct:lookup")
-	    	.routeId("Lookup FHIR Resources")
-	    	.toD("http://localhost:8080/hapi-fhir-jpaserver/baseDstu2/${header.FHIRResource}")
-	    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute.lookup?level=INFO");
+		    	.routeId("Lookup FHIR Resources")
+		    	.setBody(simple(""))
+		    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
+		    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
+		    	.setHeader(Exchange.HTTP_QUERY,simple("${header.FHIRQuery}",String.class))
+		    	.log("Lookup ${header.FHIRResource}?${header.FHIRQuery}")
+		    	.to("direct:hapi");
+		    	
+    	    
+    	    from("direct:hapi")
+    	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/json+fhir"))
+    	    	.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
     }
 }
