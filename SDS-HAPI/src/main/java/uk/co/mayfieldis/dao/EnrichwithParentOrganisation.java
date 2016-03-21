@@ -19,14 +19,15 @@ import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Reference;
 import org.hl7.fhir.instance.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
+import org.hl7.fhir.instance.model.Extension;
 import org.hl7.fhir.instance.model.Practitioner.PractitionerPractitionerRoleComponent;
 import org.hl7.fhir.instance.model.valuesets.PractitionerRole;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+//import org.slf4j.Logger;
+//import org.slf4j.LoggerFactory;
 
 public class EnrichwithParentOrganisation implements AggregationStrategy  {
 
-	private static final Logger log = LoggerFactory.getLogger(uk.co.mayfieldis.dao.EnrichwithParentOrganisation.class);
+	//private static final Logger log = LoggerFactory.getLogger(uk.co.mayfieldis.dao.EnrichwithParentOrganisation.class);
 	
 	@Override
 	public Exchange aggregate(Exchange exchange, Exchange enrichment) 
@@ -78,7 +79,7 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 		
 		String Id = entity.OrganisationCode; 
 		
-		if (Id.length()==8 && Id.startsWith("G"))
+		if ( (Id.startsWith("G") || Id.startsWith("C")) && Id.length()>6)
 		{
 			Practitioner gp = new Practitioner();
 			//gp.setId(entity.OrganisationCode);
@@ -148,21 +149,13 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 					.setUse(ContactPointUse.WORK);
 			}
 			
-			PractitionerPractitionerRoleComponent role = gp.addPractitionerRole();
-			
-			if (parentOrganisation !=null)
-			{
-				log.info("Parent Org Id = "+parentOrganisation.getId());
-				Reference practice = new Reference();
-				practice.setReference("/Organization/"+parentOrganisation.getId());
-				role.setManagingOrganizationTarget(parentOrganisation);
-			}			
-			
+			PractitionerPractitionerRoleComponent practitionerRole = new PractitionerPractitionerRoleComponent(); 
+									
 			CodeableConcept pracspecialty= new CodeableConcept();
 			pracspecialty.addCoding()
 				.setCode("600")
 				.setSystem(FHIRCodeSystems.URI_NHS_SPECIALTIES);
-			role
+			practitionerRole
 				.addSpecialty(pracspecialty);
 			
 			SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
@@ -185,14 +178,51 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 	        	// TODO Auto-generated catch block
 	        	}
 			}
-			role.setPeriod(period);
+			practitionerRole.setPeriod(period);
 			
-			CodeableConcept pracrole= new CodeableConcept();
-			pracrole.addCoding()
+			
+			if (entity.OpenDate != null && !entity.OpenDate.isEmpty())
+			{
+				Extension activePeriod = new Extension();
+				fmt = new SimpleDateFormat("yyyyMMdd");
+				
+				period = new Period();
+				activePeriod.setUrl(FHIRCodeSystems.URI_NHS_ACTIVE_PERIOD);
+				try {
+					period.setStart(fmt.parse(entity.OpenDate));
+					
+	        	} catch (ParseException e1) {
+	        	// TODO Auto-generated catch block
+	        	}
+				if (entity.CloseDate != null && !entity.CloseDate.isEmpty())
+				{
+					try {
+						period.setEnd(fmt.parse(entity.CloseDate));
+						
+		        	} catch (ParseException e1) {
+		        	// TODO Auto-generated catch block
+		        	}
+				}
+				activePeriod.setValue(period);
+				gp.addExtension(activePeriod);
+			}
+			
+			CodeableConcept role= new CodeableConcept();
+			role.addCoding()
 					.setCode(PractitionerRole.DOCTOR.toString())
 					.setSystem("http://hl7.org/fhir/practitioner-role");
-			role.setRole(pracrole);
 			
+			if (parentOrganisation !=null)
+			{
+				//log.info("Parent Org Id = "+parentOrganisation.getId());
+				Reference organisation = new Reference();
+				organisation.setReference("Organization/"+parentOrganisation.getId());
+				practitionerRole.setManagingOrganization(organisation);
+			}			
+			
+			practitionerRole.setRole(role);
+			
+			gp.addPractitionerRole(practitionerRole);
 			
 			String Response = ResourceSerialiser.serialise(gp, ParserType.JSON);
 			exchange.getIn().setHeader("FHIRResource","/Practitioner");
@@ -200,7 +230,7 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 			exchange.getIn().setBody(Response);
 			
 		}
-		if (Id.length()==6)
+		else
 		{
 			Organization organisation = new Organization();
 			
@@ -211,12 +241,49 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 			
 			organisation.setName(entity.Name);
 			
-			CodeableConcept type=new CodeableConcept();
-			type.addCoding()
-				.setSystem(FHIRCodeSystems.URI_NHS_ORGANISATION_TYPE)
-				.setCode("PR");
-			organisation.setType(type);
+			String FHIROrgType = null;
+			String NHSOrgTypeDesc = null;
+			String NHSOrgType = null;
 			
+			switch(exchange.getIn().getHeader(Exchange.FILE_NAME).toString().toUpperCase())
+			{
+				case "ECCG.CSV":
+					NHSOrgType = "CC";
+					NHSOrgTypeDesc= "Clinical Commissioning Group (CCG)";
+					FHIROrgType = "team";
+					break;
+				case "EPRACCUR.CSV":
+				case "EGPAM.CSV":
+					NHSOrgType = "PR";
+					NHSOrgTypeDesc= "GP Practices in England and Wales";
+					FHIROrgType = "prov";
+					break;
+			}
+			
+			if (FHIROrgType != null)
+			{
+				CodeableConcept type=new CodeableConcept();
+				type.addCoding()
+					.setSystem("http://hl7.org/fhir/organization-type")
+					.setCode(FHIROrgType);
+				organisation.setType(type);
+			}
+			
+			if (NHSOrgType != null)
+			{
+				
+				CodeableConcept type=new CodeableConcept();
+				type.addCoding()
+					.setSystem(FHIRCodeSystems.URI_NHS_ORGANISATION_TYPE)
+					.setCode(NHSOrgType)
+					.setDisplay(NHSOrgTypeDesc);
+				
+				Extension extNHSOrg = new Extension();
+				extNHSOrg
+					.setUrl(FHIRCodeSystems.URI_NHS_ORGANISATION_TYPE)
+					.setValue(type);
+				organisation.addExtension(extNHSOrg);
+			}
 			
 			Address address = organisation.addAddress();
 			
@@ -251,17 +318,42 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 					.setSystem(ContactPointSystem.PHONE)
 					.setUse(ContactPointUse.WORK);
 			}
-			
-			if (entity.StatusCode.equals("A"))
+			if (entity.StatusCode != null)
 			{
-				// This setting looks to be garbage. Believe active means they are still on the register but may not be practising medicine 
-				organisation.setActive(true);
+				if (entity.StatusCode.equals("A"))
+				{
+					// This setting looks to be garbage. Believe active means they are still on the register but may not be practising medicine 
+					organisation.setActive(true);
+				}
+				else
+				{
+					organisation.setActive(false);
+				}
 			}
-			else
+			if (entity.OpenDate != null && !entity.OpenDate.isEmpty())
 			{
-				organisation.setActive(false);
+				Extension activePeriod = new Extension();
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+				Period period = new Period();
+				activePeriod.setUrl(FHIRCodeSystems.URI_NHS_ACTIVE_PERIOD);
+				try {
+					period.setStart(fmt.parse(entity.OpenDate));
+					organisation.setActive(true);
+	        	} catch (ParseException e1) {
+	        	// TODO Auto-generated catch block
+	        	}
+				if (entity.CloseDate != null && !entity.CloseDate.isEmpty())
+				{
+					try {
+						period.setEnd(fmt.parse(entity.CloseDate));
+						organisation.setActive(false);
+		        	} catch (ParseException e1) {
+		        	// TODO Auto-generated catch block
+		        	}
+				}
+				activePeriod.setValue(period);
+				organisation.addExtension(activePeriod);
 			}
-			
 			if (parentOrganisation !=null)
 			{
 				Reference ccg = new Reference();

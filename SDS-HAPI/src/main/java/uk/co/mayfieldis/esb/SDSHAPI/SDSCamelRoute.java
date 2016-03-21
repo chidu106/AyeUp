@@ -21,28 +21,23 @@ public class SDSCamelRoute extends RouteBuilder {
     	EnrichwithParentOrganisation enrichOrg = new EnrichwithParentOrganisation();
     	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
     	
-
+    	
     	errorHandler(deadLetterChannel("direct:error")
         		.maximumRedeliveries(2));
             	    
     	    from("direct:error")
             	.routeId("NHS SDS Fail Handler")
             	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=ERROR&showAll=true");
-
+    	
     	
     		// Should follow Practice upload otherwise practice won't exist
-    	   /* from("scheduler://egcur?delay=24h&initialDelay=20m")
-    	    	.routeId("Retrieve NHS GP Practitioner Zip")
+    	    from("scheduler://egpcur?delay=24h")
+    	    	.routeId("Retrieve NHS GP and Practice Amendments Zip")
     	    	.setHeader(Exchange.HTTP_METHOD, constant("GET"))
-    	    	.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/data-files/egpcur.zip")
+    	    	//.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/data-files/egpcur.zip")
+    	    	.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/monthamend/current/egpam.zip")
     	    	.to("file:C:/NHSSDS/zip?fileName=${date:now:yyyyMMdd}-egpcur.zip");
-    	    
-    	    from("scheduler://epraccur?delay=24h")
-    	    	.routeId("Retrieve NHS Surgery Organizations Zip")
-	    		.setHeader(Exchange.HTTP_METHOD, constant("GET"))
-	    		.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/data-files/epraccur.zip")
-	    		.to("file:C:/NHSSDS/zip?fileName=${date:now:yyyyMMdd}-epraccur.zip");
-			*/
+    	  
     	    from("file:C:/NHSSDS/zip?readLock=markerFile&preMove=inprogress&move=.done&include=.*.(zip)&delay=1000")
 	    		.routeId("Unzip NHS Reference Files")
 	    		.unmarshal(zipFile)
@@ -63,20 +58,25 @@ public class SDSCamelRoute extends RouteBuilder {
     	    from("vm:LineProcessing")
     	    	.routeId("Process entries")
     	    	.process("entitytoHeader")
-    	    	.log("Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
     	    	.enrich("vm:org",enrichOrg)
     	    	.enrich("vm:lookup",enrichUpdateType)
-    	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("POST")).to("vm:Update")
-    	    	.filter(header(Exchange.HTTP_METHOD).isEqualTo("PUT")).to("vm:Update");
-    	    	
+    	    	.filter(header(Exchange.HTTP_METHOD)
+    	    		.isEqualTo("POST"))
+    	    		.to("vm:Update")
+    	    	.end()
+    	    	.filter(header(Exchange.HTTP_METHOD)
+    	    		.isEqualTo("PUT"))
+    	    		.to("vm:Update")
+    	    	.end();
     	    	// Gets are discarded
     	    
     	    from("vm:Update")
     	    	.routeId("Update JPA Server")
-    	    	.log("Update type ${header.CamelHttpMethod} ${header.FHIRResource} ")
+    	    	.log("Update type ${header.CamelHttpMethod} ${header.FHIRResource} Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
     	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
 		    	.removeHeader(Exchange.HTTP_QUERY)
-    	    	.to("vm:hapi");
+		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true")
+		    	.to("vm:hapi");
     	    	
     	    from("vm:org")
     	    	.routeId("Lookup FHIR Organisation")
@@ -84,8 +84,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
     	    	.setHeader(Exchange.HTTP_PATH, simple("/Organization",String.class))
 		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier=urn:fhir.nhs.uk/id/ODSOrganisationCode|${header.ParentOrganisationCode}",String.class))
-		    	.log("Lookup Parent Organization?identifier=urn:fhir.nhs.uk/id/ODSOrganisationCode|${header.ParentOrganisationCode}")
-    	    	.to("vm:hapi");
+		    	.to("vm:hapi");
     	    
     	    from("vm:lookup")
 		    	.routeId("Lookup FHIR Resources")
@@ -93,10 +92,8 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 		    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
 		    	.setHeader(Exchange.HTTP_QUERY,simple("${header.FHIRQuery}",String.class))
-		    	.log("Lookup ${header.FHIRResource}?${header.FHIRQuery}")
 		    	.to("vm:hapi");
-		    	
-    	    
+		    
     	    from("vm:hapi")
     	    	.routeId("Call FHIR Server")
     	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/json+fhir"))

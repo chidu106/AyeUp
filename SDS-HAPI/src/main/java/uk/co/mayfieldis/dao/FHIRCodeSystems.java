@@ -21,6 +21,8 @@ public class FHIRCodeSystems {
 	    public final static String URI_NHS_OCS_ORGANISATION_CODE = "urn:fhir.nhs.uk/id/ODSOrganisationCode";
 	
 	    public final static String URI_NHS_ORGANISATION_TYPE = "http://fhir.datadictionary.nhs.uk/data_dictionary/organisation_type";
+	    
+	    public final static String URI_NHS_ACTIVE_PERIOD = "http://fhir.nhs.uk/period/active";
 
 	    
 }

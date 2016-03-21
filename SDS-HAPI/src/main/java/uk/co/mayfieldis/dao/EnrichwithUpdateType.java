@@ -31,20 +31,24 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 		if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() == null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null)
 		{
 			same = false;
+			log.info("Old Organisation null. New Organisation = "+newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference());
 		}
 		else
 		{
 			if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() == null)
 			{
 				same = false;
+				log.info("Old Organisation = "+oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference()+" New Organisation null. ");
 			}
 			else
 			{
+				
 				if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null)
 				{
 					
 					if (!oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference().equals(newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference()))
 					{
+						log.info("Old Organisation = "+oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference()+" New Organisation = "+newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference());
 						same = false;
 					}
 				}
@@ -56,31 +60,46 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 	private Boolean organisationCompare(Organization oldOrganisation, Organization newOrganisation)
 	{
 		Boolean same = true;
-		
+		//log.info("Doing organisation comparison");
 		if (!oldOrganisation.getName().equals(newOrganisation.getName()))
 		{
 			same = false;
 			log.info("Name "+oldOrganisation.getName()+" "+newOrganisation.getName());
 		}
-		if (oldOrganisation.getActive() != newOrganisation.getActive())
+		
+			if (oldOrganisation.getActive() != newOrganisation.getActive())
+			{
+				same = false;
+				log.info("Active "+oldOrganisation.getActive() + " " + newOrganisation.getActive());
+			}
+		if (oldOrganisation.getTelecom().size() != oldOrganisation.getTelecom().size())
 		{
-			same = false;
-			log.info("Active "+oldOrganisation.getActive() + " " + newOrganisation.getActive());
+			same =false;
 		}
-		if (!oldOrganisation.getTelecom().get(0).getValue().equals(newOrganisation.getTelecom().get(0).getValue()))
+		if (oldOrganisation.getTelecom().size() > 0  && oldOrganisation.getTelecom().size() > 0)
 		{
-			same = false;
-			log.info("Telecom "+oldOrganisation.getTelecom().get(0).getValue()+" "+newOrganisation.getTelecom().get(0).getValue());
+			if (!oldOrganisation.getTelecom().get(0).getValue().equals(newOrganisation.getTelecom().get(0).getValue()))
+			{
+				same = false;
+				log.info("Telecom "+oldOrganisation.getTelecom().get(0).getValue()+" "+newOrganisation.getTelecom().get(0).getValue());
+			}
 		}
-		if (!oldOrganisation.getAddress().get(0).getLine().get(0).getValue().equals(newOrganisation.getAddress().get(0).getLine().get(0).getValue()))
+		if (oldOrganisation.getAddress().size() != oldOrganisation.getAddress().size())
 		{
-			same = false;
-			log.info("Line 1 "+oldOrganisation.getAddress().get(0).getLine().get(0).getValue()+" "+newOrganisation.getAddress().get(0).getLine().get(0).getValue());;
+			same =false;
 		}
-		if (!oldOrganisation.getAddress().get(0).getPostalCode().equals(newOrganisation.getAddress().get(0).getPostalCode()))
-		{
-			same = false;
-			log.info("PostCode "+oldOrganisation.getAddress().get(0).getPostalCode()+" "+newOrganisation.getAddress().get(0).getPostalCode());;
+		if (oldOrganisation.getAddress().size() >0 && oldOrganisation.getAddress().size()>0)
+		{	
+			if (!oldOrganisation.getAddress().get(0).getLine().get(0).getValue().equals(newOrganisation.getAddress().get(0).getLine().get(0).getValue()))
+			{
+				same = false;
+				log.info("Line 1 "+oldOrganisation.getAddress().get(0).getLine().get(0).getValue()+" "+newOrganisation.getAddress().get(0).getLine().get(0).getValue());;
+			}
+			if (!oldOrganisation.getAddress().get(0).getPostalCode().equals(newOrganisation.getAddress().get(0).getPostalCode()))
+			{
+				same = false;
+				log.info("PostCode "+oldOrganisation.getAddress().get(0).getPostalCode()+" "+newOrganisation.getAddress().get(0).getPostalCode());;
+			}
 		}
 		return same;
 	}
@@ -122,11 +141,11 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 			}
 			if (bundle!=null)
 			{
-				log.info("Bundle entry count = "+bundle.getEntry().size());
+				//log.info("Bundle entry count = "+bundle.getEntry().size());
 			}
 			else
 			{
-				log.info("Bundle entry count = 0 No Bundle");
+				//log.info("Bundle entry count = 0 No Bundle");
 			}	
 			if (bundle!=null && bundle.getEntry().size()==0)
 			{
@@ -211,12 +230,12 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 				{
 					sameResource = practitionerCompare(oldPractitioner,newPractitioner);
 				}
-				
+				//log.info("Equiv check = "+sameResource.toString());
 				if (!sameResource)
 				{
 					// Record is different so update it
 					exchange.getIn().setHeader(Exchange.HTTP_METHOD,"PUT");
-					
+					log.info("and that's what I think");
 					if (enrichment.getIn().getHeader(Exchange.CONTENT_TYPE).equals("application/json"))
 					{
 						//JsonParser composer = new JsonParser();

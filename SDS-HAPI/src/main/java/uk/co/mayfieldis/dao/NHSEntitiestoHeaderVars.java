@@ -11,8 +11,16 @@ public class NHSEntitiestoHeaderVars implements Processor {
 		
 		NHSEntities entity = exchange.getIn().getBody(NHSEntities.class);
 		
-		exchange.getIn().setHeader("OrganisationCode",entity.OrganisationCode); 
-		exchange.getIn().setHeader("ParentOrganisationCode",entity.ParentOrganisationCode);
+		exchange.getIn().setHeader("OrganisationCode",entity.OrganisationCode);
+		if (entity.ParentOrganisationCode != null && !entity.ParentOrganisationCode.isEmpty())
+		{
+			exchange.getIn().setHeader("ParentOrganisationCode",entity.ParentOrganisationCode);
+		}
+		else
+		{
+			exchange.getIn().setHeader("ParentOrganisationCode",entity.HighLevelHealthGeography);
+		}
+		
 		
 	}
 
