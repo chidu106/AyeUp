@@ -8,6 +8,7 @@ import org.apache.camel.model.dataformat.BindyType;
 
 import uk.co.mayfieldis.dao.EnrichwithParentOrganisation;
 import uk.co.mayfieldis.dao.EnrichwithUpdateType;
+import uk.co.mayfieldis.dao.ResourceToOrgInclude;
 
 public class SDSCamelRoute extends RouteBuilder {
 
@@ -20,6 +21,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	
     	EnrichwithParentOrganisation enrichOrg = new EnrichwithParentOrganisation();
     	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
+    	ResourceToOrgInclude resourceToOrgInclude = new ResourceToOrgInclude();
     	
     	
     	errorHandler(deadLetterChannel("direct:error")
@@ -72,10 +74,20 @@ public class SDSCamelRoute extends RouteBuilder {
     	    from("vm:Update")
     	    	.routeId("Update JPA Server")
     	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
-		    	.removeHeader(Exchange.HTTP_QUERY)
+    	    	.setHeader(Exchange.HTTP_QUERY,simple("_format=xml",String.class))
 		    	.log("Update type ${header.CamelHttpMethod} ${header.CamelHttpPath} ${header.CamelHttpQuery} Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
-		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true")
-		    	.to("vm:hapi");
+		    	.setHeader("Prefer", simple("return=representation",String.class))
+		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true&showHeaders=true")
+		    	.to("vm:hapi")
+		    	/*
+		    	 * 
+		    	.process(resourceToOrgInclude)
+		    	.to("vm:hapi")
+		    	.end()	
+		    	.setHeader(Exchange.HTTP_METHOD, simple("${header.FHIRMethod}",String.class))
+		    	*
+		    	*/
+		    	.to("http4:chft-tielive3.xthis.nhs.uk/REST/HAPI?connectionsPerRoute=60");
     	    	
     	    from("vm:org")
     	    	.routeId("Lookup FHIR Organisation")
@@ -95,7 +107,7 @@ public class SDSCamelRoute extends RouteBuilder {
 		    
     	    from("vm:hapi")
     	    	.routeId("Call FHIR Server")
-    	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/json+fhir"))
+    	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/xml+fhir"))
     	    	.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
     }
 }

@@ -22,10 +22,21 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 	private Boolean practitionerCompare(Practitioner oldPractitioner, Practitioner newPractitioner)
 	{
 		Boolean same = true;
-		
-		if (!oldPractitioner.getName().getFamily().get(0).getValue().equals(oldPractitioner.getName().getFamily().get(0).getValue()))
+		if (oldPractitioner.getName().getFamily().size()>0 && newPractitioner.getName().getFamily().size()>0)
 		{
-			same = false;
+			if (!oldPractitioner.getName().getFamily().get(0).getValue().equals(newPractitioner.getName().getFamily().get(0).getValue()))
+			{
+				log.info("#13 Old name"+oldPractitioner.getName().getFamily().get(0).getValue()+" New Name "+newPractitioner.getName().getFamily().get(0).getValue());
+				same = false;
+			}
+		}
+		if (oldPractitioner.getName().getGiven().size()>0 && newPractitioner.getName().getGiven().size()>0)
+		{
+			if (!oldPractitioner.getName().getGiven().get(0).getValue().equals(newPractitioner.getName().getGiven().get(0).getValue()))
+			{
+				log.info("#14 Old name"+oldPractitioner.getName().getGiven().get(0).getValue()+" New Name "+newPractitioner.getName().getGiven().get(0).getValue());
+				same = false;
+			}
 		}
 		// Check organisations - bit more involved to cope with organisations not being in the database
 		if (oldPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() == null && newPractitioner.getPractitionerRole().get(0).getManagingOrganization().getReference() != null)
@@ -240,7 +251,8 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 				}
 			}
 			exchange.getIn().setHeader("FHIRQuery","");
-			exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/json+fhir");
+			// XML as Ensemble doesn't like JSON
+			exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
 		}
 		return exchange;
 	}
