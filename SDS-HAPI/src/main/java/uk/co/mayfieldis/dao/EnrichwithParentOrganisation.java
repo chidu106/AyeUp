@@ -22,12 +22,12 @@ import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
 import org.hl7.fhir.instance.model.Extension;
 import org.hl7.fhir.instance.model.Practitioner.PractitionerPractitionerRoleComponent;
 import org.hl7.fhir.instance.model.valuesets.PractitionerRole;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EnrichwithParentOrganisation implements AggregationStrategy  {
 
-	//private static final Logger log = LoggerFactory.getLogger(uk.co.mayfieldis.dao.EnrichwithParentOrganisation.class);
+	private static final Logger log = LoggerFactory.getLogger(uk.co.mayfieldis.dao.EnrichwithParentOrganisation.class);
 	
 	@Override
 	public Exchange aggregate(Exchange exchange, Exchange enrichment) 
@@ -36,7 +36,7 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 		NHSEntities entity = exchange.getIn().getBody(NHSEntities.class);
 		
 		Organization parentOrganisation = null;
-		//log.info("Lookup Response = "+enrichment.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE).toString());
+		//
 		if (enrichment.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE).toString().equals("200"))
 		{
 			ByteArrayInputStream xmlContentBytes = new ByteArrayInputStream ((byte[]) enrichment.getIn().getBody(byte[].class));
@@ -214,7 +214,7 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 			
 			if (parentOrganisation !=null)
 			{
-				//log.info("Parent Org Id = "+parentOrganisation.getId());
+				
 				Reference organisation = new Reference();
 				organisation.setReference("Organization/"+parentOrganisation.getId());
 				practitionerRole.setManagingOrganization(organisation);

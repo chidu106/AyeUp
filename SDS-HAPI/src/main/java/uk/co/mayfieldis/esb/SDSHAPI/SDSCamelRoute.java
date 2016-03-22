@@ -34,7 +34,6 @@ public class SDSCamelRoute extends RouteBuilder {
     	    from("scheduler://egpcur?delay=24h")
     	    	.routeId("Retrieve NHS GP and Practice Amendments Zip")
     	    	.setHeader(Exchange.HTTP_METHOD, constant("GET"))
-    	    	//.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/data-files/egpcur.zip")
     	    	.to("http4://systems.hscic.gov.uk/data/ods/datadownloads/monthamend/current/egpam.zip")
     	    	.to("file:C:/NHSSDS/zip?fileName=${date:now:yyyyMMdd}-egpcur.zip");
     	  
@@ -72,9 +71,9 @@ public class SDSCamelRoute extends RouteBuilder {
     	    
     	    from("vm:Update")
     	    	.routeId("Update JPA Server")
-    	    	.log("Update type ${header.CamelHttpMethod} ${header.FHIRResource} Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
     	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
 		    	.removeHeader(Exchange.HTTP_QUERY)
+		    	.log("Update type ${header.CamelHttpMethod} ${header.CamelHttpPath} ${header.CamelHttpQuery} Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
 		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true")
 		    	.to("vm:hapi");
     	    	
