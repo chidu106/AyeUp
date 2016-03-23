@@ -26,6 +26,8 @@ import org.hl7.fhir.instance.model.valuesets.PractitionerRole;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
+
 public class EnrichwithParentOrganisation implements AggregationStrategy  {
 
 	private static final Logger log = LoggerFactory.getLogger(uk.co.mayfieldis.dao.EnrichwithParentOrganisation.class);
@@ -227,7 +229,7 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 					.setSystem(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE);
 				
 				parentOrg.setValue(parentCode);
-				role.addExtension(parentOrg);
+				practitionerRole.addExtension(parentOrg);
 			}			
 			
 			practitionerRole.setRole(role);
