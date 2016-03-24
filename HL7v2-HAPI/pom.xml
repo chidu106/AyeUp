@@ -44,6 +44,7 @@
 		<insight-log4j>1.2.0.Beta4</insight-log4j>
 		<io.hawt>1.4.61</io.hawt>
 		<hapi-hl7v2-version>2.2</hapi-hl7v2-version>
+		<activemq-version>5.11.1</activemq-version>
 	</properties>
 	
 
@@ -79,11 +80,6 @@
       		<artifactId>camel-sql</artifactId>
       		<version>${camel-version}</version>
     	</dependency>
-    	 <dependency>
-			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-http</artifactId>
-			<version>${camel-version}</version>
-    	</dependency>
     	<dependency>
     		<groupId>org.apache.camel</groupId>
     		<artifactId>camel-mina2</artifactId>
@@ -94,6 +90,56 @@
     		<artifactId>camel-hl7</artifactId>
     		<version>${camel-version}</version>
 		</dependency>
+		 <dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http</artifactId>
+			<version>${camel-version}</version>
+	    </dependency>
+		 <dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-http4</artifactId>
+			<version>${camel-version}</version>
+	    </dependency>
+	     <dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jms</artifactId>
+			<version>${camel-version}</version>
+	    </dependency>
+	    <dependency>
+		  	<groupId>org.apache.activemq</groupId>
+		  	<artifactId>activemq-camel</artifactId>
+		  	<version>${activemq-version}</version>
+		</dependency>
+	    
+	    <!-- embed ActiveMQ broker -->
+	    <dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-broker</artifactId>
+			<version>${activemq-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-spring</artifactId>
+			<version>${activemq-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-kahadb-store</artifactId>
+			<version>${activemq-version}</version>
+		</dependency>
+		
+	    <!-- ActiveMQ client -->
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-client</artifactId>
+			<version>${activemq-version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.activemq</groupId>
+			<artifactId>activemq-pool</artifactId>
+			<version>${activemq-version}</version>
+		</dependency>
+		
 		<dependency>
     		<groupId>ca.uhn.hapi</groupId>
     		<artifactId>hapi-structures-v24</artifactId>

@@ -1,15 +1,18 @@
-package uk.co.mayfieldis.hl7v2.hapi.route;
+package uk.co.mayfieldis.esb.hl7v2HAPI;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hl7.HL7DataFormat;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
+import uk.co.mayfieldis.hl7v2.hapi.processor.ADTA28A31toPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichMFNM05withLocation;
+import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM02PractitionerProcessor;
+import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM05LocationProcessor;
 
 import static org.apache.camel.component.hl7.HL7.ack;
 
 
-public class CamelRoute extends RouteBuilder {
+public class HL7v2CamelRoute extends RouteBuilder {
 
     @Override
     public void configure() 
@@ -23,6 +26,9 @@ public class CamelRoute extends RouteBuilder {
     	hl7.setHapiContext(hapiContext);
     	
     	EnrichMFNM05withLocation enrichMFNM05withLocation = new EnrichMFNM05withLocation();
+    	ADTA28A31toPatient adta28a31toPatient = new ADTA28A31toPatient();  
+    	MFNM02PractitionerProcessor mfnm02PractitionerProcessor = new MFNM02PractitionerProcessor();
+    	MFNM05LocationProcessor mfnm05LocationProcessor = new MFNM05LocationProcessor();
     	
     	onException(org.apache.camel.CamelAuthorizationException.class)
     		.handled(true)
@@ -58,14 +64,14 @@ public class CamelRoute extends RouteBuilder {
     	
     	from("vm:MFN_M02")
 			.routeId("MFN_M02")
-			.process("MFNM02PractitionerProcessor")
-			.to("vm:HAPIFHIR");
+			.process(mfnm02PractitionerProcessor)
+			.to("vm:FileFHIR");
 	
 		from("vm:MFN_M05")
 			.routeId("MFN_M05")
-			.process("MFNM05LocationProcessor")
+			.process(mfnm05LocationProcessor)
 			.enrich("vm:Location",enrichMFNM05withLocation)
-			.to("vm:HAPIFHIR");
+			.to("vm:FileFHIR");
 	    	
     	from("vm:ADT")
     		.routeId("ADT")
@@ -73,40 +79,45 @@ public class CamelRoute extends RouteBuilder {
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("vm:ADT_A01")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A04")).to("vm:ADT_A04")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A05")).to("vm:ADT_A05")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("vm:ADT_A28")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("vm:ADT_A31")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("vm:ADT_A28A31")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("vm:ADT_A28A31")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("vm:ADT_A40")
 			.end();
     	
     	from("vm:ADT_A01")
 			.routeId("ADT_A01")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true");
+			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
     	
     	from("vm:ADT_A04")
 			.routeId("ADT_A04")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true");
+			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
     
     	from("vm:ADT_A05")
 			.routeId("ADT_A05")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true");
+			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
 
-    	from("vm:ADT_A28")
-			.routeId("ADT_A28")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true");
-    	
-    	from("vm:ADT_A31")
-    		.routeId("ADT_A31")
-    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true");
+    	from("vm:ADT_A28A31")
+			.routeId("ADT_A28A31")
+			.process(adta28a31toPatient)
+			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
+			.to("vm:FileFHIR");
     	    	
     	from("vm:ADT_A40")
     		.routeId("ADT_A40")
-    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true");
+    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
          
+    	from("vm:Location")
+    		.transform(constant("Move along. Nothing to see here"));
+    	
+    	from("vm:FileFHIR")
+    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
+    		.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd}.xml");
+    	
     	from("vm:HAPIFHIR")
     		.routeId("HAPI FHIR")
     		.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true")
     		//&amp;bridgeEndpoint=true
-    		.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+    		.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
 		
     		
 		
