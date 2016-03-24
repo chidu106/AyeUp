@@ -29,30 +29,37 @@ public class ADTA28A31toPatient implements Processor {
 		
 		try
 		{
-			for (int f=0;f<maxRepitions;f++)
+			for (int f=1;f<maxRepitions;f++)
 			{
-				log.info("Item="+f);
-				if (!terser.get("./PID.3("+f+").1").isEmpty())
+				//log.info("Item="+f);
+				try
 				{
-					log.info("Item "+f+" is not empty");
-					switch (terser.get("./PID.3("+f+").4").toString())
+					if (!terser.get("/.PID-3("+f+")-1").isEmpty())
 					{
-						case "PAS":
-							patient.addIdentifier()
-								.setSystem(CHFTFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER)
-								.setValue(terser.get("./PID.3("+f+").4").toString());
-							break;
-						case "RWY":
-							patient.addIdentifier()
-								.setSystem(CHFTFHIRCodeSystems.URI_PATIENT_HOSPITAL_NUMBER)
-								.setValue(terser.get("./PID.3("+f+").4").toString());
-							break;
-						case "NHS":
-							patient.addIdentifier()
-								.setSystem(FHIRCodeSystems.URI_NHS_NUMBER_ENGLAND)
-								.setValue(terser.get("./PID.3("+f+").4").toString());
-							break;
+						log.info("Item "+f+" is not empty "+terser.get("/.PID-3("+f+")-1"));
+						switch (terser.get("/.PID-3("+f+")-4").toString())
+						{
+							case "PAS":
+								patient.addIdentifier()
+									.setSystem(CHFTFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER)
+									.setValue(terser.get("/.PID-3("+f+")-1").toString());
+								break;
+							case "RWY":
+								patient.addIdentifier()
+									.setSystem(CHFTFHIRCodeSystems.URI_PATIENT_HOSPITAL_NUMBER)
+									.setValue(terser.get("/.PID-3("+f+")-1").toString());
+								break;
+							case "NHS":
+								patient.addIdentifier()
+									.setSystem(FHIRCodeSystems.URI_NHS_NUMBER_ENGLAND)
+									.setValue(terser.get("/.PID-3("+f+")-1").toString());
+								break;
+						}
 					}
+				}
+				catch(Exception ex)
+				{
+					// Exception thrown on no data
 				}
 			}
 		}

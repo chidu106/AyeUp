@@ -6,6 +6,7 @@ import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
 import uk.co.mayfieldis.hl7v2.hapi.processor.ADTA28A31toPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichMFNM05withLocation;
+import uk.co.mayfieldis.hl7v2.hapi.processor.LightWithFHIR;
 import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM02PractitionerProcessor;
 import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM05LocationProcessor;
 
@@ -25,6 +26,7 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	
     	hl7.setHapiContext(hapiContext);
     	
+    	LightWithFHIR lightWithFHIR = new LightWithFHIR(); 
     	EnrichMFNM05withLocation enrichMFNM05withLocation = new EnrichMFNM05withLocation();
     	ADTA28A31toPatient adta28a31toPatient = new ADTA28A31toPatient();  
     	MFNM02PractitionerProcessor mfnm02PractitionerProcessor = new MFNM02PractitionerProcessor();
@@ -40,10 +42,10 @@ public class HL7v2CamelRoute extends RouteBuilder {
     		.unmarshal(hl7)
     		//.process("HL7v2Service")
     		.choice()
-				.when(header("CamelHL7MessageType").isEqualTo("ADT")).to("vm:ADT")
+				.when(header("CamelHL7MessageType").isEqualTo("ADT")).enrich("vm:ADT",lightWithFHIR)
 				//.when(header("CamelHL7MessageType").isEqualTo("ORM")).to("vm:ORM")
 				//.when(header("CamelHL7MessageType").isEqualTo("ORU")).to("vm:ORU")
-				.when(header("CamelHL7MessageType").isEqualTo("MFN")).to("vm:MFN")
+				.when(header("CamelHL7MessageType").isEqualTo("MFN")).enrich("vm:MFN",lightWithFHIR)
 			.end()
     		.transform(ack());
     	
@@ -79,8 +81,8 @@ public class HL7v2CamelRoute extends RouteBuilder {
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("vm:ADT_A01")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A04")).to("vm:ADT_A04")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A05")).to("vm:ADT_A05")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("vm:ADT_A28A31")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("vm:ADT_A28A31")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("activemq:ADT_A28A31")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("activemq:ADT_A28A31")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("vm:ADT_A40")
 			.end();
     	
@@ -96,7 +98,8 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.routeId("ADT_A05")
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
 
-    	from("vm:ADT_A28A31")
+    	
+    	from("activemq:ADT_A28A31")
 			.routeId("ADT_A28A31")
 			.process(adta28a31toPatient)
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
@@ -111,7 +114,7 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	
     	from("vm:FileFHIR")
     		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
-    		.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd}.xml");
+    		.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
     	
     	from("vm:HAPIFHIR")
     		.routeId("HAPI FHIR")
