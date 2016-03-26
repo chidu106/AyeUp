@@ -78,23 +78,23 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	from("vm:ADT")
     		.routeId("ADT")
     		.choice()
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("vm:ADT_A01")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A04")).to("vm:ADT_A04")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A05")).to("vm:ADT_A05")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("activemq:ADT_A01")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A04")).to("activemq:ADT_A04")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A05")).to("activemq:ADT_A05")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("activemq:ADT_A28A31")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("activemq:ADT_A28A31")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("vm:ADT_A40")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("activemq:ADT_A40")
 			.end();
     	
-    	from("vm:ADT_A01")
+    	from("activemq:ADT_A01")
 			.routeId("ADT_A01")
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
     	
-    	from("vm:ADT_A04")
+    	from("activemq:ADT_A04")
 			.routeId("ADT_A04")
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
     
-    	from("vm:ADT_A05")
+    	from("activemq:ADT_A05")
 			.routeId("ADT_A05")
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
 
@@ -105,11 +105,12 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
 			.to("vm:FileFHIR");
     	    	
-    	from("vm:ADT_A40")
+    	from("activemq:ADT_A40")
     		.routeId("ADT_A40")
     		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
          
     	from("vm:Location")
+    		.routeId("Location Lookup")
     		.transform(constant("Move along. Nothing to see here"));
     	
     	from("vm:FileFHIR")
