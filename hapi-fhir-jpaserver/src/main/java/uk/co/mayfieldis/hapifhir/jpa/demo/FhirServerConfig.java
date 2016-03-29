@@ -59,10 +59,14 @@ public class FhirServerConfig extends BaseJavaConfigDstu2 {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		//
 		retVal.setUrl("jdbc:mysql://localhost:3306/hapifhir");
+		//retVal.setUrl("jdbc:mysql://$OPENSHIFT_MYSQL_DB_HOST:$OPENSHIFT_MYSQL_DB_PORT/hapisql");
+		
 		
 		retVal.setUsername("fhirjpa");
 		retVal.setPassword("fhirjpa");
+		
 		return retVal;
 	}
 

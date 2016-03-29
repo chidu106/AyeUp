@@ -8,38 +8,20 @@
 	</parent>
 
 	<modelVersion>4.0.0</modelVersion>
-	<groupId>ca.uhn.hapi.fhir</groupId>
-	<artifactId>hapi-fhir</artifactId>
+	<groupId>uk.co.mayfieldis</groupId>
+	<artifactId>Jorvik-fhir</artifactId>
 	<packaging>pom</packaging>
-	<version>1.4-SNAPSHOT</version>
-	<name>HAPI-FHIR</name>
-	<url>http://jamesagnew.github.io/hapi-fhir/</url>
+	<version>0.1</version>
+	<name>Jorvik-fhir</name>
+	<url>http://www.mayfield-is.co.uk/</url>
 
 	<organization>
-		<name>University Health Network</name>
-		<url>http://www.uhn.ca</url>
+		<name>Mayfield Information Solutions</name>
+		<url>http://www.mayfield-is.co.uk/</url>
 	</organization>
 
-	<inceptionYear>2014</inceptionYear>
-
-	<issueManagement>
-		<system>GitHub</system>
-		<url>https://github.com/jamesagnew/hapi-fhir/issues/</url>
-	</issueManagement>
-
-	<distributionManagement>
-		<site>
-			<id>git.server</id>
-			<url>scm:git:git@github.com:jamesagnew/hapi-fhir.git</url>
-		</site>
-	</distributionManagement>
-
-	<scm>
-		<connection>scm:git:git@github.com:jamesagnew/hapi-fhir.git</connection>
-		<url>scm:git:git@github.com:jamesagnew/hapi-fhir.git</url>
-		<developerConnection>scm:git:git@github.com:jamesagnew/hapi-fhir.git</developerConnection>
-	</scm>
-
+	<inceptionYear>2016</inceptionYear>
+	
 	<description>
 	</description>
 
@@ -79,134 +61,9 @@
 
 	<developers>
 		<developer>
-			<id>jamesagnew</id>
-			<name>James Agnew</name>
-			<organization>University Health Network</organization>
-		</developer>
-		<developer>
-			<name>Dmitri Sotnikov</name>
-			<organization>University Health Network</organization>
-		</developer>
-		<developer>
-			<name>Lisa Wong</name>
-			<organization>University Health Network</organization>
-		</developer>
-		<developer>
-			<name>Josh Mandel</name>
-			<organization>Boston Children's Hospital</organization>
-		</developer>
-		<developer>
-			<id>lmds</id>
-			<name>Laura MacDougall Sookraj</name>
-			<organization>University Health Network</organization>
-		</developer>
-		<developer>
-			<name>Neal Acharya</name>
-			<organization>University Health Network</organization>
-		</developer>
-		<developer>
-			<name>David Hay</name>
-			<organization>Orion Health</organization>
-		</developer>
-		<developer>
-			<id>sweetnavelorange</id>
-			<name>James Butler</name>
-			<organization>Orion Health</organization>
-		</developer>
-		<developer>
-			<id>suranga</id>
-			<name>Suranga Nath Kasthurirathne</name>
-			<organization>OpenMRS / Regenstrief Center for Biomedical Informatics</organization>
-		</developer>
-		<developer>
-			<id>dougmartin</id>
-			<name>Doug Martin</name>
-			<organization>Regenstrief Center for Biomedical Informatics</organization>
-		</developer>
-		<developer>
-			<id>akley</id>
-			<name>Alexander Kley</name>
-		</developer>
-		<developer>
-			<id>preston</id>
-			<name>Preston Lee</name>
-			<organization>Arizona State University</organization>
-		</developer>
-		<developer>
-			<id>jjathman</id>
-			<name>Joe Athman</name>
-		</developer>
-		<developer>
-			<id>petromykhailysyn</id>
-			<name>Petro Mykhailyshyn</name>
-		</developer>
-		<developer>
-			<id>tahurac</id>
-			<name>Tahura Chaudhry</name>
-			<organization>University Health Network</organization>
-		</developer>
-		<developer>
-			<id>b.debeaubien</id>
-			<name>Bill de Beaubien</name>
-			<organization>Systems Made Simple</organization>
-		</developer>
-		<developer>
-			<id>twilson650</id>
-			<name>Tom Wilson</name>
-		</developer>
-		<developer>
-			<id>esteban-aliverti</id>
-			<name>Esteban Aliverti</name>
-		</developer>
-		<developer>
-			<id>mochaholic</id>
-			<name>Mohammad Jafari</name>
-			<organization>Edmond Scientific Company</organization>
-		</developer>
-		<developer>
-			<id>joel-costigliola</id>
-			<name>Joel Costigliola</name>
-			<organization>JCOS-Technologies</organization>
-		</developer>
-		<developer>
-			<id>pukkaone</id>
-			<name>Chin Huang</name>
-		</developer>
-		<developer>
-			<id>SingingTree</id>
-			<name>Bryce Van Dyk</name>
-		</developer>
-		<developer>
-			<id>botunge</id>
-			<name>Thomas Andersen</name>
-		</developer>
-		<developer>
-			<id>samlanfranchi</id>
-			<name>Sam Lanfranchi</name>
-		</developer>
-		<developer>
-			<id>jkiddo</id>
-			<name>Jens Kristian Villadsen</name>
-		</developer>
-		<developer>
-			<id>cmikeb1</id>
-			<name>C. Mike Bylund</name>
-		</developer>
-		<developer>
-			<id>nrpeterson</id>
-			<name>Nick Peterson</name>
-		</developer>
-		<developer>
-			<id>petervanhoute</id>
-			<name>Peter Van Houte</name>
-		</developer>
-		<developer>
-			<id>karlmdavis</id>
-			<name>Karl M. Davis</name>
-		</developer>
-		<developer>
-			<id>matt-blanchette</id>
-			<name>Matt Blanchette</name>
+			<id>kevinmayfield</id>
+			<name>Kevin Mayfield</name>
+			<organization>Mayfield Information Solutions</organization>
 		</developer>
 	</developers>
 
@@ -222,7 +79,7 @@
 		<maven.build.timestamp.format>yyyy-MM-dd'T'HH:mm:ss'Z'</maven.build.timestamp.format>
 
 		<!-- This property is used in some of the site documentation where the version is shown, so that we can deploy the site even if the project is on a snapshot version. -->
-		<hapi_stable_version>1.3</hapi_stable_version>
+		<hapi-fhir-version>1.4</hapi-fhir-version>
 
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -246,10 +103,16 @@
 		<phloc_schematron_version>2.7.1</phloc_schematron_version>
 		<phloc_commons_version>4.4.4</phloc_commons_version>
 		<spring_version>4.2.4.RELEASE</spring_version>
+		
+		<springframework-version>4.2.1.RELEASE</springframework-version>
+		<spring-security-version>4.0.2.RELEASE</spring-security-version>
+		<spring-security-oauth2>2.0.7.RELEASE</spring-security-oauth2>
+		
 		<thymeleaf-version>2.1.4.RELEASE</thymeleaf-version>
 		<ebay_cors_filter_version>1.0.1</ebay_cors_filter_version>
 		<xmlunit_version>1.6</xmlunit_version>
-
+		<hl7-fhir-me-version>1.0.1.7108</hl7-fhir-me-version>
+		
 		<!-- We are aiming to still work on a very old version of SLF4j even though we depend on the newest, just to be nice to users of the API. This version is tested in the hapi-fhir-cobertura. -->
 		<slf4j_target_version>1.6.0</slf4j_target_version>
 
@@ -703,11 +566,7 @@
 					<artifactId>maven-dependency-plugin</artifactId>
 					<version>2.10</version>
 				</plugin>
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-deploy-plugin</artifactId>
-					<version>2.8.2</version>
-				</plugin>
+				
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-gpg-plugin</artifactId>
@@ -771,14 +630,6 @@
 					<groupId>org.codehaus.mojo</groupId>
 					<artifactId>animal-sniffer-maven-plugin</artifactId>
 					<version>1.14</version>
-				</plugin>
-				<plugin>
-					<groupId>org.codehaus.mojo</groupId>
-					<artifactId>cobertura-maven-plugin</artifactId>
-					<version>2.7</version>
-					<configuration>
-						<skip>true</skip>
-					</configuration>
 				</plugin>
 				<plugin>
 					<groupId>org.codehaus.mojo</groupId>
@@ -958,28 +809,7 @@
 			</plugins>
 		</pluginManagement>
 		<plugins>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-enforcer-plugin</artifactId>
-				<executions>
-					<execution>
-						<id>enforce-java</id>
-						<goals>
-							<goal>enforce</goal>
-						</goals>
-						<configuration>
-							<rules>
-								<requireJavaVersion>
-									<version>[1.8,)</version>
-									<message>
-										The hapi-fhir Maven build requires JDK version 1.8 or higher.
-									</message>
-								</requireJavaVersion>
-							</rules>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
+			
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
@@ -1264,28 +1094,7 @@
 					</dependency>
 				</dependencies>
 			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-scm-publish-plugin</artifactId>
-				<version>1.1</version>
-				<inherited>false</inherited>
-				<configuration>
-					<checkoutDirectory>${scmPubCheckoutDirectory}</checkoutDirectory>
-					<content>\${siteMainDirectory}</content>
-					<tryUpdate>true</tryUpdate>
-					<scmBranch>gh-pages</scmBranch>
-					<pubScmUrl>scm:git:git@github.com:jamesagnew/hapi-fhir.git</pubScmUrl>
-				</configuration>
-				<executions>
-					<execution>
-						<id>scm-publish</id>
-						<phase>site-deploy</phase>
-						<goals>
-							<goal>publish-scm</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
+			
 		</plugins>
 	</build>
 
@@ -1293,26 +1102,6 @@
 		<plugins>
 			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-checkstyle-plugin</artifactId> <reportSets> <reportSet> <reports><report>checkstyle-aggregate</report></reports> </reportSet> 
 				</reportSets> <configuration> <configLocation>config/sun_checks.xml</configLocation> <includes> hapi-fhir-base/src/main/java/**/*.java </includes> </configuration> </plugin> -->
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-changes-plugin</artifactId>
-				<version>2.11</version>
-				<inherited>false</inherited>
-				<reportSets>
-					<reportSet>
-						<reports>
-							<report>changes-report</report>
-						</reports>
-					</reportSet>
-				</reportSets>
-				<configuration>
-					<feedType>atom_1.0</feedType>
-					<issueLinkTemplatePerSystem>
-						<default>https://github.com/jamesagnew/hapi-fhir/issues/%ISSUE%</default>
-					</issueLinkTemplatePerSystem>
-					<escapeHTML>false</escapeHTML>
-				</configuration>
-			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-surefire-report-plugin</artifactId>
@@ -1398,73 +1187,7 @@
 				</plugins>
 			</build>
 		</profile>
-		<profile>
-			<id>SITE</id>
-			<modules>
-				<module>hapi-fhir-base</module>
-				<module>hapi-fhir-structures-dstu</module>
-				<module>hapi-fhir-structures-dstu2</module>
-				<module>hapi-fhir-structures-hl7org-dstu2</module>
-				<module>hapi-fhir-jpaserver-base</module>
-				<module>hapi-fhir-jaxrsserver-base</module>
-				<!-- <module>hapi-fhir-cobertura</module> -->
-				<module>examples</module>
-			</modules>
-			<reporting>
-				<plugins>
-					<plugin>
-						<groupId>org.codehaus.mojo</groupId>
-						<artifactId>findbugs-maven-plugin</artifactId>
-						<version>3.0.3</version>
-						<configuration>
-							<classFilesDirectory>./hapi-fhir-base/target/classes</classFilesDirectory>
-						</configuration>
-						<reportSets>
-							<reportSet>
-								<reports>
-									<report>findbugs</report>
-								</reports>
-							</reportSet>
-						</reportSets>
-					</plugin>
-				</plugins>
-			</reporting>
-		</profile>
-		<profile>
-			<id>ALLMODULES</id>
-			<activation>
-				<activeByDefault>true</activeByDefault>
-			</activation>
-			<modules>
-				<module>hapi-deployable-pom</module>
-				<module>hapi-fhir-base</module>
-				<!--<module>hapi-fhir-oauth2</module> -->
-				<module>hapi-fhir-base-test-mindeps-client</module>
-				<module>hapi-fhir-base-test-mindeps-server</module>
-				<module>hapi-tinder-plugin</module>
-				<module>hapi-tinder-test</module>
-				<module>hapi-fhir-structures-dstu</module>
-				<module>hapi-fhir-validation-resources-dstu2</module>
-				<module>hapi-fhir-structures-dstu2</module>
-				<module>hapi-fhir-structures-hl7org-dstu2</module>
-				<module>hapi-fhir-validation-resources-dstu2.1</module>
-				<module>hapi-fhir-structures-dstu2.1</module>
-				<module>hapi-fhir-jaxrsserver-base</module>
-				<module>hapi-fhir-jaxrsserver-example</module>
-				<module>hapi-fhir-jpaserver-base</module>
-				<module>hapi-fhir-jpaserver-example</module>
-				<module>restful-server-example</module>
-				<module>restful-server-example-test</module>
-				<module>hapi-fhir-testpage-overlay</module>
-				<module>hapi-fhir-jpaserver-uhnfhirtest</module>
-				<module>hapi-fhir-android</module>
-				<module>hapi-fhir-cli</module>
-				<module>hapi-fhir-dist</module>
-				<module>examples</module>
-				<module>hapi-fhir-osgi-core</module>
-				<module>hapi-fhir-base-example-embedded-ws</module>
-			</modules>
-		</profile>
+		
 		<profile>
 			<id>COBERTURA</id>
 			<modules>
