@@ -79,15 +79,8 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.setHeader("Prefer", simple("return=representation",String.class))
 		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true&showHeaders=true")
 		    	.to("vm:hapi")
-		    	/*
-		    	 * 
-		    	.process(resourceToOrgInclude)
-		    	.to("vm:hapi")
-		    	.end()	
-		    	.setHeader(Exchange.HTTP_METHOD, simple("${header.FHIRMethod}",String.class))
-		    	*
-		    	*/
-		    	.to("http4:chft-tielive3.xthis.nhs.uk/REST/HAPI?connectionsPerRoute=60");
+    	    	.to("vm:FileFHIR");
+		    	//.to("http4:chft-tielive3.xthis.nhs.uk/REST/HAPI?connectionsPerRoute=60");
     	    	
     	    from("vm:org")
     	    	.routeId("Lookup FHIR Organisation")
@@ -109,5 +102,9 @@ public class SDSCamelRoute extends RouteBuilder {
     	    	.routeId("Call FHIR Server")
     	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/xml+fhir"))
     	    	.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+    	    
+    	    from("vm:FileFHIR")
+    		.routeId("FileStore")
+    		.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
     }
 }

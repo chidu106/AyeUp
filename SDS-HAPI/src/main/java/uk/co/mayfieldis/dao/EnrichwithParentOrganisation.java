@@ -270,6 +270,21 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 					NHSOrgTypeDesc= "GP Practices in England and Wales";
 					FHIROrgType = "prov";
 					break;
+				case "ETR.CSV":
+					NHSOrgType = "TR";
+					NHSOrgTypeDesc= "NHS Trust";
+					FHIROrgType = "prov";
+					break;
+				case "ETS.CSV":
+					NHSOrgType = "SITE";
+					NHSOrgTypeDesc= "NHS Trust Site";
+					FHIROrgType = "prov";
+					break;
+				case "EAUTH.CSV":
+					NHSOrgType = "HA";
+					NHSOrgTypeDesc= "NHS (England) High Level Health Geography";
+					FHIROrgType = "govt";
+					break;
 			}
 			
 			if (FHIROrgType != null)
