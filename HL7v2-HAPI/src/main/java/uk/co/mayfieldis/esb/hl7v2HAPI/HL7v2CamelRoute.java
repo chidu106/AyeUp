@@ -9,7 +9,6 @@ import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichMFNM05withLocation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichPatientwithOrganisation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichPatientwithPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichPatientwithPractitioner;
-import uk.co.mayfieldis.hl7v2.hapi.processor.LightWithFHIR;
 import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM02PractitionerProcessor;
 import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM05LocationProcessor;
 
@@ -53,10 +52,10 @@ public class HL7v2CamelRoute extends RouteBuilder {
     		//.process("HL7v2Service")
     		.choice()
 				.when(header("CamelHL7MessageType").isEqualTo("ADT"))
-					.wireTap("vm:ADT")
+					.wireTap("activemq:ADT")
 					.end()
 				.when(header("CamelHL7MessageType").isEqualTo("MFN"))
-					.wireTap("vm:MFN")
+					.wireTap("activemq:MFN")
 					.end()
 			.end()
     		.transform(ack());
@@ -73,16 +72,10 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.routeId("ORU")
 			.log("ORU");
 		*/
-    	from("vm:ADT?waitForTaskToComplete=Never")
-    		.routeId("ADT")
-    		.choice() //enrich("vm:ADT",lightWithFHIR)
-    			.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("activemq:ADT_A28A31")
-    			.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("activemq:ADT_A28A31")
-    			.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("activemq:ADT_A40")
-    		.end();
     	
-    	from("vm:MFN?waitForTaskToComplete=Never")
+    	from("activemq:MFN")
     		.routeId("MFN")
+    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
     		.choice()
     			.when(header("CamelHL7TriggerEvent").isEqualTo("M02")).to("activemq:MFN_M02")
     			.when(header("CamelHL7TriggerEvent").isEqualTo("M05")).to("activemq:MFN_M05")
@@ -99,44 +92,41 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.enrich("vm:Location",enrichMFNM05withLocation)
 			.to("activemq:FileFHIR");
 	    	
-    	from("vm:ADT")
+    	from("activemq:ADT")
     		.routeId("ADT")
+    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
     		.choice()
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("activemq:ADT_A01")
+		/*		.when(header("CamelHL7TriggerEvent").isEqualTo("A01")).to("activemq:ADT_A01")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A04")).to("activemq:ADT_A04")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A05")).to("activemq:ADT_A05")
+				.when(header("CamelHL7TriggerEvent").isEqualTo("A05")).to("activemq:ADT_A05") */
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A28")).to("activemq:ADT_A28A31")
 				.when(header("CamelHL7TriggerEvent").isEqualTo("A31")).to("activemq:ADT_A28A31")
-				.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("activemq:ADT_A40")
+			/*	.when(header("CamelHL7TriggerEvent").isEqualTo("A40")).to("activemq:ADT_A40") */
 			.end();
-    	
+    	/*
     	from("activemq:ADT_A01")
-			.routeId("ADT_A01")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
+			.routeId("ADT_A01");
     	
     	from("activemq:ADT_A04")
-			.routeId("ADT_A04")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
+			.routeId("ADT_A04");
     
     	from("activemq:ADT_A05")
-			.routeId("ADT_A05")
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
-
+			.routeId("ADT_A05");
+			
+		from("activemq:ADT_A40")
+    		.routeId("ADT_A40");
+	*/
     	
 		from("activemq:ADT_A28A31")
 			.routeId("ADT_A28A31")
 			.process(adta28a31toPatient)
-			.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true")
 			.enrich("vm:Organisation",enrichPatientwithOrganisation)
 			.enrich("vm:Practitioner",enrichPatientwithPractitioner)
 			.enrich("vm:Patient",enrichPatientwithPatient)
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true")
-			.to("activemq:FileFHIR");
+			.to("vm:HAPIFHIR");
+			//.to("activemq:FileFHIR");
     	    	
-    	from("activemq:ADT_A40")
-    		.routeId("ADT_A40")
-    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.HL7v2CamelRoute?showAll=true&multiline=true");
-
          
     	from("vm:Location")
     		.routeId("Location Lookup")

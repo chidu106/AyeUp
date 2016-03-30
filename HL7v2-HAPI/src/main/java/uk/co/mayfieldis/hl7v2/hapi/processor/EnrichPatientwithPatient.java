@@ -70,6 +70,9 @@ public class EnrichPatientwithPatient implements AggregationStrategy {
 						patient.setId(hapiPatient.getId());
 						exchange.getIn().setHeader(Exchange.HTTP_METHOD,"PUT");
 						exchange.getIn().setHeader(Exchange.HTTP_PATH,"Patient/"+hapiPatient.getId());
+						// Have altered resource so process it.
+						String Response = ResourceSerialiser.serialise(patient, ParserType.XML);
+						exchange.getIn().setBody(Response);
 					}
 					else
 					{
@@ -80,17 +83,19 @@ public class EnrichPatientwithPatient implements AggregationStrategy {
 				}
 				catch(Exception ex)
 				{
-					log.error("#12 XML Parse failed 2 "+ex.getMessage());
+					log.error("#12 XML Parse failed 2"+ exchange.getExchangeId() + " "  + ex.getMessage() 
+					+" Properties: " + exchange.getProperties().toString()
+					+" Headers: " + exchange.getIn().getHeaders().toString() 
+					+ " Message:" + exchange.getIn().getBody().toString());
 				}
-				String Response = ResourceSerialiser.serialise(patient, ParserType.XML);
-				exchange.getIn().setBody(Response);
+				
 				exchange.getIn().setHeader(Exchange.HTTP_QUERY,"");
 				exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
 			}
 		}
 		catch (Exception ex)
 		{
-			log.error(ex.getMessage());
+			log.error(exchange.getExchangeId() + " "  + ex.getMessage() +" " + enrichment.getProperties().toString());
 		}
 		
 		return exchange;

@@ -72,21 +72,27 @@ public class EnrichPatientwithPractitioner implements AggregationStrategy {
 						Practitioner practitioner = (Practitioner) bundle.getEntry().get(0).getResource(); 
 						ref.setReference("Practitioner/"+practitioner.getId());
 						patient.addCareProvider(ref);
+						
+						String Response = ResourceSerialiser.serialise(patient, ParserType.XML);
+						exchange.getIn().setBody(Response);
 					}
 				}
 				catch(Exception ex)
 				{
-					log.error("#12 XML Parse failed 2 "+ex.getMessage());
+					
+					log.error("#12 XML Parse failed 2"+ exchange.getExchangeId() + " "  + ex.getMessage() 
+						+" Properties: " + exchange.getProperties().toString()
+						+" Headers: " + exchange.getIn().getHeaders().toString() 
+						+ " Message:" + exchange.getIn().getBody().toString());
 				}
-				String Response = ResourceSerialiser.serialise(patient, ParserType.XML);
-				exchange.getIn().setBody(Response);
+				
 			
 				exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
 			}
 		}
 		catch (Exception ex)
 		{
-			log.error(ex.getMessage());
+			log.error(exchange.getExchangeId() + " "  + ex.getMessage() +" " + enrichment.getProperties().toString());
 		}
 		
 		return exchange;

@@ -15,13 +15,8 @@ import org.hl7.fhir.instance.model.DateType;
 import org.hl7.fhir.instance.model.Enumerations.AdministrativeGender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HL7Exception;
-import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
-import ca.uhn.hl7v2.parser.CanonicalModelClassFactory;
-import ca.uhn.hl7v2.parser.PipeParser;
 import ca.uhn.hl7v2.util.Terser;
 import uk.co.mayfieldis.FHIRConstants.CHFTFHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
@@ -45,12 +40,12 @@ public class ADTA28A31toPatient implements Processor {
 		{
 			// Could add some extra code here
 			
-			log.debug(hl7ex.getMessage());
+			log.debug("#1 "+hl7ex.getMessage());
 		}
 		catch(Exception ex)
 		{
 			// Exception thrown on no data
-			log.info(ex.getMessage());
+			log.debug("#2 "+ex.getMessage());
 		}
 		
 		return result;
@@ -198,19 +193,23 @@ public class ADTA28A31toPatient implements Processor {
 							contactPoint
 								.setValue(value)
 								.setSystem(ContactPointSystem.PHONE);
+							break;
 						case "ORN":
 							contactPoint
 								.setValue(value)
 								.setSystem(ContactPointSystem.PHONE);
+							break;
 					}
 					switch (value1)
 					{
 						case "PH":
 							contactPoint
 								.setUse(ContactPointUse.HOME);
+							break;
 						case "CP":
 							contactPoint
 								.setUse(ContactPointUse.MOBILE);
+							break;
 					}
 					
 				}
@@ -243,24 +242,29 @@ public class ADTA28A31toPatient implements Processor {
 							contactPoint
 								.setValue(value)
 								.setSystem(ContactPointSystem.PHONE);
+							break;
 						case "ORN":
 							contactPoint
 								.setValue(value)
 								.setSystem(ContactPointSystem.PHONE);
+							break;
 						case "WPN":
 							contactPoint
 								.setValue(value)
 								.setSystem(ContactPointSystem.PHONE)
 								.setUse(ContactPointUse.WORK);
+							break;
 					}
 					switch (value1)
 					{
 						case "PH":
 							contactPoint
 								.setUse(ContactPointUse.HOME);
+							break;
 						case "CP":
 							contactPoint
 								.setUse(ContactPointUse.MOBILE);
+							break;
 					}
 					
 				}
@@ -269,7 +273,7 @@ public class ADTA28A31toPatient implements Processor {
 			//log.info("Patient DoD");
 			if (terserGet("/.PID-29-1") != null && !terserGet("/.PID-29-1").isEmpty())
 			{
-				SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMdd");
+				SimpleDateFormat fmt = new SimpleDateFormat("yyyyMMddHHmmss");
 				
 	        	try {
 	        		Date dod;
@@ -300,7 +304,10 @@ public class ADTA28A31toPatient implements Processor {
 		}
 		catch (Exception ex)
 		{
-			log.error(ex.getMessage());
+			log.error("#3 "+ exchange.getExchangeId() + " "  + ex.getMessage() 
+					+" Properties: " + exchange.getProperties().toString()
+					+" Headers: " + exchange.getIn().getHeaders().toString() 
+					+ " Message:" + exchange.getIn().getBody().toString());
 		}
 		
 		String Response = ResourceSerialiser.serialise(patient, ParserType.XML);
