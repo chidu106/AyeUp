@@ -4,10 +4,11 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hl7.HL7DataFormat;
 import ca.uhn.hl7v2.DefaultHapiContext;
 import ca.uhn.hl7v2.HapiContext;
-import uk.co.mayfieldis.FHIRConstants.CHFTFHIRCodeSystems;
+import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 import uk.co.mayfieldis.hl7v2.hapi.processor.ADTA01A04A08toEncounter;
 import uk.co.mayfieldis.hl7v2.hapi.processor.ADTA28A31toPatient;
+import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithOrganisation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithPractitioner;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichMFNM05withLocation;
@@ -46,6 +47,7 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	EnrichPatientwithPatient enrichPatientwithPatient = new EnrichPatientwithPatient();
     	EnrichEncounterwithPatient enrichEncounterwithPatient = new EnrichEncounterwithPatient();
     	EnrichEncounterwithPractitioner enrichEncounterwithPractitioner = new EnrichEncounterwithPractitioner();
+    	EnrichEncounterwithOrganisation enrichEncounterwithOrganisation = new EnrichEncounterwithOrganisation();
     	
     	onException(org.apache.
     			camel.CamelAuthorizationException.class)
@@ -142,6 +144,7 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.process(adta01a04a08toEncounter)
 			.enrich("vm:Patient",enrichEncounterwithPatient)
 			.enrich("vm:Consultant",enrichEncounterwithPractitioner)
+			.enrich("vm:Organisation",enrichEncounterwithOrganisation)
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true")
 			.to("activemq:FileFHIR");
 		
@@ -187,7 +190,7 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.setBody(simple(""))
 			.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 	    	.setHeader(Exchange.HTTP_PATH, simple("/Patient",String.class))
-	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+CHFTFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER+"|${header.FHIRPatient}",String.class))
+	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER+"|${header.FHIRPatient}",String.class))
 	    	.to("vm:HAPIFHIR");
 
     }

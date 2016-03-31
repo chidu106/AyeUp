@@ -18,7 +18,7 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-import uk.co.mayfieldis.FHIRConstants.CHFTFHIRCodeSystems;
+import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 import uk.co.mayfieldis.dao.ResourceSerialiser;
 
@@ -97,13 +97,13 @@ public class ADTA28A31toPatient implements Processor {
 					{
 						case "PAS":
 							patient.addIdentifier()
-								.setSystem(CHFTFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER)
+								.setSystem(NHSTrustFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER)
 								.setValue(value);
 							exchange.getIn().setHeader("FHIRPatient", value);
 							break;
 						case "RWY":
 							patient.addIdentifier()
-								.setSystem(CHFTFHIRCodeSystems.URI_PATIENT_HOSPITAL_NUMBER)
+								.setSystem(NHSTrustFHIRCodeSystems.URI_PATIENT_HOSPITAL_NUMBER)
 								.setValue(value);
 							break;
 						case "NHS":

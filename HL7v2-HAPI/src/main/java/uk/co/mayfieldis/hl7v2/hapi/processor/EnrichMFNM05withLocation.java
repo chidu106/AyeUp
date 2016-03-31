@@ -12,7 +12,7 @@ import org.hl7.fhir.instance.model.HealthcareService.ServiceTypeComponent;
 
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-import uk.co.mayfieldis.FHIRConstants.CHFTFHIRCodeSystems;
+import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 import uk.co.mayfieldis.dao.ResourceSerialiser;
 
@@ -36,7 +36,7 @@ public class EnrichMFNM05withLocation implements AggregationStrategy {
 			
 			healthcareService.addIdentifier()
 				.setValue(terser.get("/.LOC-1-1"))
-				.setSystem(CHFTFHIRCodeSystems.URI_CHFT_CLINIC_CODE);
+				.setSystem(NHSTrustFHIRCodeSystems.URI_CHFT_CLINIC_CODE);
 			
 			ServiceTypeComponent serviceType = healthcareService.addServiceType();
 			if (!terser.get("/.LDP-4-1").isEmpty())
@@ -44,7 +44,7 @@ public class EnrichMFNM05withLocation implements AggregationStrategy {
 				CodeableConcept localSpecialty = new CodeableConcept();
 				localSpecialty.addCoding()
 					.setCode(terser.get("/.LDP-4-1"))
-					.setSystem(CHFTFHIRCodeSystems.URI_CHFT_SPECIALTY);
+					.setSystem(NHSTrustFHIRCodeSystems.URI_CHFT_SPECIALTY);
 				serviceType.addSpecialty(localSpecialty);
 			}
 			if (!terser.get("/.LDP-4-2").isEmpty())

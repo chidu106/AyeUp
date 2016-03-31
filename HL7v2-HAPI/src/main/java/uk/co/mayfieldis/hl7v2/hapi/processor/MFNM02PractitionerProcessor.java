@@ -10,7 +10,7 @@ import org.hl7.fhir.instance.model.Practitioner;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
-import uk.co.mayfieldis.FHIRConstants.CHFTFHIRCodeSystems;
+import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 import uk.co.mayfieldis.dao.ResourceSerialiser;
 
@@ -38,7 +38,7 @@ public class MFNM02PractitionerProcessor implements Processor {
 		
 		practitioner.addIdentifier()
 			.setValue(terser.get("/.STF-2"))
-			.setSystem(CHFTFHIRCodeSystems.URI_CHFT_PAS_CONSULTANT_CODE);
+			.setSystem(NHSTrustFHIRCodeSystems.URI_CHFT_PAS_CONSULTANT_CODE);
 		
 		practitioner.addPractitionerRole()
 			.addSpecialty()
