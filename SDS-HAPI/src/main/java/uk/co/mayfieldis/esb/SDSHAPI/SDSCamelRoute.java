@@ -6,8 +6,12 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.zipfile.ZipFileDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 
+import uk.co.mayfieldis.dao.ConsultantEnrichwithOrganisation;
 import uk.co.mayfieldis.dao.EnrichwithParentOrganisation;
 import uk.co.mayfieldis.dao.EnrichwithUpdateType;
+import uk.co.mayfieldis.dao.NHSConsultantEntities;
+import uk.co.mayfieldis.dao.NHSConsultantEntitiestoHeaderVars;
+import uk.co.mayfieldis.dao.NHSEntities;
 import uk.co.mayfieldis.dao.ResourceToOrgInclude;
 
 public class SDSCamelRoute extends RouteBuilder {
@@ -22,7 +26,8 @@ public class SDSCamelRoute extends RouteBuilder {
     	EnrichwithParentOrganisation enrichOrg = new EnrichwithParentOrganisation();
     	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
     	ResourceToOrgInclude resourceToOrgInclude = new ResourceToOrgInclude();
-    	
+    	NHSConsultantEntitiestoHeaderVars consultanttoHeaders = new NHSConsultantEntitiestoHeaderVars(); 
+    	ConsultantEnrichwithOrganisation consultantEnrichwithOrganisation = new ConsultantEnrichwithOrganisation(); 
     	
     	errorHandler(deadLetterChannel("direct:error")
         		.maximumRedeliveries(2));
@@ -51,10 +56,41 @@ public class SDSCamelRoute extends RouteBuilder {
     	    
     	    from("file:C:/NHSSDS/Extract?readLock=markerFile&preMove=inprogress&move=.done&include=.*.(csv)&delay=1000")
     	    	.routeId("Split CSV File")
-    	    	.unmarshal()
-                .bindy(BindyType.Csv, uk.co.mayfieldis.dao.NHSEntities.class)
-    	    	.split(body())
-    	    		.to("vm:LineProcessing");
+    	    	.log("File ${header.CamelFileName}")
+    	    	.choice()
+    	    		.when(header(Exchange.FILE_NAME).isEqualTo("econcur.csv"))
+    	    			.to("vm:ConsultantProcessing")
+    	    		.otherwise()
+    					.unmarshal()
+    	    			.bindy(BindyType.Csv, NHSEntities.class)
+    	    			.split(body())
+    	    			.wireTap("vm:LineProcessing")
+    	    			.end()
+    	    		.end();
+    	    
+    	    from("vm:ConsultantLine")
+		    	.routeId("Process Consultant Lines")
+		    	.log("Consultant Line")
+		    	.process(consultanttoHeaders)
+		    	.enrich("vm:org",consultantEnrichwithOrganisation)
+		    	.enrich("vm:lookup",enrichUpdateType)
+		    	.filter(header(Exchange.HTTP_METHOD)
+	    	    	.isEqualTo("POST"))
+	    	    		.to("vm:Update")
+	    	    	.end()
+	    	    .filter(header(Exchange.HTTP_METHOD)
+	    	    	.isEqualTo("PUT"))
+	    	    		.to("vm:Update")
+	    	    	.end();
+	    	    
+    	    from("vm:ConsultantProcessing")
+	    		.routeId("Process Consultant File")
+	    		.log("Processing Consultant File")
+	    		.unmarshal()
+    			.bindy(BindyType.Csv, NHSConsultantEntities.class)
+    			.split(body())
+	    		.wireTap("vm:ConsultantLine")
+	    		.end();
     	    
     	    from("vm:LineProcessing")
     	    	.routeId("Process entries")
@@ -79,8 +115,11 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.setHeader("Prefer", simple("return=representation",String.class))
 		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true&showHeaders=true")
 		    	.to("vm:hapi")
-    	    	.to("vm:FileFHIR");
-		    	//.to("http4:chft-tielive3.xthis.nhs.uk/REST/HAPI?connectionsPerRoute=60");
+		    	.choice()
+	    		.when(header(Exchange.FILE_NAME).isEqualTo("egpam.csv"))
+	    			// only send updates for amendment load not a bulk load
+	    			.to("http4:chft-tielive3.xthis.nhs.uk/REST/HAPI?connectionsPerRoute=60");
+	    		
     	    	
     	    from("vm:org")
     	    	.routeId("Lookup FHIR Organisation")
@@ -104,7 +143,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	    	.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
     	    
     	    from("vm:FileFHIR")
-    		.routeId("FileStore")
-    		.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
+    			.routeId("FileStore")
+    			.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
     }
 }

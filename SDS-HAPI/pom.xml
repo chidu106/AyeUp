@@ -42,6 +42,7 @@
 		<derby-version>10.12.1.1</derby-version>
 			<hibernate_version>5.0.7.Final</hibernate_version>
 		<hibernate_validator_version>5.2.2.Final</hibernate_validator_version>
+		<activemq-version>5.11.1</activemq-version>
   	</properties>
 
 	<build>
@@ -172,6 +173,18 @@
 		<artifactId>camel-bindy</artifactId>
 		<version>${camel-version}</version>
 	</dependency>
+	
+	   <dependency>
+			<groupId>org.apache.camel</groupId>
+			<artifactId>camel-jms</artifactId>
+			<version>${camel-version}</version>
+	    </dependency>
+	    <dependency>
+		  	<groupId>org.apache.activemq</groupId>
+		  	<artifactId>activemq-camel</artifactId>
+		  	<version>${activemq-version}</version>
+		</dependency>
+	
    	<dependency>
 		<groupId>me.fhir</groupId>
 		<artifactId>fhir-dstu2</artifactId>

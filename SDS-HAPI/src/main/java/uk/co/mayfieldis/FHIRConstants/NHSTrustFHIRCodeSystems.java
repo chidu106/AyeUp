@@ -3,7 +3,7 @@ package uk.co.mayfieldis.FHIRConstants;
 // 2016-02-05 Added all constants from subprojects
 
 //Added Gp and Practice  19/1/2016 
-public class CHFTFHIRCodeSystems {
+public class NHSTrustFHIRCodeSystems {
 	 public final static String URI_PATIENT_HOSPITAL_NUMBER = "http://fhir.chft.nhs.uk/HospitalNumber";
 	 
 	 public final static String URI_PATIENT_DISTRICT_NUMBER = "http://fhir.chft.nhs.uk/DistrictNumber";

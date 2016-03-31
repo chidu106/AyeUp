@@ -35,41 +35,37 @@
     	<property name="usingIterator" value="true"/>
 	</bean>
 	
+	 <bean id="jmsConnectionFactory" 
+   class="org.apache.activemq.ActiveMQConnectionFactory">
+	   <property name="brokerURL" value="tcp://localhost:61616" />
+	</bean>
+	 
+	<bean id="pooledConnectionFactory" 
+	   class="org.apache.activemq.pool.PooledConnectionFactory" init-method="start" destroy-method="stop">
+	   <property name="maxConnections" value="8" />
+	   <property name="connectionFactory" ref="jmsConnectionFactory" />
+	</bean>
+	 
+	<bean id="jmsConfig" 
+	   class="org.apache.camel.component.jms.JmsConfiguration">
+	   <property name="connectionFactory" ref="pooledConnectionFactory"/>
+	   <property name="concurrentConsumers" value="10"/>
+	</bean>
+	 
+	<bean id="activemq" 
+	    class="org.apache.activemq.camel.component.ActiveMQComponent">
+	    <property name="configuration" ref="jmsConfig"/>
+	 
+	    <!-- if we are using transacted then enable CACHE_CONSUMER (if not using XA) to run faster
+	         see more details at: http://camel.apache.org/jms
+	    <property name="transacted" value="true"/>
+	    <property name="cacheLevelName" value="CACHE_CONSUMER" />
+	    -->
+	</bean>
+	
 	<camelContext id="NHSSDSRoutetoHAPI" xmlns="http://camel.apache.org/schema/spring">
     	<package>uk.co.mayfieldis.esb.SDSHAPI</package>
   	</camelContext>
-	
-	<bean id="dataSource"
-		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-		<property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
-		<property name="url"
-			value="jdbc:derby:c:\\temp\\database\\SDS;create=true" />
-		<property name="username" value="" />
-		<property name="password" value="" />
-	</bean>
- <!-- 
-	<bean id="entityManagerFactory"
-		class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
-		<property name="dataSource" ref="dataSource"></property>
-		<property name="jpaVendorAdapter">
-			<bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter">
-				<property name="databasePlatform" value="org.hibernate.dialect.DerbyDialect" />
-			</bean>
-		</property>
-		<property name="jpaProperties">
-			<props>
-				<prop key="hibernate.hbm2ddl.auto">update</prop>
-				<prop key="hibernate.show_sql">true</prop>
-				<prop key="hbm2ddl.auto">update</prop>
-			</props>
-		</property>
-		
-	</bean>
-	<bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-    <property name="entityManagerFactory" ref="entityManagerFactory" />
-    <property name="dataSource" ref="dataSource" />
-  </bean>
-	 -->
   
 
 </beans>
