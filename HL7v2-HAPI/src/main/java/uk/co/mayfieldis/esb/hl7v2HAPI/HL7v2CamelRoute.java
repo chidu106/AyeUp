@@ -116,24 +116,13 @@ public class HL7v2CamelRoute extends RouteBuilder {
 			.end();
     	
     	
-    	
-    	
-    	
-    	/*
-    	
-    	from("activemq:ADT_A05")
-			.routeId("ADT_A05");
-			
-		from("activemq:ADT_A40")
-    		.routeId("ADT_A40");
-	*/
     	// Demographics 
 		from("activemq:ADT_A28A31")
 			.routeId("ADT_A28A31 Demographics")
 			.process(adta28a31toPatient)
-			.enrich("vm:Organisation",enrichPatientwithOrganisation)
-			.enrich("vm:Practitioner",enrichPatientwithPractitioner)
-			.enrich("vm:Patient",enrichPatientwithPatient)
+			.enrich("vm:lookupOrganisation",enrichPatientwithOrganisation)
+			.enrich("vm:lookupGP",enrichPatientwithPractitioner)
+			.enrich("vm:lookupPatient",enrichPatientwithPatient)
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true")
 			.to("vm:HAPIFHIR");
 			//.to("activemq:FileFHIR");
@@ -142,26 +131,28 @@ public class HL7v2CamelRoute extends RouteBuilder {
 		from("activemq:ADT_A01A04A08")
 			.routeId("ADT_A01A04A08 Encounters")
 			.process(adta01a04a08toEncounter)
-			.enrich("vm:Patient",enrichEncounterwithPatient)
-			.enrich("vm:Consultant",enrichEncounterwithPractitioner)
-			.enrich("vm:Organisation",enrichEncounterwithOrganisation)
+			.enrich("vm:lookupPatient",enrichEncounterwithPatient)
+			.enrich("vm:lookupConsultant",enrichEncounterwithPractitioner)
+			.enrich("vm:lookupOrganisation",enrichEncounterwithOrganisation)
+			
+			.choice()
+				.when(header("FHIRLocation").isNotNull())
+					.enrich("vm:lookupLocation")
+			.end()
 			.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true")
 			.to("activemq:FileFHIR");
 		
          
-    	from("vm:Location")
-    		.routeId("Location Lookup")
-    		.transform(constant("Move along. Nothing to see here"));
+    	from("vm:lookupLocation")
+    		.routeId("Loookup FHIR Location")
+    		.log("Lookup Location ${header.FHIRLocation}")
+    		.setBody(simple(""))
+	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
+	    	.setHeader(Exchange.HTTP_PATH, simple("/Location",String.class))
+	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.uriCHFTLocation+"|${header.FHIRLocation}",String.class))
+	    	.to("vm:HAPIFHIR");
     	
-    	from("activemq:FileFHIR")
-    		.routeId("FileStore")
-    		.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
-    	
-    	from("vm:HAPIFHIR")
-    		.routeId("HAPI FHIR")
-    		.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
-		
-    	from("vm:Organisation")
+    	from("vm:lookupOrganisation")
 	    	.routeId("Lookup FHIR Organisation")
 	    	.setBody(simple(""))
 	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
@@ -169,29 +160,37 @@ public class HL7v2CamelRoute extends RouteBuilder {
 	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"|${header.FHIROrganisationCode}",String.class))
 	    	.to("vm:HAPIFHIR");
     	
-    	from("vm:Practitioner")
-    		.routeId("Lookup FHIR Practitioner")
+    	from("vm:lookupGP")
+    		.routeId("Lookup FHIR Practitioner (GP)")
 	    	.setBody(simple(""))
 	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 	    	.setHeader(Exchange.HTTP_PATH, simple("/Practitioner",String.class))
 	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+FHIRCodeSystems.URI_NHS_GMP_CODE+"|${header.FHIRGP}",String.class))
 	    	.to("vm:HAPIFHIR");
     	
-    	from("vm:Consultant")
-			.routeId("Lookup FHIR Consultant")
+    	from("vm:lookupConsultant")
+			.routeId("Lookup FHIR Practitioner (Consultant)")
 	    	.setBody(simple(""))
+	    	//.log("GET /Practitioner?identifier="+FHIRCodeSystems.URI_OID_NHS_PERSONNEL_IDENTIFIERS+"|${header.FHIRPractitioner}")
 	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 	    	.setHeader(Exchange.HTTP_PATH, simple("/Practitioner",String.class))
-	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+FHIRCodeSystems.URI_OID_NHS_PERSONNEL_IDENTIFIERS+"|${header.FHIRGP}",String.class))
+	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+FHIRCodeSystems.URI_OID_NHS_PERSONNEL_IDENTIFIERS+"|${header.FHIRPractitioner}",String.class))
 	    	.to("vm:HAPIFHIR");
 	    	
-    	from("vm:Patient")
+    	from("vm:lookupPatient")
 			.routeId("Lookup FHIR Patient")
 			.setBody(simple(""))
 			.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 	    	.setHeader(Exchange.HTTP_PATH, simple("/Patient",String.class))
 	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.URI_PATIENT_DISTRICT_NUMBER+"|${header.FHIRPatient}",String.class))
 	    	.to("vm:HAPIFHIR");
-
+    	
+    	from("activemq:FileFHIR")
+			.routeId("FileStore")
+			.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
+	
+    	from("vm:HAPIFHIR")
+			.routeId("HAPI FHIR")
+			.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
     }
 }

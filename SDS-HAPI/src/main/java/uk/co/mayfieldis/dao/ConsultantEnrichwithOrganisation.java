@@ -14,6 +14,7 @@ import org.hl7.fhir.instance.model.Bundle;
 import org.hl7.fhir.instance.model.CodeableConcept;
 import org.hl7.fhir.instance.model.Coding;
 import org.hl7.fhir.instance.model.HumanName;
+import org.hl7.fhir.instance.model.Location;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Period;
 import org.hl7.fhir.instance.model.Practitioner;
@@ -36,9 +37,10 @@ public class ConsultantEnrichwithOrganisation implements AggregationStrategy  {
 	public Exchange aggregate(Exchange exchange, Exchange enrichment) 
 	{
 		
-		NHSConsultantEntities entity = exchange.getIn().getBody(NHSConsultantEntities.class);
+		
 		
 		Organization parentOrganisation = null;
+		Practitioner gp = null;
 		//
 		if (enrichment.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE).toString().equals("200"))
 		{
@@ -77,72 +79,43 @@ public class ConsultantEnrichwithOrganisation implements AggregationStrategy  {
 					
 				}
 			}
-			  
-		}
-		
-		String Id = entity.PractitionerCode; 
-		
-		if ( Id.startsWith("C") && Id.length()>6)
-		{
-			Practitioner gp = new Practitioner();
-			//gp.setId(entity.OrganisationCode);
-			
-			gp.addIdentifier()
-				.setValue(entity.PractitionerCode)
-				.setSystem(FHIRCodeSystems.URI_OID_NHS_PERSONNEL_IDENTIFIERS);
-			
-			
-			HumanName name = new HumanName();
-			
-			if (!entity.Surname.isEmpty()) 
-			{
-				name.addFamily(entity.Surname);
-			}
-			if (!entity.Initials.isEmpty()) 
-			{
-				name.addGiven(entity.Initials);
-			}
-			gp.setName(name);
-			
-			PractitionerPractitionerRoleComponent practitionerRole = new PractitionerPractitionerRoleComponent(); 
-									
-			CodeableConcept pracspecialty= new CodeableConcept();
-			pracspecialty.addCoding()
-				.setCode(entity.SpecialityFunctionCode)
-				.setSystem(FHIRCodeSystems.URI_NHS_SPECIALTIES);
-			practitionerRole
-				.addSpecialty(pracspecialty);
-			
-			CodeableConcept role= new CodeableConcept();
-			role.addCoding()
-					.setCode(PractitionerRole.DOCTOR.toString())
-					.setSystem("http://hl7.org/fhir/practitioner-role");
 			
 			if (parentOrganisation !=null)
 			{
+				ByteArrayInputStream xmlNewContentBytes = new ByteArrayInputStream ((byte[]) exchange.getIn().getBody(byte[].class));
 				
-				Reference organisation = new Reference();
-				organisation.setReference("Organization/"+parentOrganisation.getId());
-				practitionerRole.setManagingOrganization(organisation);
-				Extension parentOrg= new Extension();
-				parentOrg.setUrl(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"/ParentCode");
-				CodeableConcept parentCode = new CodeableConcept();
-				parentCode.addCoding()
-					.setCode(exchange.getIn().getHeader("ParentOrganisationCode").toString())
-					.setSystem(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE);
-				
-				parentOrg.setValue(parentCode);
-				practitionerRole.addExtension(parentOrg);
-			}			
-			
-			practitionerRole.setRole(role);
-			
-			gp.addPractitionerRole(practitionerRole);
-			// XML as Ensemble doesn't like JSON
-			String Response = ResourceSerialiser.serialise(gp, ParserType.XML);
-			exchange.getIn().setHeader("FHIRResource","/Practitioner");
-			exchange.getIn().setHeader("FHIRQuery","identifier="+gp.getIdentifier().get(0).getSystem()+"|"+gp.getIdentifier().get(0).getValue());
-			exchange.getIn().setBody(Response);
+				XmlParser composer = new XmlParser();
+				try
+				{
+					// Add in the parent organisation code
+					gp = (Practitioner) composer.parse(xmlNewContentBytes);
+					
+					PractitionerPractitionerRoleComponent practitionerRole = gp.getPractitionerRole().get(0);
+									
+					Reference organisation = new Reference();
+					organisation.setReference("Organization/"+parentOrganisation.getId());
+					practitionerRole.setManagingOrganization(organisation);
+					Extension parentOrg= new Extension();
+					parentOrg.setUrl(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"/ParentCode");
+					CodeableConcept parentCode = new CodeableConcept();
+					parentCode.addCoding()
+						.setCode(exchange.getIn().getHeader("ParentOrganisationCode").toString())
+						.setSystem(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE);
+					
+					parentOrg.setValue(parentCode);
+					practitionerRole.addExtension(parentOrg);
+					
+					String Response = ResourceSerialiser.serialise(gp, ParserType.XML);
+					exchange.getIn().setBody(Response);
+				}
+				catch(Exception ex)
+				{
+					log.error("#12 XML Parse failed 2"+ exchange.getExchangeId() + " "  + ex.getMessage() 
+						+" Properties: " + exchange.getProperties().toString()
+						+" Headers: " + exchange.getIn().getHeaders().toString() 
+						+ " Message:" + exchange.getIn().getBody().toString());
+				}
+			}
 		}
 		
 		exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");

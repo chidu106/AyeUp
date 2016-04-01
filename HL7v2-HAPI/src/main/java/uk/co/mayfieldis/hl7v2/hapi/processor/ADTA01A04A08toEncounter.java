@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.util.Terser;
+import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
 import uk.co.mayfieldis.dao.ResourceSerialiser;
 
@@ -122,6 +123,44 @@ public class ADTA01A04A08toEncounter implements Processor {
 	        	// TODO Auto-generated catch block
 	        	}
 			}
+			encounter.setPeriod(period);
+			
+			if (terserGet("/.PV1-10-1") != null && !terserGet("/.PV1-10-1").isEmpty())
+			{
+				encounter.addType()
+					.addCoding()
+						.setSystem(FHIRCodeSystems.URI_NHS_SPECIALTIES)
+						.setCode(terserGet("/.PV1-10-1"));
+			}
+			
+			switch (terserGet("/.PV1-2"))
+			{
+				case "O" : 
+					encounter.setClass_(Encounter.EncounterClass.OUTPATIENT);
+					if (terserGet("/.PV1-3-2") != null && !terserGet("/.PV1-3-2").isEmpty())
+					{
+						encounter.addType()
+							.addCoding()
+								.setSystem(NHSTrustFHIRCodeSystems.URI_CHFT_CLINIC_CODE)
+								.setCode(terserGet("/.PV1-3-2"))
+								.setDisplay(terserGet("/.PV1-3-9"));
+					}
+					break;
+				case "I" : encounter.setClass_(Encounter.EncounterClass.INPATIENT);
+					break;
+				case "E" : encounter.setClass_(Encounter.EncounterClass.EMERGENCY);
+					break;
+			}
+			
+			
+			if (terserGet("/.PV1-3-2") != null && !terserGet("/.PV1-3-2").isEmpty())
+			{
+				exchange.getIn().setHeader("FHIRroom", terserGet("/.PV1-3-2"));
+			}
+			if (terserGet("/.PV1-3-4-1") != null && !terserGet("/.PV1-3-4-1").isEmpty())
+			{
+				exchange.getIn().setHeader("FHIRfacilityHD", terserGet("/.PV1-3-4-1"));
+			}
 			if (terserGet("/.PV1-9-1") != null && !terserGet("/.PV1-9-1").isEmpty())
 			{
 				exchange.getIn().setHeader("FHIRPractitioner", terserGet("/.PV1-9-1"));
@@ -130,16 +169,7 @@ public class ADTA01A04A08toEncounter implements Processor {
 			{
 				exchange.getIn().setHeader("FHIROrganisationCode", terserGet("/.PV1-3-1"));
 			}
-			encounter.setPeriod(period);
-			switch (terserGet("/.PV1-2"))
-			{
-				case "O" : encounter.setClass_(Encounter.EncounterClass.OUTPATIENT);
-					break;
-				case "I" : encounter.setClass_(Encounter.EncounterClass.INPATIENT);
-					break;
-				case "E" : encounter.setClass_(Encounter.EncounterClass.EMERGENCY);
-					break;
-			}
+			
 			
 			switch (terserGet("/.MSH-9-2"))
 			{

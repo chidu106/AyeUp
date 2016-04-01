@@ -43,53 +43,13 @@ public class NHSTrustFHIRCodeSystems {
 	 
 	 public final static String URI_CHFT_CLINIC_CODE = "http://fhir.chft.nhs.uk/ClinicCode";
 	 
-	 public final static String SELECT_PATIENT_SQL = "select  p.ID,"+
-				" p.Address1,"+
-				" p.Address2,"+
-				" p.Address3,"+
-				" p.Address4,"+
-				" CopyLetter,"+
-				" DateOfDeath,"+
-				" DistrictNo DistrictNumber,"+
-				" DoB DOB,"+
-				" Email,"+
-				" EthnicOrigin,"+
-				" ForeName1,"+
-				" ForeName2,"+
-				" GP,"+
-				" GPPract,"+
-				" GenNo,"+
-				" HomeTelNo,"+
-				" SUBSTRING(HospNo,2,99) HospitalNumber,"+
-				" JointNum,"+
-				" MobileTelNo,"+
-				" SUBSTRING(NHSNum,2,99) NHSNum,"+
-				" NHSNumStatus,"+
-				" OverVisitStat,"+
-				" p.PostCode,"+
-				" Religion,"+
-				" SMS,"+
-				" Sex,"+
-				" Site,"+
-				" p.Status,"+
-				" p.Surname,"+
-				" Title,"+
-				" UN1,"+
-				" '' GPLocalCode,"+
-				" gp.Surname GPSurname,"+
-				" gp.Initials GPInitials,"+
-				" prac.Address1 PracticeName,"+
-				" prac.Address2 PracticeAd1,"+
-				" prac.Address3 PracticeAd2,"+
-				" prac.Address4 PracticeAd3,"+
-				" prac.postcode PracticePostCode"+
-				" from MPI.Patient p"+
-				" left outer join REF.NationalGP gp on p.GP = gp.GPCode"
-				+ " left outer join REF.NationalPractice prac on prac.PracCode = p.GPPract";
+	 
 	 
 	 public final static String URI_CHFT_REFERRAL_REASON = "http://fhir.chft.nhs.uk/ReferralRequest/ReferralReason";
 	 
 	 public final static String URI_CHFT_REFERRAL_REASON_ACCPETED_DATE = "http://fhir.chft.nhs.uk/ReferralRequest/AcceptedDate";
+	 
+	 public final static String  uriCHFTLocation = "http://fhir.chft.nhs.uk/LocationId";
 	 /*
 	  * 
 	  * #define uriDistrictNumber "http://fhir.chft.nhs.uk/DistrictNumber"

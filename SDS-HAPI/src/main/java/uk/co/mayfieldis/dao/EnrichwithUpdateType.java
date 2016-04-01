@@ -8,6 +8,7 @@ import org.hl7.fhir.instance.formats.JsonParser;
 
 import org.hl7.fhir.instance.formats.XmlParser;
 import org.hl7.fhir.instance.model.Bundle;
+import org.hl7.fhir.instance.model.Location;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Practitioner;
 import org.hl7.fhir.instance.model.Resource;
@@ -163,6 +164,10 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 				{
 					exchange.getIn().setHeader("FHIRResource","Practitioner");
 				}
+				if (exchange.getIn().getHeader("FHIRResource").toString().contains("Location"))
+				{
+					exchange.getIn().setHeader("FHIRResource","Location");
+				}
 			}
 			
 			if (bundle!=null && bundle.getEntry().size()>0)
@@ -173,8 +178,10 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 				Resource oldResource=bundle.getEntry().get(0).getResource();
 				Organization oldOrganisation = null;
 				Practitioner oldPractitioner = null;
+				Location oldLocation = null;
 				Organization newOrganisation = null;
 				Practitioner newPractitioner = null;
+				Location newLocation = null;
 				if (exchange.getIn().getHeader("FHIRResource").toString().contains("Organization"))
 				{
 					oldOrganisation = (Organization) bundle.getEntry().get(0).getResource();
@@ -183,6 +190,10 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 				if (exchange.getIn().getHeader("FHIRResource").toString().contains("Practitioner"))
 				{
 					oldPractitioner = (Practitioner) bundle.getEntry().get(0).getResource();
+				}
+				if (exchange.getIn().getHeader("FHIRResource").toString().contains("Location"))
+				{
+					oldLocation = (Location) bundle.getEntry().get(0).getResource();
 				}
 				
 				ByteArrayInputStream xmlNewContentBytes = new ByteArrayInputStream ((byte[]) exchange.getIn().getBody(byte[].class));
@@ -199,6 +210,10 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 						if (exchange.getIn().getHeader("FHIRResource").toString().contains("Organization"))
 						{
 							newOrganisation = (Organization) composer.parse(xmlNewContentBytes);
+						}
+						if (exchange.getIn().getHeader("FHIRResource").toString().contains("Location"))
+						{
+							newLocation = (Location) composer.parse(xmlNewContentBytes);
 						}
 					}
 					catch(Exception ex)
@@ -219,6 +234,10 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 						{
 							newOrganisation = (Organization) composer.parse(xmlNewContentBytes);
 						}
+						if (exchange.getIn().getHeader("FHIRResource").toString().contains("Location"))
+						{
+							newLocation = (Location) composer.parse(xmlNewContentBytes);
+						}
 					}
 					catch(Exception ex)
 					{
@@ -234,19 +253,28 @@ public class EnrichwithUpdateType implements AggregationStrategy  {
 				{
 					sameResource = practitionerCompare(oldPractitioner,newPractitioner);
 				}
+				if (oldLocation !=null)
+				{
+					// this isn't coded for Location
+				}
 				if (!sameResource)
 				{
 					// Record is different so update it
-					exchange.getIn().setHeader(Exchange.HTTP_METHOD,"PUT");
+					
 					if (exchange.getIn().getHeader("FHIRResource").toString().contains("Organization"))
 					{
-						
+						exchange.getIn().setHeader(Exchange.HTTP_METHOD,"PUT");
 						exchange.getIn().setHeader("FHIRResource","Organization/"+oldOrganisation.getId());
 					}
 					if (exchange.getIn().getHeader("FHIRResource").toString().contains("Practitioner"))
 					{
-						
+						exchange.getIn().setHeader(Exchange.HTTP_METHOD,"PUT");
 						exchange.getIn().setHeader("FHIRResource","Practitioner/"+oldPractitioner.getId());
+					}
+					if (exchange.getIn().getHeader("FHIRResource").toString().contains("Location"))
+					{
+						exchange.getIn().setHeader(Exchange.HTTP_METHOD,"PUT");
+						exchange.getIn().setHeader("FHIRResource","Location/"+oldLocation.getId());
 					}
 				}
 			}

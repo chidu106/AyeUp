@@ -43,6 +43,7 @@ public class NHSTrustFHIRCodeSystems {
 	 
 	 public final static String URI_CHFT_CLINIC_CODE = "http://fhir.chft.nhs.uk/ClinicCode";
 	 
+	 public final static String  uriCHFTLocation = "http://fhir.chft.nhs.uk/LocationId";
 	
 	 
 	 public final static String URI_CHFT_REFERRAL_REASON = "http://fhir.chft.nhs.uk/ReferralRequest/ReferralReason";
