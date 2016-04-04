@@ -19,6 +19,7 @@ public class NHSTrustFHIRCodeSystems {
 	 public final static String uri_CHFT_Kodak_DocumentId = "http://fhir.chft.nh.uk/DocumentReference/KodakScanning";
 	 
 	 public final static String uriCHFTActivityId = "http://fhir.chft.nhs.uk/HSI";
+	 public final static String uriCHFTAppointmentId = "http://fhir.chft.nhs.uk/Appointment/HSI";
 	 
 	 public final static String uriCHFTEDISActivityId = "http://fhir.chft.nhs.uk/EDISActivityId";
 	 

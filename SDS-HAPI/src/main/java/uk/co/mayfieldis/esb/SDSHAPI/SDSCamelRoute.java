@@ -11,11 +11,12 @@ import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
 import uk.co.mayfieldis.dao.ConsultantEnrichwithOrganisation;
 import uk.co.mayfieldis.dao.EnrichLocationwithLocation;
 import uk.co.mayfieldis.dao.EnrichLocationwithOrganisation;
-import uk.co.mayfieldis.dao.EnrichwithParentOrganisation;
+import uk.co.mayfieldis.dao.EnrichResourcewithOrganisation;
 import uk.co.mayfieldis.dao.EnrichwithUpdateType;
 import uk.co.mayfieldis.dao.NHSConsultantEntities;
 import uk.co.mayfieldis.dao.NHSConsultantEntitiestoFHIRPractitioner;
 import uk.co.mayfieldis.dao.NHSEntities;
+import uk.co.mayfieldis.dao.NHSEntitiestoFHIRResource;
 import uk.co.mayfieldis.dao.NHSTrustLocationEntities;
 import uk.co.mayfieldis.dao.NHSTrustLocationEntitiestoFHIRLocation;
 
@@ -30,12 +31,12 @@ public class SDSCamelRoute extends RouteBuilder {
     	
     	EnrichLocationwithLocation enrichLocationwithLocation = new EnrichLocationwithLocation();
     	EnrichLocationwithOrganisation enrichLocationwithOrganisation = new EnrichLocationwithOrganisation();
-    	EnrichwithParentOrganisation enrichOrg = new EnrichwithParentOrganisation();
+    	EnrichResourcewithOrganisation enrichOrg = new EnrichResourcewithOrganisation();
     	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
-    	//ResourceToOrgInclude resourceToOrgInclude = new ResourceToOrgInclude();
     	NHSConsultantEntitiestoFHIRPractitioner consultanttoFHIRPractitioner = new NHSConsultantEntitiestoFHIRPractitioner(); 
     	ConsultantEnrichwithOrganisation consultantEnrichwithOrganisation = new ConsultantEnrichwithOrganisation();
-    	NHSTrustLocationEntitiestoFHIRLocation trustLocationEntitiestoFHIRLocation = new NHSTrustLocationEntitiestoFHIRLocation(); 
+    	NHSTrustLocationEntitiestoFHIRLocation trustLocationEntitiestoFHIRLocation = new NHSTrustLocationEntitiestoFHIRLocation();
+    	NHSEntitiestoFHIRResource nhsEntitiestoFHIRResource = new NHSEntitiestoFHIRResource();
     	
     	errorHandler(deadLetterChannel("direct:error")
         		.maximumRedeliveries(2));
@@ -71,11 +72,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	    		.when(header(Exchange.FILE_NAME).contains("location"))
     	    			.to("vm:LocationProcessing")	
     	    		.otherwise()
-    					.unmarshal()
-    	    			.bindy(BindyType.Csv, NHSEntities.class)
-    	    			.split(body())
-    	    			.wireTap("vm:LineProcessing")
-    	    			.end()
+    					.to("vm:SDSProcessing")
     	    		.end();
     	        
     	    from("vm:ConsultantProcessing")
@@ -87,6 +84,16 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.process(consultanttoFHIRPractitioner)
 	    		.wireTap("activemq:Consultant")
 	    		.end();
+    	    
+    	    from("vm:SDSProcessing")
+    	    	.routeId("Prcess SDS/ODS File")
+    	    	.log("Processing SDS/ODS File")
+	    	    .unmarshal()
+				.bindy(BindyType.Csv, NHSEntities.class)
+				.split(body())
+				.process(nhsEntitiestoFHIRResource)
+				.wireTap("activemq:SDSResource")
+				.end();
     	    
     	    from("vm:LocationProcessing")
 	    		.routeId("Process Location File")
@@ -131,9 +138,8 @@ public class SDSCamelRoute extends RouteBuilder {
 	    	    	.end();
 	
     	    
-    	    from("vm:LineProcessing")
-    	    	.routeId("Process entries")
-    	    	.process("entitytoHeader")
+    	    from("activemq:SDSResource")
+    	    	.routeId("Process SDS Resource")
     	    	.enrich("vm:lookupOrganisation",enrichOrg)
     	    	.enrich("vm:lookup",enrichUpdateType)
     	    	.filter(header(Exchange.HTTP_METHOD)
@@ -150,10 +156,10 @@ public class SDSCamelRoute extends RouteBuilder {
     	    	.routeId("Update JPA Server")
     	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
     	    	.setHeader(Exchange.HTTP_QUERY,simple("_format=xml",String.class))
-		    	.log("Update type ${header.CamelHttpMethod} ${header.CamelHttpPath} ${header.CamelHttpQuery} Record Entity ID = ${header.OrganisationCode} partOf ${header.ParentOrganisationCode}")
+		    	.log("Update type ${header.CamelHttpMethod} ${header.CamelHttpPath} ${header.CamelHttpQuery} Record Entity ID = ${header.OrganisationCode} partOf ${header.FHIROrganisationCode}")
 		    	.setHeader("Prefer", simple("return=representation",String.class))
 		    	.to("log:uk.co.mayfieldis.esb.SDSHAPI.SDSCamelRoute?level=INFO&showBody=true&showHeaders=true")
-		    	.to("vm:hapi")
+		    	.to("activemq:HAPIFHIR")
 		    	.choice()
 	    		.when(header(Exchange.FILE_NAME).isEqualTo("egpam.csv"))
 	    			// only send updates for amendment load not a bulk load
@@ -165,8 +171,8 @@ public class SDSCamelRoute extends RouteBuilder {
     	    	.setBody(simple(""))
     	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
     	    	.setHeader(Exchange.HTTP_PATH, simple("/Organization",String.class))
-		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"|${header.ParentOrganisationCode}",String.class))
-		    	.to("vm:hapi");
+		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"|${header.FHIROrganisationCode}",String.class))
+		    	.to("vm:HAPIFHIR");
     	    
     	    from("vm:lookupLocation")
 		    	.routeId("Lookup FHIR Location")
@@ -175,7 +181,7 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 		    	.setHeader(Exchange.HTTP_PATH, simple("/Location",String.class))
 		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.uriCHFTLocation+"|${header.FHIRLocation}",String.class))
-		    	.to("vm:hapi");
+		    	.to("vm:HAPIFHIR");
     	    
     	    from("vm:lookup")
 		    	.routeId("Lookup FHIR Resources")
@@ -183,13 +189,16 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 		    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
 		    	.setHeader(Exchange.HTTP_QUERY,simple("${header.FHIRQuery}",String.class))
-		    	.to("vm:hapi");
+		    	.to("vm:HAPIFHIR");
 		    
-    	    from("vm:hapi")
-    	    	.routeId("Call FHIR Server")
-    	    	.setHeader(Exchange.CONTENT_TYPE,simple("application/xml+fhir"))
-    	    	.to("http4:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
-    	    
+    	    from("vm:HAPIFHIR")
+			.routeId("HAPI FHIR")
+			.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+    	
+	    	from("activemq:HAPIFHIR")
+				.routeId("HAPI FHIR MQ")
+				.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+	    	    
     	    from("vm:FileFHIR")
     			.routeId("FileStore")
     			.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");

@@ -30,7 +30,8 @@
 	<bean id="logQuery" class="io.fabric8.insight.log.log4j.Log4jLogQuery" lazy-init="false" scope="singleton"
         init-method="start" destroy-method="stop"/>
 	
-	<bean id="entitytoHeader" class="uk.co.mayfieldis.dao.NHSEntitiestoHeaderVars" />
+	<!--  <bean id="entitytoHeader" class="uk.co.mayfieldis.dao.NHSEntitiestoHeaderVars" />  -->
+	
 	<bean id="zipFileDataFormat" class="org.apache.camel.dataformat.zipfile.ZipFileDataFormat">
     	<property name="usingIterator" value="true"/>
 	</bean>

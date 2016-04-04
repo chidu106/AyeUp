@@ -1,83 +1,32 @@
 package uk.co.mayfieldis.dao;
 
-import java.io.ByteArrayInputStream;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
-import org.hl7.fhir.instance.formats.JsonParser;
+import org.apache.camel.Processor;
 import org.hl7.fhir.instance.formats.ParserType;
-import org.hl7.fhir.instance.formats.XmlParser;
 import org.hl7.fhir.instance.model.Address;
-import org.hl7.fhir.instance.model.Bundle;
 import org.hl7.fhir.instance.model.CodeableConcept;
+import org.hl7.fhir.instance.model.Extension;
 import org.hl7.fhir.instance.model.HumanName;
 import org.hl7.fhir.instance.model.Organization;
 import org.hl7.fhir.instance.model.Period;
 import org.hl7.fhir.instance.model.Practitioner;
-import org.hl7.fhir.instance.model.Reference;
 import org.hl7.fhir.instance.model.ContactPoint.ContactPointSystem;
 import org.hl7.fhir.instance.model.ContactPoint.ContactPointUse;
-import org.hl7.fhir.instance.model.Extension;
 import org.hl7.fhir.instance.model.Practitioner.PractitionerPractitionerRoleComponent;
 import org.hl7.fhir.instance.model.valuesets.PractitionerRole;
-//import org.slf4j.Logger;
-//import org.slf4j.LoggerFactory;
 
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 
-public class EnrichwithParentOrganisation implements AggregationStrategy  {
 
-	//private static final Logger log = LoggerFactory.getLogger(uk.co.mayfieldis.dao.EnrichwithParentOrganisation.class);
-	
+public class NHSEntitiestoFHIRResource implements Processor {
+
 	@Override
-	public Exchange aggregate(Exchange exchange, Exchange enrichment) 
-	{
+	public void process(Exchange exchange) throws Exception {
 		
 		NHSEntities entity = exchange.getIn().getBody(NHSEntities.class);
-		
-		Organization parentOrganisation = null;
-		//
-		if (enrichment.getIn().getHeader(Exchange.HTTP_RESPONSE_CODE).toString().equals("200"))
-		{
-			ByteArrayInputStream xmlContentBytes = new ByteArrayInputStream ((byte[]) enrichment.getIn().getBody(byte[].class));
-			
-			
-			if (enrichment.getIn().getHeader(Exchange.CONTENT_TYPE).toString().contains("json"))
-			{
-				JsonParser composer = new JsonParser();
-				try
-				{
-					Bundle bundle = (Bundle) composer.parse(xmlContentBytes);
-					if (bundle.getEntry().size()>0)
-					{
-						parentOrganisation = (Organization) bundle.getEntry().get(0).getResource();
-					}
-				}
-				catch(Exception ex)
-				{
-					
-				}
-			}
-			else
-			{
-				XmlParser composer = new XmlParser();
-				try
-				{
-					Bundle bundle = (Bundle) composer.parse(xmlContentBytes);
-					if (bundle.getEntry().size()>0)
-					{
-						parentOrganisation = (Organization) bundle.getEntry().get(0).getResource();
-					}
-				}
-				catch(Exception ex)
-				{
-					
-				}
-			}
-			  
-		}
 		
 		String Id = entity.OrganisationCode; 
 		
@@ -214,22 +163,6 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 					.setCode(PractitionerRole.DOCTOR.toString())
 					.setSystem("http://hl7.org/fhir/practitioner-role");
 			
-			if (parentOrganisation !=null)
-			{
-				
-				Reference organisation = new Reference();
-				organisation.setReference("Organization/"+parentOrganisation.getId());
-				practitionerRole.setManagingOrganization(organisation);
-				Extension parentOrg= new Extension();
-				parentOrg.setUrl(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"/ParentCode");
-				CodeableConcept parentCode = new CodeableConcept();
-				parentCode.addCoding()
-					.setCode(exchange.getIn().getHeader("ParentOrganisationCode").toString())
-					.setSystem(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE);
-				
-				parentOrg.setValue(parentCode);
-				practitionerRole.addExtension(parentOrg);
-			}			
 			
 			practitionerRole.setRole(role);
 			
@@ -380,22 +313,6 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 				activePeriod.setValue(period);
 				organisation.addExtension(activePeriod);
 			}
-			if (parentOrganisation !=null)
-			{
-				Reference ccg = new Reference();
-				ccg.setReference("/Organization/"+parentOrganisation.getId());
-				organisation.setPartOf(ccg);
-				
-				Extension parentOrg= new Extension();
-				parentOrg.setUrl(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE+"/ParentCode");
-				CodeableConcept parentCode = new CodeableConcept();
-				parentCode.addCoding()
-					.setCode(exchange.getIn().getHeader("ParentOrganisationCode").toString())
-					.setSystem(FHIRCodeSystems.URI_NHS_OCS_ORGANISATION_CODE);
-				
-				parentOrg.setValue(parentCode);
-				organisation.addExtension(parentOrg);
-			}
 			// XML as Ensemble doesn't like JSON
 			String Response = ResourceSerialiser.serialise(organisation, ParserType.XML);
 			exchange.getIn().setHeader("FHIRResource","/Organization");
@@ -404,10 +321,18 @@ public class EnrichwithParentOrganisation implements AggregationStrategy  {
 			
 	
 		}
-		exchange.getIn().setHeader(Exchange.CONTENT_TYPE,"application/xml+fhir");
-		exchange.getIn().setHeader(Exchange.HTTP_METHOD,"GET");
-		return exchange;
+		exchange.getIn().setHeader("NHSEntityId", entity.OrganisationCode);
+		exchange.getIn().setHeader("OrganisationCode",entity.OrganisationCode);
+		if (entity.ParentOrganisationCode != null && !entity.ParentOrganisationCode.isEmpty())
+		{
+			exchange.getIn().setHeader("FHIROrganisationCode",entity.ParentOrganisationCode);
+		}
+		else
+		{
+			exchange.getIn().setHeader("FHIROrganisationCode",entity.HighLevelHealthGeography);
+		}
+		
+		
 	}
+
 }
-
-
