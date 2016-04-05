@@ -8,7 +8,7 @@ import org.apache.camel.model.dataformat.BindyType;
 
 import uk.co.mayfieldis.FHIRConstants.FHIRCodeSystems;
 import uk.co.mayfieldis.FHIRConstants.NHSTrustFHIRCodeSystems;
-import uk.co.mayfieldis.dao.ConsultantEnrichwithOrganisation;
+import uk.co.mayfieldis.dao.EnrichConsultantwithOrganisation;
 import uk.co.mayfieldis.dao.EnrichLocationwithLocation;
 import uk.co.mayfieldis.dao.EnrichLocationwithOrganisation;
 import uk.co.mayfieldis.dao.EnrichResourcewithOrganisation;
@@ -34,7 +34,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	EnrichResourcewithOrganisation enrichOrg = new EnrichResourcewithOrganisation();
     	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
     	NHSConsultantEntitiestoFHIRPractitioner consultanttoFHIRPractitioner = new NHSConsultantEntitiestoFHIRPractitioner(); 
-    	ConsultantEnrichwithOrganisation consultantEnrichwithOrganisation = new ConsultantEnrichwithOrganisation();
+    	EnrichConsultantwithOrganisation consultantEnrichwithOrganisation = new EnrichConsultantwithOrganisation();
     	NHSTrustLocationEntitiestoFHIRLocation trustLocationEntitiestoFHIRLocation = new NHSTrustLocationEntitiestoFHIRLocation();
     	NHSEntitiestoFHIRResource nhsEntitiestoFHIRResource = new NHSEntitiestoFHIRResource();
     	
@@ -109,7 +109,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	    from("activemq:Consultant")
 		    	.routeId("FHIR Practitioner (Consultant)")
 		    	.enrich("vm:lookupOrganisation",consultantEnrichwithOrganisation)
-		    	.enrich("vm:lookup",enrichUpdateType)
+		    	.enrich("vm:lookupResource",enrichUpdateType)
 		    	.filter(header(Exchange.HTTP_METHOD)
 	    	    	.isEqualTo("POST"))
 	    	    		.to("vm:Update")
@@ -126,7 +126,7 @@ public class SDSCamelRoute extends RouteBuilder {
 					.when(header("FHIRLocation").isNotNull())
 						.enrich("vm:lookupLocation",enrichLocationwithLocation)
 				.end()
-		    	.enrich("vm:lookup",enrichUpdateType)
+		    	.enrich("vm:lookupResource",enrichUpdateType)
 		    	.filter(header(Exchange.HTTP_METHOD)
 	    	    	.isEqualTo("POST"))
 	    	    		.to("vm:Update")
@@ -141,7 +141,7 @@ public class SDSCamelRoute extends RouteBuilder {
     	    from("activemq:SDSResource")
     	    	.routeId("Process SDS Resource")
     	    	.enrich("vm:lookupOrganisation",enrichOrg)
-    	    	.enrich("vm:lookup",enrichUpdateType)
+    	    	.enrich("vm:lookupResource",enrichUpdateType)
     	    	.filter(header(Exchange.HTTP_METHOD)
     	    		.isEqualTo("POST"))
     	    		.to("vm:Update")
@@ -183,7 +183,7 @@ public class SDSCamelRoute extends RouteBuilder {
 		    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.uriCHFTLocation+"|${header.FHIRLocation}",String.class))
 		    	.to("vm:HAPIFHIR");
     	    
-    	    from("vm:lookup")
+    	    from("vm:lookupResource")
 		    	.routeId("Lookup FHIR Resources")
 		    	.setBody(simple(""))
 		    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
@@ -193,11 +193,11 @@ public class SDSCamelRoute extends RouteBuilder {
 		    
     	    from("vm:HAPIFHIR")
 			.routeId("HAPI FHIR")
-			.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+			.to("http:localhost:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
     	
 	    	from("activemq:HAPIFHIR")
 				.routeId("HAPI FHIR MQ")
-				.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+				.to("http:localhost:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
 	    	    
     	    from("vm:FileFHIR")
     			.routeId("FileStore")

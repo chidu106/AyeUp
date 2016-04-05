@@ -15,22 +15,25 @@ import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichAppointmentwithAppointment;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichAppointmentwithLocation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichAppointmentwithPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichAppointmentwithPractitioner;
+import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichConsultantwithOrganisation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithAppointment;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithEncounter;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithLocation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithOrganisation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichEncounterwithPractitioner;
-import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichMFNM05withLocation;
+import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichLocationwithLocation;
+import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichLocationwithOrganisation;
+import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM05toFHIRLocation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichPatientwithOrganisation;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichPatientwithPatient;
 import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichPatientwithPractitioner;
-import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM02PractitionerProcessor;
-import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM05LocationProcessor;
+import uk.co.mayfieldis.hl7v2.hapi.processor.EnrichwithUpdateType;
+import uk.co.mayfieldis.hl7v2.hapi.processor.MFNM02toFHIRPractitioner;
+
+
 
 import static org.apache.camel.component.hl7.HL7.ack;
-
-import org.apache.activemq.RedeliveryPolicy;
 import org.apache.camel.Exchange;
 
 
@@ -48,15 +51,21 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	hl7.setHapiContext(hapiContext);
     	
     	//LightWithFHIR lightWithFHIR = new LightWithFHIR(); 
-    	EnrichMFNM05withLocation enrichMFNM05withLocation = new EnrichMFNM05withLocation();
+    	//MFNM05toFHIRLocation enrichMFNM05withLocation = new MFNM05toFHIRLocation();
     	ADTA28A31toPatient adta28a31toPatient = new ADTA28A31toPatient();  
     	ADTA01A04A08toEncounter adta01a04a08toEncounter = new ADTA01A04A08toEncounter();
     	ADTA05A38toAppointment adta05a38toAppointment = new ADTA05A38toAppointment();
-    	MFNM02PractitionerProcessor mfnm02PractitionerProcessor = new MFNM02PractitionerProcessor();
-    	MFNM05LocationProcessor mfnm05LocationProcessor = new MFNM05LocationProcessor();
+    	MFNM02toFHIRPractitioner mfnm02PractitionerProcessor = new MFNM02toFHIRPractitioner();
+    	MFNM05toFHIRLocation mfnm05LocationProcessor = new MFNM05toFHIRLocation();
+    	
+    	EnrichLocationwithLocation enrichLocationwithLocation = new EnrichLocationwithLocation();
+    	EnrichLocationwithOrganisation enrichLocationwithOrganisation = new EnrichLocationwithOrganisation();
+    	EnrichwithUpdateType enrichUpdateType = new EnrichwithUpdateType();
+    	
     	EnrichPatientwithOrganisation enrichPatientwithOrganisation = new EnrichPatientwithOrganisation();
     	EnrichPatientwithPractitioner enrichPatientwithPractitioner = new EnrichPatientwithPractitioner();
     	EnrichPatientwithPatient enrichPatientwithPatient = new EnrichPatientwithPatient();
+    	
     	EnrichEncounterwithPatient enrichEncounterwithPatient = new EnrichEncounterwithPatient();
     	EnrichEncounterwithPractitioner enrichEncounterwithPractitioner = new EnrichEncounterwithPractitioner();
     	EnrichEncounterwithOrganisation enrichEncounterwithOrganisation = new EnrichEncounterwithOrganisation();
@@ -66,9 +75,12 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	
     	EnrichAppointmentwithPatient enrichAppointmentwithPatient = new EnrichAppointmentwithPatient();
     	EnrichAppointmentwithPractitioner enrichAppointmentwithPractitioner = new EnrichAppointmentwithPractitioner();
-    	
     	EnrichAppointmentwithLocation enrichAppointmentwithLocation = new EnrichAppointmentwithLocation();
     	EnrichAppointmentwithAppointment enrichAppointmentwithAppointment = new EnrichAppointmentwithAppointment();
+    	
+    	EnrichConsultantwithOrganisation consultantEnrichwithOrganisation = new EnrichConsultantwithOrganisation();
+    	
+    	//httpOutcomeProcessor httpOutcomeProcessor = new httpOutcomeProcessor();
     	
     	onException(org.apache.
     			camel.CamelAuthorizationException.class)
@@ -84,9 +96,10 @@ public class HL7v2CamelRoute extends RouteBuilder {
     	retryPolicyDef.setMaximumRedeliveries("3");
     	
     	onException(org.apache.camel.http.common.HttpOperationFailedException.class)
-    		.routeId("HttpError")
+    		.maximumRedeliveries(3)
     		.handled(false)
-    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route?showAll=true&multiline=true&level=WARN");
+    		.log("Error Message = ${exception.message}")
+    		.to("log:uk.co.mayfieldis.hl7v2.hapi.route.httpError?showAll=true&multiline=true&level=WARN");
     	
     	errorHandler(defaultErrorHandler().maximumRedeliveries(3));
     	
@@ -126,14 +139,22 @@ public class HL7v2CamelRoute extends RouteBuilder {
     		.end();
     	
     	from("activemq:MFN_M02")
-			.routeId("MFN_M02")
+			.routeId("MFN_M02 Consultants")
 			.process(mfnm02PractitionerProcessor)
+			.log("Org = ${header.FHIROrganisationCode}")
+			.enrich("vm:lookupOrganisation",consultantEnrichwithOrganisation)
+	    	.enrich("vm:lookupResource",enrichUpdateType)
 			.to("activemq:FileFHIR");
 	
 		from("activemq:MFN_M05")
-			.routeId("MFN_M05")
+			.routeId("MFN_M05 Clinic Locations")
 			.process(mfnm05LocationProcessor)
-			.enrich("vm:Location",enrichMFNM05withLocation)
+			.enrich("vm:lookupOrganisation",enrichLocationwithOrganisation)
+	    	.choice()
+				.when(header("FHIRLocation").isNotNull())
+					.enrich("vm:lookupLocation",enrichLocationwithLocation)
+			.end()
+	    	.enrich("vm:lookupResource",enrichUpdateType)
 			.to("activemq:FileFHIR");
 	    	
     	from("activemq:ADT")
@@ -202,13 +223,12 @@ public class HL7v2CamelRoute extends RouteBuilder {
  
     	from("vm:lookupLocation")
     		.routeId("Loookup FHIR Location")
-    		.log("Lookup Location ${header.FHIRLocation}")
     		.setBody(simple(""))
 	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
 	    	.setHeader(Exchange.HTTP_PATH, simple("/Location",String.class))
 	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.uriCHFTLocation+"|${header.FHIRLocation}",String.class))
 	    	.to("vm:HAPIFHIR");
-    	
+    	    	
     	from("vm:lookupOrganisation")
 	    	.routeId("Lookup FHIR Organisation")
 	    	.setBody(simple(""))
@@ -257,17 +277,37 @@ public class HL7v2CamelRoute extends RouteBuilder {
 	    	.setHeader(Exchange.HTTP_PATH, simple("/Appointment",String.class))
 	    	.setHeader(Exchange.HTTP_QUERY,simple("identifier="+NHSTrustFHIRCodeSystems.uriCHFTAppointmentId+"|${header.FHIRAppointment}",String.class))
 	    	.to("vm:HAPIFHIR");
+    	
+    	 from("vm:lookupResource")
+	    	.routeId("Lookup FHIR Resources")
+	    	.setBody(simple(""))
+	    	.setHeader(Exchange.HTTP_METHOD, simple("GET", String.class))
+	    	.setHeader(Exchange.HTTP_PATH, simple("${header.FHIRResource}",String.class))
+	    	.setHeader(Exchange.HTTP_QUERY,simple("${header.FHIRQuery}",String.class))
+	    	.to("vm:HAPIFHIR");
 	    
     	from("activemq:FileFHIR")
 			.routeId("FileStore")
 			.to("file:C:/NHSSDS/fhir?fileName=${date:now:yyyyMMdd hhmm.ss} ${header.CamelHL7MessageControl}.xml");
-	
+		
     	from("vm:HAPIFHIR")
 			.routeId("HAPI FHIR")
-			.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+			.to("http:localhost:8181/hapi-fhir-jpaserver/baseDstu2?throwExceptionOnFailure=false&connectionsPerRoute=60")
+			.choice()
+				.when(simple("${in.header.CamelHttpResponseCode} == 500"))
+					.to("log:uk.co.mayfieldis.hl7v2.hapi.vm.HAPIFHIR?showAll=true&multiline=true&level=ERROR")
+					.throwException(org.apache.camel.http.common.HttpOperationFailedException.class,"Error Code 500")
+			.end();
     	
     	from("activemq:HAPIFHIR")
 			.routeId("HAPI FHIR MQ")
-			.to("http:chft-ddmirth.xthis.nhs.uk:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60");
+			.onException(org.apache.camel.http.common.HttpOperationFailedException.class).maximumRedeliveries(3).end()
+			.to("http:localhost:8181/hapi-fhir-jpaserver/baseDstu2?connectionsPerRoute=60")
+			.choice()
+				.when(simple("${in.header.CamelHttpResponseCode} == 500"))
+					.to("log:uk.co.mayfieldis.hl7v2.hapi.activemq.HAPIFHIR?showAll=true&multiline=true&level=ERROR")
+					.throwException(org.apache.camel.http.common.HttpOperationFailedException.class,"Error Code 500")
+			.end();
+    	
     }
 }

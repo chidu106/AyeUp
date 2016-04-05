@@ -1,4 +1,4 @@
-package uk.co.mayfieldis.hl7v2.hapi.processor;
+		package uk.co.mayfieldis.hl7v2.hapi.processor;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -149,10 +149,20 @@ public class ADTA28A31toPatient implements Processor {
 	        		case "2":  
 	        			patient.setGender(AdministrativeGender.FEMALE);
 	        			break;
+	        		case "9":  
+	        			patient.setGender(AdministrativeGender.OTHER);
+	        			break;
+	        		case "0":  
+	        			patient.setGender(AdministrativeGender.UNKNOWN);
+	        			break;
 	        		default:
-	        			patient.setGender(AdministrativeGender.NULL);
+	        			patient.setGender(AdministrativeGender.UNKNOWN);
 	        			break;
 	        	}
+			}
+			else
+			{
+				patient.setGender(AdministrativeGender.UNKNOWN);
 			}
 			// Address
 			//log.info("Patient Address");
