@@ -1,0 +1,75 @@
+<html ng-app="booksModule">
+  <head>
+    <title>Part II: Highlighting Text</title>
+  </head>
+
+  <body>
+    <div ng-controller="BookDetailController">
+      <div style="float:left; width: 300px; margin: 25px">
+        <img ng-src="{{ book.image }}" style="width: 300px">
+      </div>
+      <div style="float: left; width: 600px;">
+        <h1>
+          {{ book.title }}
+        </h1>
+        <h3>
+          By: {{ book.author }}
+        </h3>
+        <p  ng-click="getSelection()"
+            ng-bind-html-unsafe="book.preview | highlight:selectedText">
+        </p>
+      </div>
+      <div style="clear: both"></div>
+    </div>
+
+    <script type="text/javascript" src="angular.js"></script>
+    <script type="text/javascript" src="books.js"></script>
+    <script type="text/javascript">
+      var booksModule = angular.module('booksModule', []);
+      booksModule.factory('$books', booksService);
+
+      function BookDetailController($scope, $books, $location) {
+        $scope.book = $books.getById(1); // Les Miserables
+        $scope.selectedText = $location.search()['highlight'] ?
+          decodeURIComponent($location.search()['highlight']) :
+          null;
+
+        $scope.getSelection = function() {
+          var selected = window.getSelection().toString();
+          $location.search('highlight', encodeURIComponent(selected));
+          $scope.selectedText = selected;
+        };
+      }
+
+      booksModule.filter('highlight', function() {
+        return function(input, highlight) {
+          if (!highlight) {
+            return input;
+          }
+          return input.replace(highlight,
+            '<span class="highlight">' + highlight + '</span>');
+        }
+      });
+
+      booksModule.directive('ngBindHtmlUnsafe', function() {
+        return function(scope, element, attrs) {
+          scope.$watch(attrs.ngBindHtmlUnsafe, function(v) {
+            element.html(v);
+          });
+        }
+      });
+
+      booksModule.filter('urlPrefix', function() {
+        return function() {
+          return '#';
+        }
+      });
+    </script>
+
+    <style rel="stylesheet">
+      .highlight {
+        background-color: yellow;
+      }
+    </style>
+  </body>
+</html>

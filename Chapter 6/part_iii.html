@@ -1,0 +1,107 @@
+<html ng-app="booksModule">
+  <head>
+    <title>Part III: Basic Single Page App</title>
+  </head>
+
+  <body>
+    <div ng-view="true">
+    </div>
+
+    <script type="text/javascript" src="angular.js"></script>
+    <script type="text/javascript" src="angular-route.js"></script>
+    <script type="text/javascript" src="books.js"></script>
+    <script type="text/javascript">
+      var booksModule = angular.module('booksModule', ['ngRoute']);
+      booksModule.factory('$books', booksService);
+
+      booksModule.config(function($routeProvider) {
+        $routeProvider.
+          when('/', {
+            templateUrl: 'part_iii_master.template.html',
+            controller: BooksController
+          }).
+          when('/book/:id', {
+            templateUrl: 'part_iii_detail.template.html',
+            controller: BookDetailController,
+            reloadOnSearch: false
+          });
+      });
+
+      function BooksController($scope, $books) {
+        $scope.books = $books.getAll();
+
+        for (var i = 0; i < $scope.books.length; ++i) {
+          $scope.books[i].templateUrl = (i % 2 === 0 ?
+            'master_img_left.template.html' :
+            'master_img_right.template.html');
+        }
+      }
+
+      function BookDetailController($scope, $books, $location,
+        $routeParams) {
+        $scope.book = $books.getById(parseInt($routeParams.id, 10));
+        $scope.selectedText = $location.search('highlight') || null;
+
+        $scope.getSelection = function() {
+          var selected = window.getSelection().toString();
+          if (selected) {
+            $location.search('highlight', encodeURIComponent(selected));
+          }
+          $scope.selectedText = selected;
+        };
+      }
+
+      booksModule.filter('highlight', function() {
+        return function(input, highlight) {
+          if (!highlight) {
+            return input;
+          }
+          return input.replace(highlight,
+            '<span class="highlight">' + highlight + '</span>');
+        }
+      });
+
+      booksModule.directive('ngBindHtmlUnsafe', function() {
+        return function(scope, element, attrs) {
+          scope.$watch(attrs.ngBindHtmlUnsafe, function(v) {
+            element.html(v);
+          });
+        }
+      });
+
+      booksModule.filter('urlPrefix', function() {
+        return function(input) {
+          return '#';
+        }
+      });
+    </script>
+
+    <style rel="stylesheet">
+      .highlight {
+        background-color: yellow;
+      }
+
+      .book-preview {
+        margin: 25px;
+        border: 1px dashed #dfdfdf;
+        width: 600px;
+      }
+
+      .book-preview-image {
+        float: left;
+        width: 180px;
+      }
+
+      .book-preview-image img {
+        width: 180px;
+        height: 180px;
+      }
+
+      .book-preview-text {
+        float: left;
+        width: 400px;
+        margin: 10px;
+      }
+    </style>
+  </body>
+</html>

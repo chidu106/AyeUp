@@ -1,0 +1,86 @@
+<html ng-app="booksModule">
+  <head>
+    <title>Simple ngInclude with data binding</title>
+  </head>
+
+  <body>
+    <div ng-controller="BooksController">
+      <select ng-model="currentOption"
+              ng-options="key for (key, value) in options"
+              ng-change="currentOption()">
+      </select>
+      <div  ng-repeat="book in books"
+            ng-include="book.templateUrl">
+      </div>
+    </div>
+
+    <script type="text/javascript" src="angular.js"></script>
+    <script type="text/javascript" src="books.js"></script>
+    <script type="text/javascript">
+      var booksModule = angular.module('booksModule', []);
+      booksModule.factory('$books', booksService);
+
+      function BooksController($scope, $books) {
+        $scope.books = $books.getAll();
+
+        $scope.setAlternatingTemplates = function() {
+          for (var i = 0; i < $scope.books.length; ++i) {
+            $scope.books[i].templateUrl = (i % 2 === 0 ?
+              'master_img_left.template.html' :
+              'master_img_right.template.html');
+          }
+        };
+
+        $scope.setAllLeft = function() {
+          for (var i = 0; i < $scope.books.length; ++i) {
+            $scope.books[i].templateUrl = 'master_img_left.template.html';
+          }
+        };
+
+        $scope.setAllRight = function() {
+          for (var i = 0; i < $scope.books.length; ++i) {
+            $scope.books[i].templateUrl = 'master_img_right.template.html';
+          }
+        };
+
+        $scope.options = {
+          'Alternating': $scope.setAlternatingTemplates,
+          'All Left': $scope.setAllLeft,
+          'All Right': $scope.setAllRight
+        };
+        $scope.currentOption = $scope.options['Alternating'];
+        $scope.setAlternatingTemplates();
+      }
+
+      booksModule.filter('urlPrefix', function() {
+        return function(input) {
+          return '#';
+        }
+      });
+    </script>
+
+    <style rel="stylesheet">
+      .book-preview {
+        margin: 25px;
+        border: 1px dashed #dfdfdf;
+        width: 600px;
+      }
+
+      .book-preview-image {
+        float: left;
+        width: 180px;
+      }
+
+      .book-preview-image img {
+        width: 180px;
+        height: 180px;
+      }
+
+      .book-preview-text {
+        float: left;
+        width: 400px;
+        margin: 10px;
+      }
+    </style>
+  </body>
+</html>

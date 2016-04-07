@@ -1,0 +1,32 @@
+{
+  "resourceType": "Bundle",
+  "entry": [
+    {
+      "resource": {
+        "resourceType": "Condition",
+        "id": "79e19641-1b06-4ca7-9562-dad23b640833::answer.hopd.com::31",
+        "identifier": [
+          {
+            "system": "http://fhir.answer.hopd.com/source/openehr",
+            "value": "79e19641-1b06-4ca7-9562-dad23b640833::answer.hopd.com::31"
+          }
+        ],
+        "patient": {
+          "reference": "Patient/9999999000"
+        },
+        "code": {
+          "coding": [
+            {
+              "system": "http://snomed.info/sct",
+              "code": "301485011",
+              "display": "Asthma"
+            }
+          ]
+        },
+        "verificationStatus": "unknown",
+        "onsetDateTime": "2015-10-19T12:32:17+01:00",
+        "notes": "Default"
+      }
+    }
+  ]
+}

@@ -1,0 +1,20 @@
+<div class="book-preview">
+  <div class="book-preview-text">
+    <h3>
+      <a ng-href="{{'' | urlPrefix}}/book/{{book._id}}">
+        {{ book.title }}
+      </a>
+    </h3>
+    <h4>
+      By {{ book.author }}
+    </h4>
+    <em>
+      {{ book.preview | limitTo:140 }}
+    </em>
+  </div>
+  <div class="book-preview-image">
+    <img ng-src="{{ book.image }}">
+  </div>
+  <div style="clear: both">
+  </div>
+</div>

@@ -1,0 +1,56 @@
+<div class="row" ng-repeat="slide in slides">
+    <div ng-hide="!isCurrentSlideIndex($index)" >
+        <div class="col-md-3">
+            <div class="container fluid">
+                
+                <table>
+                    <tr><td>&nbsp;</td></tr>
+                     <tr><td>&nbsp;</td></tr>
+                      <tr><td>&nbsp;</td></tr>
+                    <tr style="height:30px;" ><td class="navbar navbar-default" style="background-color: #9acfea;color: white;font-size:20px">&nbsp;&nbsp;{{slide.description}}&nbsp;&nbsp;</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                    <tr><td>{{slide.text1}}</td></tr>
+                    <tr><td>{{slide.text2}}</td></tr>
+                    <tr><td>{{slide.text3}}</td></tr>
+                    <tr><td>&nbsp;</td></tr>
+                </table>
+          
+            </div>
+        </div>
+    <div class="col-md-9">
+        <div class="container slider">
+            <img class="slide slide-animation"
+                 ng-src="{{slide.image}}">
+
+            <a class="arrow prev" href="#/" ng-click="nextSlide()"></a>
+            <a class="arrow next" href="#/" ng-click="prevSlide()"></a>
+            <nav class="navv">
+                <div class="wrapper">
+                    <ul class="dots">
+                        <li class="dot" ng-repeat="slide in slides">
+                            <a href="#/" ng-class="{'active':isCurrentSlideIndex($index)}"
+                              ng-click="setCurrentSlideIndex($index);">{{slide.description}}</a></li>
+                    </ul>
+                </div>
+            </nav>
+        </div>
+    </div>
+    </div>
+</div>
+
+<div class="row marketing">
+ 
+ <div id="share-buttons">
+    <!-- Email -->
+    <a href="mailto:kevin.mayfield@mayfield-is.co.uk">
+        <img src="images/email.png" alt="Email" height="21" width="21" />
+    </a>
+    <!-- LinkedIn -->
+    <a href="https://www.linkedin.com/in/kevin-mayfield-26639716" target="_blank">
+        <img src="images/linkedin.png" alt="LinkedIn" height="21" width="21" />
+    </a>
+    <!-- Twitter -->
+    <a href="https://twitter.com/kevingmayfield" target="_blank">
+        <img src="images/twitter.png" alt="Twitter" height="21" width="21" />
+    </a>
+</div>

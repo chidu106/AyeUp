@@ -1,0 +1,75 @@
+<html ng-app="booksModule">
+  <head>
+    <title>Simple ngInclude with script</title>
+  </head>
+
+  <body>
+    <div ng-controller="BooksController">
+      <div  ng-repeat="book in books"
+            ng-include="book.templateUrl">
+      </div>
+    </div>
+
+    <script type="text/javascript" src="angular.js"></script>
+    <script type="text/javascript" src="books.js"></script>
+    <script type="text/javascript">
+      var booksModule = angular.module('booksModule', []);
+      booksModule.factory('$books', booksService);
+
+      function BooksController($scope, $books, $templateCache, $http) {
+        var templates = [
+          'master_img_left.template.html',
+          'master_img_right.template.html'
+        ];
+
+        $scope.loadBooks = function() {
+          $scope.books = $books.getAll();
+
+          for (var i = 0; i < $scope.books.length; ++i) {
+            $scope.books[i].templateUrl = templates[i % 2];
+          }
+        };
+
+        var done = 0;
+        angular.forEach(templates, function(templateUrl) {
+          $http.get(templateUrl).success(function(data) {
+            $templateCache.put(templateUrl, data);
+            if (++done === templates.length) {
+              $scope.loadBooks();
+            }
+          });
+        });
+      }
+
+      booksModule.filter('urlPrefix', function() {
+        return function(input) {
+          return '#';
+        }
+      });
+    </script>
+
+    <style rel="stylesheet">
+      .book-preview {
+        margin: 25px;
+        border: 1px dashed #dfdfdf;
+        width: 600px;
+      }
+
+      .book-preview-image {
+        float: left;
+        width: 180px;
+      }
+
+      .book-preview-image img {
+        width: 180px;
+        height: 180px;
+      }
+
+      .book-preview-text {
+        float: left;
+        width: 400px;
+        margin: 10px;
+      }
+    </style>
+  </body>
+</html>

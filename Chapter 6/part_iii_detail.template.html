@@ -1,0 +1,20 @@
+<h3 style="cursor: pointer">
+  <a ng-href="{{'' | urlPrefix}}/">
+    Back to Master List
+  </a>
+</h3>
+<div style="float:left; width: 300px; margin: 25px">
+  <img ng-src="{{ book.image }}" style="width: 300px">
+</div>
+<div style="float: left; width: 600px;">
+  <h1>
+    {{ book.title }}
+  </h1>
+  <h3>
+    By: {{ book.author }}
+  </h3>
+  <p  ng-click="getSelection()"
+      ng-bind-html-unsafe="book.preview | highlight:selectedText">
+  </p>
+</div>
+<div style="clear: both"></div>
